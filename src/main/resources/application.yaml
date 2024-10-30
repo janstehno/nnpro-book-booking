@@ -1,0 +1,5 @@
+spring:
+  application:
+  name: nnpro-book-booking
+  config:
+    import: 'optional:classpath:.env'
