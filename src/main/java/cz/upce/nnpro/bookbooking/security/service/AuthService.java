@@ -1,13 +1,13 @@
 package cz.upce.nnpro.bookbooking.security.service;
 
+import cz.upce.nnpro.bookbooking.entity.ResetToken;
 import cz.upce.nnpro.bookbooking.entity.User;
 import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
-import cz.upce.nnpro.bookbooking.security.dto.AuthenticationResponse;
-import cz.upce.nnpro.bookbooking.security.dto.LoginRequest;
-import cz.upce.nnpro.bookbooking.security.dto.RegisterRequest;
+import cz.upce.nnpro.bookbooking.security.dto.*;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.RoleService;
 import cz.upce.nnpro.bookbooking.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +29,10 @@ public class AuthService {
     private final UserService userService;
 
     private final RoleService roleService;
+
+    private final ResetTokenService resetTokenService;
+
+    private final MailService mailService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -70,6 +74,54 @@ public class AuthService {
         } else {
             return new ResponseEntity<>(new Exception("USERNAME_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
+    }
+
+    public ResponseEntity<?> passwordMail(PasswordResetRequest passwordResetRequest, HttpServletRequest httpRequest) {
+        String token = null;
+        User user = userService.getByUsername(passwordResetRequest.getUsername());
+
+        if (user != null) {
+            token = jwtService.generateResetToken(user);
+            ResetToken resetToken = ResetToken.builder().token(token).user(user).expiration(LocalDateTime.now().plusMinutes(15)).build();
+            resetTokenService.create(resetToken);
+
+            String appUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort();
+            String resetUrl = appUrl + "/auth/password/new?token=" + token;
+
+            mailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
+        }
+
+        return ResponseEntity.ok(token);
+    }
+
+    public ResponseEntity<?> passwordReset(PasswordResetDTO passwordResetDTO) {
+        if (passwordResetDTO.getNewPassword().equals(passwordResetDTO.getConfirmPassword())) {
+            String token = passwordResetDTO.getToken();
+            String username = jwtService.extractUsername(token);
+            User user = userService.getByUsername(username);
+
+            if (user != null) {
+                if (username == null || !jwtService.isTokenValid(token, user)) {
+                    return ResponseEntity.status(400).body("INVALID_TOKEN");
+                }
+
+                String purpose = jwtService.extractClaim(token, claims -> (String) claims.get("usedFor"));
+                if (!"PASSWORD_RESET".equals(purpose)) {
+                    return ResponseEntity.status(400).body("INVALID_TOKEN");
+                }
+
+                user.setPassword(passwordEncoder.encode(passwordResetDTO.getNewPassword()));
+                userService.update(user);
+
+                ResetToken resetToken = resetTokenService.getByToken(token);
+                if (resetToken != null) resetTokenService.deleteById(resetToken.getId());
+
+                return ResponseEntity.ok("PASSWORD_RESET");
+
+            }
+        }
+
+        return ResponseEntity.status(400).body("PASSWORD_NOT_RESET");
     }
 
     private ResponseEntity<?> returnAuthenticatedUser(User user) {

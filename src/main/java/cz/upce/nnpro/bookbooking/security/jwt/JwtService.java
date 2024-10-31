@@ -54,6 +54,12 @@ public class JwtService {
         return createToken(new HashMap<>(), user);
     }
 
+    public String generateResetToken(User user) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("usedFor", "PASSWORD_RESET");
+        return createResetToken(extraClaims, user);
+    }
+
     private String createToken(Map<String, Object> extraClaims, User user, Integer expiration) {
         return Jwts.builder()
                    .claims(extraClaims)
@@ -67,6 +73,10 @@ public class JwtService {
 
     private String createToken(Map<String, Object> extraClaims, User user) {
         return createToken(extraClaims, user, 1000 * 60 * 60 * 24);
+    }
+
+    private String createResetToken(Map<String, Object> extraClaims, User user) {
+        return createToken(extraClaims, user, 1000 * 60 * 15);
     }
 
     private SecretKey getSignKey() {

@@ -1,8 +1,11 @@
 package cz.upce.nnpro.bookbooking.security.controller;
 
 import cz.upce.nnpro.bookbooking.security.dto.LoginRequest;
+import cz.upce.nnpro.bookbooking.security.dto.PasswordResetDTO;
+import cz.upce.nnpro.bookbooking.security.dto.PasswordResetRequest;
 import cz.upce.nnpro.bookbooking.security.dto.RegisterRequest;
 import cz.upce.nnpro.bookbooking.security.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,5 +32,19 @@ public class AuthController {
             @RequestBody
             LoginRequest loginRequest) {
         return authService.login(loginRequest);
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<?> passwordMail(
+            @RequestBody
+            PasswordResetRequest passwordResetRequest, HttpServletRequest httpRequest) {
+        return authService.passwordMail(passwordResetRequest, httpRequest);
+    }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<?> passwordReset(
+            @RequestBody
+            PasswordResetDTO passwordResetDTO) {
+        return authService.passwordReset(passwordResetDTO);
     }
 }
