@@ -4,7 +4,6 @@ import cz.upce.nnpro.bookbooking.entity.User;
 import cz.upce.nnpro.bookbooking.repository.UserRepository;
 import lombok.AllArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -30,14 +29,11 @@ public class UserService implements ServiceInterface<User> {
 
     @Override
     public User create(User user) {
-        user.setCreation_date(LocalDateTime.now());
-        user.setUpdate_date(LocalDateTime.now());
         return userRepository.save(user);
     }
 
     @Override
     public User update(User user) {
-        user.setUpdate_date(LocalDateTime.now());
         return userRepository.save(user);
     }
 

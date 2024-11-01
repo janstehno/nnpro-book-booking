@@ -52,8 +52,6 @@ public class AuthService {
                               .email(registerRequest.getEmail())
                               .username(registerRequest.getUsername())
                               .password(passwordEncoder.encode(registerRequest.getPassword()))
-                              .creation_date(LocalDateTime.now())
-                              .update_date(LocalDateTime.now()).role(roleService.getByName(RoleE.USER))
                               .build();
         userService.create(user);
         final User found = userService.getByUsername(registerRequest.getUsername());

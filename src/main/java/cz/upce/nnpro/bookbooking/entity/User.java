@@ -48,9 +48,9 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
-    @Column(updatable = false) private LocalDateTime creation_date;
+    @Column(updatable = false) private LocalDateTime creationDate;
 
-    @Column private LocalDateTime update_date;
+    @Column private LocalDateTime updateDate;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -60,5 +60,16 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(role.getName().name()));
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        creationDate = LocalDateTime.now();
+        updateDate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateDate = LocalDateTime.now();
     }
 }

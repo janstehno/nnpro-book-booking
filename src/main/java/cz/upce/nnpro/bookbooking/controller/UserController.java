@@ -56,7 +56,6 @@ public class UserController {
                 user.setFirstname(user.getFirstname());
                 user.setLastname(user.getLastname());
                 user.setEmail(user.getEmail());
-                user.setUpdate_date(user.getUpdate_date());
                 service.update(user);
                 return ResponseEntity.ok(jwtService.generateToken(user));
             }
@@ -79,7 +78,6 @@ public class UserController {
             if (user != null) {
                 if (passwordEncoder.matches(data.getOldPassword(), user.getPassword())) {
                     user.setPassword(passwordEncoder.encode(data.getPassword()));
-                    user.setUpdate_date(data.getUpdateDate());
                     service.update(user);
                     return ResponseEntity.ok().build();
                 } else {
