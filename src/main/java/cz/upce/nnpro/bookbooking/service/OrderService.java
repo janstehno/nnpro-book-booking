@@ -11,30 +11,30 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderService implements ServiceInterface<Order> {
 
-    private final OrderRepository bookRepository;
+    private final OrderRepository orderRepository;
 
     @Override
     public List<Order> getAll() {
-        return bookRepository.findAll();
+        return orderRepository.findAll();
     }
 
     @Override
     public Order getById(Long id) {
-        return bookRepository.findById(id).orElse(null);
+        return orderRepository.findById(id).orElse(null);
     }
 
     @Override
     public Order create(Order order) {
-        return bookRepository.save(order);
+        return orderRepository.save(order);
     }
 
     @Override
     public Order update(Order order) {
-        return bookRepository.save(order);
+        return orderRepository.save(order);
     }
 
     @Override
     public void deleteById(Long id) {
-        bookRepository.deleteById(id);
+        orderRepository.deleteById(id);
     }
 }
