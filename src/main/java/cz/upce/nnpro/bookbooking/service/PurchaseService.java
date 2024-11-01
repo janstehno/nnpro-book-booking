@@ -37,4 +37,12 @@ public class PurchaseService implements ServiceInterface<Purchase> {
     public void deleteById(Long id) {
         purchaseRepository.deleteById(id);
     }
+
+    public List<Purchase> getAllByUserId(Long userId) {
+        return purchaseRepository.findAllByUserId(userId);
+    }
+
+    public Purchase getByIdAndUserId(Long id, Long userId) {
+        return purchaseRepository.findAllByIdAndUserId(id, userId);
+    }
 }
