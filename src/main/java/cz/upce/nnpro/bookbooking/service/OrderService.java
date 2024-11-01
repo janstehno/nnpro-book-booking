@@ -37,4 +37,12 @@ public class OrderService implements ServiceInterface<Order> {
     public void deleteById(Long id) {
         orderRepository.deleteById(id);
     }
+
+    public List<Order> getAllByUserId(Long userId) {
+        return orderRepository.findAllByUserId(userId);
+    }
+
+    public Order getByIdAndUserId(Long id, Long userId) {
+        return orderRepository.findByIdAndUserId(id, userId);
+    }
 }
