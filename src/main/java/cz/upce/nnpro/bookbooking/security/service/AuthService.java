@@ -2,8 +2,10 @@ package cz.upce.nnpro.bookbooking.security.service;
 
 import cz.upce.nnpro.bookbooking.entity.ResetToken;
 import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
 import cz.upce.nnpro.bookbooking.security.dto.*;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
+import cz.upce.nnpro.bookbooking.service.RoleService;
 import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,8 @@ public class AuthService {
     private final JwtService jwtService;
 
     private final UserService userService;
+
+    private final RoleService roleService;
 
     private final ResetTokenService resetTokenService;
 
@@ -48,6 +52,7 @@ public class AuthService {
                               .email(registerRequest.getEmail())
                               .username(registerRequest.getUsername())
                               .password(passwordEncoder.encode(registerRequest.getPassword()))
+                              .role(roleService.getByName(RoleE.USER))
                               .build();
         userService.create(user);
         final User found = userService.getByUsername(registerRequest.getUsername());
