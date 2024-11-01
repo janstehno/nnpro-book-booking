@@ -3,9 +3,11 @@ package cz.upce.nnpro.bookbooking.service;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.repository.BookingRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 @AllArgsConstructor
 public class BookingService implements ServiceInterface<Booking> {
 
