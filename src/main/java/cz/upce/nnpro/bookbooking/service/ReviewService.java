@@ -18,6 +18,10 @@ public class ReviewService implements ServiceInterface<Review> {
         return reviewRepository.findAll();
     }
 
+    public List<Review> getAllByBookId(Long id) {
+        return reviewRepository.findAllByBookId(id);
+    }
+
     @Override
     public Review getById(Long id) {
         return reviewRepository.findById(id).orElse(null);
