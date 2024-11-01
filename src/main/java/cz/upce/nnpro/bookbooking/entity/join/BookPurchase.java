@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "book_purchase", uniqueConstraints = {@UniqueConstraint(columnNames = {"purchase_id", "book_id"})})
 public class BookPurchase {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "purchase_id")
     @NotNull
