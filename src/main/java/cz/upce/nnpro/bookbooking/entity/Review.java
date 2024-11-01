@@ -3,36 +3,36 @@ package cz.upce.nnpro.bookbooking.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "reset_tokens")
-public class ResetToken {
-
+@AllArgsConstructor
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true) private String token;
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    @NotNull
+    private Book book;
+
     @Column
     @NotNull
-    private LocalDateTime expiration;
+    private int rating;
 
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiration);
-    }
+    @Column private String text;
+
+    @Column private LocalDate date;
 }
+

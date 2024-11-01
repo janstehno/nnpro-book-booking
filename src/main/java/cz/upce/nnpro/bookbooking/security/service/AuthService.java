@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -54,8 +53,7 @@ public class AuthService {
                               .username(registerRequest.getUsername())
                               .password(passwordEncoder.encode(registerRequest.getPassword()))
                               .creation_date(LocalDateTime.now())
-                              .update_date(LocalDateTime.now())
-                              .roles(Set.of(roleService.getByName(RoleE.USER)))
+                              .update_date(LocalDateTime.now()).role(roleService.getByName(RoleE.USER))
                               .build();
         userService.create(user);
         final User found = userService.getByUsername(registerRequest.getUsername());
