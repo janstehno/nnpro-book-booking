@@ -36,5 +36,10 @@ public class Purchase {
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
     @NotNull
     private Set<BookPurchase> bookPurchases;
+
+    @PrePersist
+    protected void onCreate() {
+        date = LocalDate.now();
+    }
 }
 
