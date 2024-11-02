@@ -1,8 +1,11 @@
 package cz.upce.nnpro.bookbooking.service;
 
+import cz.upce.nnpro.bookbooking.dto.UserNameDTO;
+import cz.upce.nnpro.bookbooking.dto.UserPasswordDTO;
 import cz.upce.nnpro.bookbooking.entity.User;
 import cz.upce.nnpro.bookbooking.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +15,8 @@ import java.util.List;
 public class UserService implements ServiceInterface<User> {
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getAll() {
@@ -39,8 +44,21 @@ public class UserService implements ServiceInterface<User> {
         return userRepository.save(user);
     }
 
+    public User update(User user, UserNameDTO data) {
+        user.setFirstname(data.getFirstname());
+        user.setLastname(data.getLastname());
+        user.setEmail(data.getEmail());
+        return userRepository.save(user);
+    }
+
+    public User update(User user, UserPasswordDTO data) {
+        user.setPassword(passwordEncoder.encode(data.getPassword()));
+        return userRepository.save(user);
+    }
+
     @Override
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
+
 }
