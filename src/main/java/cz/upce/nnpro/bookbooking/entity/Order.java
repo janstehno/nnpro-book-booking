@@ -31,5 +31,10 @@ public class Order {
     @Column
     @NotNull
     private LocalDate date;
+
+    @PrePersist
+    protected void onCreate() {
+        date = LocalDate.now();
+    }
 }
 
