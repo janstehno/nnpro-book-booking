@@ -16,8 +16,6 @@ public class UserService implements ServiceInterface<User> {
 
     private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     @Override
     public List<User> getAll() {
         return userRepository.findAll();
@@ -51,7 +49,7 @@ public class UserService implements ServiceInterface<User> {
         return userRepository.save(user);
     }
 
-    public User update(User user, UserPasswordDTO data) {
+    public User update(User user, UserPasswordDTO data, PasswordEncoder passwordEncoder) {
         user.setPassword(passwordEncoder.encode(data.getPassword()));
         return userRepository.save(user);
     }

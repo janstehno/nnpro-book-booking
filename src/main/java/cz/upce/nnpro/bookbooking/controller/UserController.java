@@ -61,7 +61,7 @@ public class UserController {
         if (!passwordEncoder.matches(data.getOldPassword(), user.getPassword())) {
             return new ResponseEntity<>(new Exception("OLD_PASSWORD_INCORRECT"), HttpStatus.CONFLICT);
         }
-        final String newToken = jwtService.generateToken(service.update(user, data));
+        final String newToken = jwtService.generateToken(service.update(user, data, passwordEncoder));
         return ResponseEntity.ok().body(newToken);
     }
 }
