@@ -27,8 +27,7 @@ public class SecurityConfiguration {
         return http.cors(Customizer.withDefaults())
                    .csrf(AbstractHttpConfigurer::disable)
                    .authorizeHttpRequests(a -> a
-                           .requestMatchers("/auth/**", "/books/**").permitAll()
-                           .requestMatchers("/bookings/**").hasAuthority("ADMIN")
+                           .requestMatchers("/auth/**", "/books/**").permitAll().requestMatchers("/bookings/manager/**").hasAuthority("ADMIN")
                            .anyRequest().authenticated())
                    .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .authenticationProvider(authenticationProvider)

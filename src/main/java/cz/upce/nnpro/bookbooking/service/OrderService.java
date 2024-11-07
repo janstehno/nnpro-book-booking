@@ -1,11 +1,14 @@
 package cz.upce.nnpro.bookbooking.service;
 
-import cz.upce.nnpro.bookbooking.dto.OrderDTO;
+import cz.upce.nnpro.bookbooking.dto.RequestOrderDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponseBookingDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponseOrderDTO;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
-import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
 import cz.upce.nnpro.bookbooking.security.service.MailService;
 import lombok.AllArgsConstructor;
@@ -41,7 +44,31 @@ public class OrderService implements ServiceInterface<Order> {
         return orderRepository.save(order);
     }
 
-    public Order create(AppUser user, OrderDTO data) {
+    @Override
+    public Order update(Order order) {
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        orderRepository.deleteById(id);
+    }
+
+    public List<ResponseOrderDTO> getAllByUserId(Long userId) {
+        return orderRepository.findAllByUserId(userId).stream().map(o -> new ResponseOrderDTO(o.getDate(), null)).toList();
+    }
+
+    public ResponseOrderDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
+        final Order order = orderRepository.findByIdAndUserId(id, userId);
+        if (order == null) throw new CustomExceptionHandler.ItemNotFoundException();
+        return new ResponseOrderDTO(order.getDate(),
+                                    order.getBookings()
+                                         .stream()
+                                         .map(b -> new ResponseBookingDTO(b.getBook(), b.getCount(), b.getStatus(), b.getBookingDate(), b.getExpirationDate()))
+                                         .toList());
+    }
+
+    public ResponseOrderDTO create(AppUser user, RequestOrderDTO data) {
         Order order = new Order();
         order.setUser(user);
 
@@ -71,24 +98,6 @@ public class OrderService implements ServiceInterface<Order> {
         Order savedOrder = orderRepository.save(order);
         mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
 
-        return savedOrder;
-    }
-
-    @Override
-    public Order update(Order order) {
-        return orderRepository.save(order);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        orderRepository.deleteById(id);
-    }
-
-    public List<Order> getAllByUserId(Long userId) {
-        return orderRepository.findAllByUserId(userId);
-    }
-
-    public Order getByIdAndUserId(Long id, Long userId) {
-        return orderRepository.findByIdAndUserId(id, userId);
+        return new ResponseOrderDTO(savedOrder.getDate(), null);
     }
 }

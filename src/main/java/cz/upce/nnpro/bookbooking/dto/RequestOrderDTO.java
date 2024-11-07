@@ -9,6 +9,6 @@ import java.util.Map;
 @Data
 @Builder
 @AllArgsConstructor
-public class OrderDTO {
+public class RequestOrderDTO {
     private Map<Long, Integer> books;
 }

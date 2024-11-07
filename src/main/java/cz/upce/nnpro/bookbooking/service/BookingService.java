@@ -3,6 +3,7 @@ package cz.upce.nnpro.bookbooking.service;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookingRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -50,7 +51,10 @@ public class BookingService implements ServiceInterface<Booking> {
         return bookingRepository.findAllByOrderUserId(userId);
     }
 
-    public StatusE updateReturned(Booking booking) {
+    public StatusE updateReturned(Long bookingId) throws RuntimeException {
+        final Booking booking = getById(bookingId);
+        if (booking == null) throw new CustomExceptionHandler.ItemNotFoundException();
+
         booking.setStatus(StatusE.RETURNED);
         booking.setReturnDate(LocalDate.now());
 
@@ -75,7 +79,10 @@ public class BookingService implements ServiceInterface<Booking> {
         return bookingRepository.save(booking).getStatus();
     }
 
-    public StatusE updateLoaned(Booking booking) {
+    public StatusE updateLoaned(Long bookingId) throws RuntimeException {
+        final Booking booking = getById(bookingId);
+        if (booking == null) throw new CustomExceptionHandler.ItemNotFoundException();
+
         booking.setStatus(StatusE.LOANED);
         booking.setLoanDate(LocalDate.now());
         booking.setExpirationDate(LocalDate.now().plusDays(30));
