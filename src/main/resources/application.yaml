@@ -26,3 +26,6 @@ spring:
             required: true
 jwt:
   secret: ${JWT_SECRET}
+service:
+  mail:
+    enabled: ${SERVICE_MAIL_ENABLED}

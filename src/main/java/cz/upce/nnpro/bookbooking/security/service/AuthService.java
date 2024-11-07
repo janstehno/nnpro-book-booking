@@ -85,7 +85,7 @@ public class AuthService {
             String appUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort();
             String resetUrl = appUrl + "/auth/password/new?token=" + token;
 
-            mailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
+            mailService.sendEmailAboutPasswordReset(user.getEmail(), resetUrl);
         }
 
         return ResponseEntity.ok(token);
