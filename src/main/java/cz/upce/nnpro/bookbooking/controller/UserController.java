@@ -1,15 +1,13 @@
 package cz.upce.nnpro.bookbooking.controller;
 
-import cz.upce.nnpro.bookbooking.dto.UserNameDTO;
-import cz.upce.nnpro.bookbooking.dto.UserPasswordDTO;
+import cz.upce.nnpro.bookbooking.dto.RequestUserPasswordDTO;
+import cz.upce.nnpro.bookbooking.dto.UserDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
-import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,49 +17,30 @@ public class UserController {
 
     private final UserService service;
 
-    private final JwtService jwtService;
-
-    private final PasswordEncoder passwordEncoder;
-
     @GetMapping
-    public ResponseEntity<AppUser> getUserById(
-            @RequestHeader("Authorization")
-            String token) {
-        final AppUser user = service.getById(jwtService.extractUserId(token));
-        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.ok().body(user);
+    public ResponseEntity<UserDTO> getUser(
+            @AuthenticationPrincipal
+            AppUser user) {
+        return ResponseEntity.ok(service.get(user));
     }
 
     @PutMapping
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<String> updateUser(
             @RequestBody
             @Valid
-            UserNameDTO data,
-            @RequestHeader("Authorization")
-            String token) {
-        final AppUser user = service.getById(jwtService.extractUserId(token));
-        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        final AppUser foundByEmail = service.getByEmail(data.getEmail());
-        if (foundByEmail != null && !foundByEmail.getId().equals(jwtService.extractUserId(token))) {
-            return new ResponseEntity<>(new Exception("EMAIL_EXISTS"), HttpStatus.CONFLICT);
-        }
-        final String newToken = jwtService.generateToken(service.update(user, data));
-        return ResponseEntity.ok().body(newToken);
+            UserDTO data,
+            @AuthenticationPrincipal
+            AppUser user) {
+        return ResponseEntity.ok(service.update(user, data));
     }
 
     @PutMapping("/password")
-    public ResponseEntity<?> updateUserPassword(
+    public ResponseEntity<String> updateUserPassword(
             @RequestBody
             @Valid
-            UserPasswordDTO data,
-            @RequestHeader("Authorization")
-            String token) {
-        final AppUser user = service.getById(jwtService.extractUserId(token));
-        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        if (!passwordEncoder.matches(data.getOldPassword(), user.getPassword())) {
-            return new ResponseEntity<>(new Exception("OLD_PASSWORD_INCORRECT"), HttpStatus.CONFLICT);
-        }
-        final String newToken = jwtService.generateToken(service.update(user, data, passwordEncoder));
-        return ResponseEntity.ok().body(newToken);
+            RequestUserPasswordDTO data,
+            @AuthenticationPrincipal
+            AppUser user) {
+        return ResponseEntity.ok(service.updatePassword(user, data));
     }
 }

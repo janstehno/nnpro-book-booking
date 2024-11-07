@@ -7,8 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class UserNameDTO {
-    private String firstname;
-    private String lastname;
-    private String email;
+public class RequestUserPasswordDTO {
+    private String oldPassword;
+    private String password;
 }
