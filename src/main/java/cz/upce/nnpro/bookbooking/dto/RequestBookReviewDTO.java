@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class BookReviewDTO {
+public class RequestBookReviewDTO {
     private int rating;
     private String text;
 }

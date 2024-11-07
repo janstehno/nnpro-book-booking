@@ -20,6 +20,12 @@ public class CustomExceptionHandler {
         }
     }
 
+    public static class ItemNotFoundException extends RuntimeException {
+        public ItemNotFoundException() {
+            super();
+        }
+    }
+
     @ExceptionHandler(EmailExistsException.class)
     public ResponseEntity<String> handleEmailExistsException(EmailExistsException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
@@ -28,6 +34,11 @@ public class CustomExceptionHandler {
     @ExceptionHandler(EmailExistsException.class)
     public ResponseEntity<String> handleOldPasswordIncorrectException(OldPasswordIncorrectException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<String> handleItemNotFoundException() {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
 

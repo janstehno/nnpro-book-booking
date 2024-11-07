@@ -1,9 +1,11 @@
 package cz.upce.nnpro.bookbooking.service;
 
-import cz.upce.nnpro.bookbooking.dto.BookReviewDTO;
+import cz.upce.nnpro.bookbooking.dto.RequestBookReviewDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponseBookReviewDTO;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Review;
-import cz.upce.nnpro.bookbooking.entity.AppUser;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.ReviewRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +18,11 @@ public class ReviewService implements ServiceInterface<Review> {
 
     private final ReviewRepository reviewRepository;
 
+    private final BookService bookService;
+
     @Override
     public List<Review> getAll() {
         return reviewRepository.findAll();
-    }
-
-    public List<Review> getAllByBookId(Long id) {
-        return reviewRepository.findAllByBookId(id);
     }
 
     @Override
@@ -35,19 +35,8 @@ public class ReviewService implements ServiceInterface<Review> {
         return reviewRepository.save(review);
     }
 
-    public Review create(AppUser user, Book book, BookReviewDTO data) {
-        final Review review = Review.builder().user(user).book(book).rating(data.getRating()).text(data.getText()).build();
-        return reviewRepository.save(review);
-    }
-
     @Override
     public Review update(Review review) {
-        return reviewRepository.save(review);
-    }
-
-    public Review update(Review review, BookReviewDTO data) {
-        review.setRating(data.getRating());
-        review.setText(data.getText());
         return reviewRepository.save(review);
     }
 
@@ -56,7 +45,39 @@ public class ReviewService implements ServiceInterface<Review> {
         reviewRepository.deleteById(id);
     }
 
+    public List<Review> getAllByBookId(Long id) {
+        return reviewRepository.findAllByBookId(id);
+    }
+
     public Review getByUserIdAndBookId(Long userId, Long bookId) {
         return reviewRepository.findByUserIdAndBookId(userId, bookId);
+    }
+
+    public ResponseBookReviewDTO create(AppUser user, Long bookId, RequestBookReviewDTO data) throws RuntimeException {
+        final Book book = bookService.getById(bookId);
+        if (book == null) throw new CustomExceptionHandler.ItemNotFoundException();
+
+        final Review review = Review.builder().user(user).book(book).rating(data.getRating()).text(data.getText()).build();
+        create(review);
+
+        return new ResponseBookReviewDTO(user.getFirstname(), user.getLastname(), review.getRating(), review.getText());
+    }
+
+    public ResponseBookReviewDTO update(AppUser user, Long bookId, RequestBookReviewDTO data) throws RuntimeException {
+        final Review review = getByUserIdAndBookId(user.getId(), bookId);
+        if (review == null) throw new CustomExceptionHandler.ItemNotFoundException();
+
+        review.setRating(data.getRating());
+        review.setText(data.getText());
+        update(review);
+
+        return new ResponseBookReviewDTO(user.getFirstname(), user.getLastname(), review.getRating(), review.getText());
+    }
+
+    public void delete(AppUser user, Long bookId) throws RuntimeException {
+        final Review review = getByUserIdAndBookId(user.getId(), bookId);
+        if (review == null) throw new CustomExceptionHandler.ItemNotFoundException();
+
+        deleteById(review.getId());
     }
 }
