@@ -1,6 +1,9 @@
 package cz.upce.nnpro.bookbooking.service;
 
+import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
+import cz.upce.nnpro.bookbooking.entity.Review;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,8 @@ import java.util.List;
 public class BookService implements ServiceInterface<Book> {
 
     private final BookRepository bookRepository;
+
+    private final ReviewService reviewService;
 
     @Override
     public List<Book> getAll() {
@@ -36,5 +41,12 @@ public class BookService implements ServiceInterface<Book> {
     @Override
     public void deleteById(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    public ResponseBookDetailDTO getBookById(Long id) throws RuntimeException {
+        final Book book = getById(id);
+        if (book == null) throw new CustomExceptionHandler.ItemNotFoundException();
+        final List<Review> reviews = reviewService.getAllByBookId(book.getId());
+        return new ResponseBookDetailDTO(book, reviews);
     }
 }

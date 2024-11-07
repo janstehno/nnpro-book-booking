@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-public class BookDetailDTO {
+public class ResponseBookDetailDTO {
     private Book book;
     private List<Review> reviews;
 }
