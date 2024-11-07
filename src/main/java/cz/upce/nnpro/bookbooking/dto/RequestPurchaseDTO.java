@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-public class PurchaseDTO {
+public class RequestPurchaseDTO {
     private List<Long> bookIds;
 }

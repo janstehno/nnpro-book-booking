@@ -1,10 +1,12 @@
 package cz.upce.nnpro.bookbooking.service;
 
-import cz.upce.nnpro.bookbooking.dto.PurchaseDTO;
+import cz.upce.nnpro.bookbooking.dto.RequestPurchaseDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponsePurchaseDTO;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
-import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.PurchaseRepository;
 import cz.upce.nnpro.bookbooking.security.service.MailService;
 import lombok.AllArgsConstructor;
@@ -39,7 +41,27 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         return purchaseRepository.save(purchase);
     }
 
-    public Purchase create(AppUser user, PurchaseDTO data) {
+    @Override
+    public Purchase update(Purchase purchase) {
+        return purchaseRepository.save(purchase);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        purchaseRepository.deleteById(id);
+    }
+
+    public List<ResponsePurchaseDTO> getAllByUserId(Long userId) {
+        return purchaseRepository.findAllByUserId(userId).stream().map(p -> new ResponsePurchaseDTO(p.getDate(), p.getPrice(), null)).toList();
+    }
+
+    public ResponsePurchaseDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
+        final Purchase purchase = purchaseRepository.findAllByIdAndUserId(id, userId);
+        if (purchase == null) throw new CustomExceptionHandler.ItemNotFoundException();
+        return new ResponsePurchaseDTO(purchase.getDate(), purchase.getPrice(), purchase.getBookPurchases().stream().map(BookPurchase::getBook).toList());
+    }
+
+    public ResponsePurchaseDTO create(AppUser user, RequestPurchaseDTO data) {
         Purchase purchase = new Purchase();
         purchase.setUser(user);
 
@@ -56,27 +78,9 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         purchase.setPrice(price);
         purchase.setBookPurchases(bookPurchases);
 
-        Purchase savedPurchase = purchaseRepository.save(purchase);
+        Purchase savedPurchase = create(purchase);
         mailService.sendEmailAboutPurchase(user.getEmail(), savedPurchase);
 
-        return savedPurchase;
-    }
-
-    @Override
-    public Purchase update(Purchase purchase) {
-        return purchaseRepository.save(purchase);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        purchaseRepository.deleteById(id);
-    }
-
-    public List<Purchase> getAllByUserId(Long userId) {
-        return purchaseRepository.findAllByUserId(userId);
-    }
-
-    public Purchase getByIdAndUserId(Long id, Long userId) {
-        return purchaseRepository.findAllByIdAndUserId(id, userId);
+        return new ResponsePurchaseDTO(savedPurchase.getDate(), savedPurchase.getPrice(), null);
     }
 }
