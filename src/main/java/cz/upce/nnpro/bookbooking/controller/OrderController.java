@@ -4,7 +4,6 @@ import cz.upce.nnpro.bookbooking.dto.OrderDTO;
 import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.entity.User;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
-import cz.upce.nnpro.bookbooking.service.BookService;
 import cz.upce.nnpro.bookbooking.service.OrderService;
 import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.validation.Valid;
@@ -21,8 +20,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService service;
-
-    private final BookService bookService;
 
     private final UserService userService;
 

@@ -24,7 +24,7 @@ public class Order {
     @NotNull
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @NotNull
     private Set<Booking> bookings;
 

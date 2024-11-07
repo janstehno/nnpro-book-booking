@@ -33,7 +33,7 @@ public class Purchase {
     @NotNull
     private double price;
 
-    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @NotNull
     private Set<BookPurchase> bookPurchases;
 

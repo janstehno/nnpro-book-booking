@@ -7,6 +7,7 @@ import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.entity.User;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
+import cz.upce.nnpro.bookbooking.security.service.MailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class OrderService implements ServiceInterface<Order> {
     private final OrderRepository orderRepository;
 
     private final BookService bookService;
+
+    private final MailService mailService;
 
     @Override
     public List<Order> getAll() {
@@ -64,7 +67,11 @@ public class OrderService implements ServiceInterface<Order> {
         }
 
         order.setBookings(bookings);
-        return orderRepository.save(order);
+
+        Order savedOrder = orderRepository.save(order);
+        mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
+
+        return savedOrder;
     }
 
     @Override

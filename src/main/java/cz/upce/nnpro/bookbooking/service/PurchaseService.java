@@ -6,6 +6,7 @@ import cz.upce.nnpro.bookbooking.entity.Purchase;
 import cz.upce.nnpro.bookbooking.entity.User;
 import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
 import cz.upce.nnpro.bookbooking.repository.PurchaseRepository;
+import cz.upce.nnpro.bookbooking.security.service.MailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ public class PurchaseService implements ServiceInterface<Purchase> {
     private final PurchaseRepository purchaseRepository;
 
     private final BookService bookService;
+
+    private final MailService mailService;
 
     @Override
     public List<Purchase> getAll() {
@@ -53,7 +56,10 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         purchase.setPrice(price);
         purchase.setBookPurchases(bookPurchases);
 
-        return purchaseRepository.save(purchase);
+        Purchase savedPurchase = purchaseRepository.save(purchase);
+        mailService.sendEmailAboutPurchase(user.getEmail(), savedPurchase);
+
+        return savedPurchase;
     }
 
     @Override
