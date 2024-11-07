@@ -2,7 +2,7 @@ package cz.upce.nnpro.bookbooking.controller;
 
 import cz.upce.nnpro.bookbooking.dto.OrderDTO;
 import cz.upce.nnpro.bookbooking.entity.Order;
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.OrderService;
 import cz.upce.nnpro.bookbooking.service.UserService;
@@ -29,7 +29,7 @@ public class OrderController {
     public ResponseEntity<List<Order>> getAllOrders(
             @RequestHeader("Authorization")
             String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         final List<Order> orders = service.getAllByUserId(user.getId());
         return ResponseEntity.ok(orders);
@@ -41,7 +41,7 @@ public class OrderController {
             Long id,
             @RequestHeader("Authorization")
             String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         final Order order = service.getByIdAndUserId(id, user.getId());
         if (order == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -55,7 +55,7 @@ public class OrderController {
             OrderDTO data,
             @RequestHeader("Authorization")
             String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         //TODO lock
         final Order order = service.create(user, data);

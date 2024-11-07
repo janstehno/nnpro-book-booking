@@ -1,6 +1,6 @@
 package cz.upce.nnpro.bookbooking.security.jwt;
 
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -54,17 +54,17 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(extractToken(token)));
     }
 
-    public String generateToken(User user) {
+    public String generateToken(AppUser user) {
         return createToken(new HashMap<>(), user);
     }
 
-    public String generateResetToken(User user) {
+    public String generateResetToken(AppUser user) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("usedFor", "PASSWORD_RESET");
         return createResetToken(extraClaims, user);
     }
 
-    private String createToken(Map<String, Object> extraClaims, User user, Integer expiration) {
+    private String createToken(Map<String, Object> extraClaims, AppUser user, Integer expiration) {
         return Jwts.builder()
                    .claims(extraClaims)
                    .id(user.getId().toString())
@@ -75,11 +75,11 @@ public class JwtService {
                    .compact();
     }
 
-    private String createToken(Map<String, Object> extraClaims, User user) {
+    private String createToken(Map<String, Object> extraClaims, AppUser user) {
         return createToken(extraClaims, user, 1000 * 60 * 60 * 24);
     }
 
-    private String createResetToken(Map<String, Object> extraClaims, User user) {
+    private String createResetToken(Map<String, Object> extraClaims, AppUser user) {
         return createToken(extraClaims, user, 1000 * 60 * 15);
     }
 

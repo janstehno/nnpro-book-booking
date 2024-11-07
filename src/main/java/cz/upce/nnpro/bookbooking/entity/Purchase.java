@@ -23,7 +23,7 @@ public class Purchase {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
-    private User user;
+    private AppUser user;
 
     @Column
     @NotNull

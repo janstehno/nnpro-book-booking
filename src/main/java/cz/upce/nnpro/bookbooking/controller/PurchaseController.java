@@ -2,7 +2,7 @@ package cz.upce.nnpro.bookbooking.controller;
 
 import cz.upce.nnpro.bookbooking.dto.PurchaseDTO;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.PurchaseService;
 import cz.upce.nnpro.bookbooking.service.UserService;
@@ -29,7 +29,7 @@ public class PurchaseController {
     public ResponseEntity<List<Purchase>> getAllPurchases(
             @RequestHeader("Authorization")
             String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         final List<Purchase> purchases = service.getAllByUserId(user.getId());
         return ResponseEntity.ok(purchases);
@@ -41,7 +41,7 @@ public class PurchaseController {
             Long id,
             @RequestHeader("Authorization")
             String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         final Purchase purchase = service.getByIdAndUserId(id, user.getId());
         if (purchase == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -55,7 +55,7 @@ public class PurchaseController {
             PurchaseDTO data,
             @RequestHeader("Authorization")
             String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         final Purchase purchase = service.create(user, data);
         return ResponseEntity.ok(purchase);

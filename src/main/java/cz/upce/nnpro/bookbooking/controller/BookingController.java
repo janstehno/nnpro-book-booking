@@ -19,7 +19,6 @@ public class BookingController {
     private final BookingService service;
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Booking>> getAllBookingsOfUser(
             @PathVariable
             Long userId) {
@@ -28,7 +27,6 @@ public class BookingController {
     }
 
     @PutMapping("/{userId}/{id}/returned")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StatusE> updateReturnedBooking(
             @PathVariable
             Long id) {
@@ -40,7 +38,6 @@ public class BookingController {
     }
 
     @PutMapping("/{userId}/{id}/loaned")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StatusE> updateLoanedBooking(
             @PathVariable
             Long id) {

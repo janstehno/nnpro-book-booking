@@ -3,7 +3,7 @@ package cz.upce.nnpro.bookbooking.service;
 import cz.upce.nnpro.bookbooking.dto.PurchaseDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
 import cz.upce.nnpro.bookbooking.repository.PurchaseRepository;
 import cz.upce.nnpro.bookbooking.security.service.MailService;
@@ -39,7 +39,7 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         return purchaseRepository.save(purchase);
     }
 
-    public Purchase create(User user, PurchaseDTO data) {
+    public Purchase create(AppUser user, PurchaseDTO data) {
         Purchase purchase = new Purchase();
         purchase.setUser(user);
 

@@ -3,7 +3,7 @@ package cz.upce.nnpro.bookbooking.controller;
 import cz.upce.nnpro.bookbooking.dto.BookReviewDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Review;
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.BookService;
 import cz.upce.nnpro.bookbooking.service.ReviewService;
@@ -38,7 +38,7 @@ public class ReviewController {
             String token) {
         final Book book = bookService.getById(bookId);
         if (book == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         final Review review = service.create(user, book, data);
         return ResponseEntity.ok(review);
@@ -53,7 +53,7 @@ public class ReviewController {
             BookReviewDTO data,
             @RequestHeader("Authorization")
             String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
+        final AppUser user = userService.getById(jwtService.extractUserId(token));
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         final Review foundReview = service.getByUserIdAndBookId(user.getId(), bookId);
         if (foundReview == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

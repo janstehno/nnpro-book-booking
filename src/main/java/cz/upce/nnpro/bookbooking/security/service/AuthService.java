@@ -1,7 +1,7 @@
 package cz.upce.nnpro.bookbooking.security.service;
 
 import cz.upce.nnpro.bookbooking.entity.ResetToken;
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
 import cz.upce.nnpro.bookbooking.security.dto.*;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
@@ -38,15 +38,15 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public ResponseEntity<?> register(RegisterRequest registerRequest) {
-        final User foundByEmail = userService.getByEmail(registerRequest.getEmail());
+        final AppUser foundByEmail = userService.getByEmail(registerRequest.getEmail());
         if (foundByEmail != null) {
             return new ResponseEntity<>(new Exception("EMAIL_EXISTS"), HttpStatus.CONFLICT);
         }
-        final User foundByUsername = userService.getByUsername(registerRequest.getUsername());
+        final AppUser foundByUsername = userService.getByUsername(registerRequest.getUsername());
         if (foundByUsername != null) {
             return new ResponseEntity<>(new Exception("USERNAME_EXISTS"), HttpStatus.CONFLICT);
         }
-        final User user = User.builder()
+        final AppUser user = AppUser.builder()
                               .firstname(registerRequest.getFirstname())
                               .lastname(registerRequest.getLastname())
                               .email(registerRequest.getEmail())
@@ -55,12 +55,12 @@ public class AuthService {
                               .role(roleService.getByName(RoleE.USER))
                               .build();
         userService.create(user);
-        final User found = userService.getByUsername(registerRequest.getUsername());
+        final AppUser found = userService.getByUsername(registerRequest.getUsername());
         return returnAuthenticatedUser(found);
     }
 
     public ResponseEntity<?> login(LoginRequest loginRequest) {
-        final User found = userService.getByUsername(loginRequest.getUsername());
+        final AppUser found = userService.getByUsername(loginRequest.getUsername());
         if (found != null && passwordEncoder.matches(loginRequest.getPassword(), found.getPassword())) {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -75,7 +75,7 @@ public class AuthService {
 
     public ResponseEntity<?> passwordMail(PasswordResetRequest passwordResetRequest, HttpServletRequest httpRequest) {
         String token = null;
-        User user = userService.getByUsername(passwordResetRequest.getUsername());
+        AppUser user = userService.getByUsername(passwordResetRequest.getUsername());
 
         if (user != null) {
             token = jwtService.generateResetToken(user);
@@ -95,7 +95,7 @@ public class AuthService {
         if (passwordResetDTO.getNewPassword().equals(passwordResetDTO.getConfirmPassword())) {
             String token = passwordResetDTO.getToken();
             String username = jwtService.extractUsername(token);
-            User user = userService.getByUsername(username);
+            AppUser user = userService.getByUsername(username);
 
             if (user != null) {
                 if (username == null || !jwtService.isTokenValid(token, user)) {
@@ -121,7 +121,7 @@ public class AuthService {
         return ResponseEntity.status(400).body("PASSWORD_NOT_RESET");
     }
 
-    private ResponseEntity<?> returnAuthenticatedUser(User user) {
+    private ResponseEntity<?> returnAuthenticatedUser(AppUser user) {
         final String token = jwtService.generateToken(user);
         return ResponseEntity.ok(AuthenticationResponse.builder()
                                                        .id(user.getId())

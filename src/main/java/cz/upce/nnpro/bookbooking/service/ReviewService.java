@@ -3,7 +3,7 @@ package cz.upce.nnpro.bookbooking.service;
 import cz.upce.nnpro.bookbooking.dto.BookReviewDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Review;
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.repository.ReviewRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class ReviewService implements ServiceInterface<Review> {
         return reviewRepository.save(review);
     }
 
-    public Review create(User user, Book book, BookReviewDTO data) {
+    public Review create(AppUser user, Book book, BookReviewDTO data) {
         final Review review = Review.builder().user(user).book(book).rating(data.getRating()).text(data.getText()).build();
         return reviewRepository.save(review);
     }

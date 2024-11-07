@@ -4,7 +4,7 @@ import cz.upce.nnpro.bookbooking.dto.OrderDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
 import cz.upce.nnpro.bookbooking.security.service.MailService;
@@ -41,7 +41,7 @@ public class OrderService implements ServiceInterface<Order> {
         return orderRepository.save(order);
     }
 
-    public Order create(User user, OrderDTO data) {
+    public Order create(AppUser user, OrderDTO data) {
         Order order = new Order();
         order.setUser(user);
 

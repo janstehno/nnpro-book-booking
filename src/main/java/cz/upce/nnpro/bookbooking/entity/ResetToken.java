@@ -26,7 +26,7 @@ public class ResetToken {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @NotNull
-    private User user;
+    private AppUser user;
 
     @Column
     @NotNull

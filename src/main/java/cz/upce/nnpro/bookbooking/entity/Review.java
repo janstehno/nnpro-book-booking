@@ -23,7 +23,7 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     @NotNull
-    private User user;
+    private AppUser user;
 
     @ManyToOne
     @JoinColumn(name = "BOOK_ID")

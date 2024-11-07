@@ -22,7 +22,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
-    private User user;
+    private AppUser user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @NotNull
