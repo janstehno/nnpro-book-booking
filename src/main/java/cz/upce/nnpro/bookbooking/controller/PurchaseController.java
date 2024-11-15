@@ -3,9 +3,7 @@ package cz.upce.nnpro.bookbooking.controller;
 import cz.upce.nnpro.bookbooking.dto.RequestPurchaseDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponsePurchaseDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
-import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.PurchaseService;
-import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +18,6 @@ import java.util.List;
 public class PurchaseController {
 
     private final PurchaseService service;
-
-    private final UserService userService;
-
-    private final JwtService jwtService;
 
     @GetMapping
     public ResponseEntity<List<ResponsePurchaseDTO>> getAllPurchases(

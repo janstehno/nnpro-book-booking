@@ -3,9 +3,7 @@ package cz.upce.nnpro.bookbooking.controller;
 import cz.upce.nnpro.bookbooking.dto.RequestOrderDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseOrderDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
-import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.OrderService;
-import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +18,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService service;
-
-    private final UserService userService;
-
-    private final JwtService jwtService;
 
     @GetMapping
     public ResponseEntity<List<ResponseOrderDTO>> getAllOrders(
