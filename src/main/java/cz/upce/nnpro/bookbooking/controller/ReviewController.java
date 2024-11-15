@@ -3,6 +3,7 @@ package cz.upce.nnpro.bookbooking.controller;
 import cz.upce.nnpro.bookbooking.dto.RequestBookReviewDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookReviewDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
+import cz.upce.nnpro.bookbooking.service.BookService;
 import cz.upce.nnpro.bookbooking.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,8 @@ public class ReviewController {
 
     private final ReviewService service;
 
+    private final BookService bookService;
+
     @PostMapping
     public ResponseEntity<ResponseBookReviewDTO> createReview(
             @PathVariable
@@ -26,7 +29,7 @@ public class ReviewController {
             RequestBookReviewDTO data,
             @AuthenticationPrincipal
             AppUser user) {
-        return ResponseEntity.ok(service.create(user, bookId, data));
+        return ResponseEntity.ok(service.create(user, bookService.getById(bookId), data));
     }
 
     @PutMapping
@@ -38,7 +41,7 @@ public class ReviewController {
             RequestBookReviewDTO data,
             @AuthenticationPrincipal
             AppUser user) {
-        return ResponseEntity.ok(service.update(user, bookId, data));
+        return ResponseEntity.ok(service.update(user, bookService.getById(bookId), data));
     }
 
     @DeleteMapping

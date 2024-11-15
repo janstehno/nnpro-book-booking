@@ -18,8 +18,6 @@ public class ReviewService implements ServiceInterface<Review> {
 
     private final ReviewRepository reviewRepository;
 
-    private final BookService bookService;
-
     @Override
     public List<Review> getAll() {
         return reviewRepository.findAll();
@@ -53,8 +51,7 @@ public class ReviewService implements ServiceInterface<Review> {
         return reviewRepository.findByUserIdAndBookId(userId, bookId);
     }
 
-    public ResponseBookReviewDTO create(AppUser user, Long bookId, RequestBookReviewDTO data) throws RuntimeException {
-        final Book book = bookService.getById(bookId);
+    public ResponseBookReviewDTO create(AppUser user, Book book, RequestBookReviewDTO data) throws RuntimeException {
         if (book == null) throw new CustomExceptionHandler.ItemNotFoundException();
 
         final Review review = Review.builder().user(user).book(book).rating(data.getRating()).text(data.getText()).build();
@@ -63,8 +60,8 @@ public class ReviewService implements ServiceInterface<Review> {
         return new ResponseBookReviewDTO(user.getFirstname(), user.getLastname(), review.getRating(), review.getText());
     }
 
-    public ResponseBookReviewDTO update(AppUser user, Long bookId, RequestBookReviewDTO data) throws RuntimeException {
-        final Review review = getByUserIdAndBookId(user.getId(), bookId);
+    public ResponseBookReviewDTO update(AppUser user, Book book, RequestBookReviewDTO data) throws RuntimeException {
+        final Review review = getByUserIdAndBookId(user.getId(), book.getId());
         if (review == null) throw new CustomExceptionHandler.ItemNotFoundException();
 
         review.setRating(data.getRating());
