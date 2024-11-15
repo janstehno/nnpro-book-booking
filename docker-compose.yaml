@@ -27,3 +27,15 @@ services:
       - db
     ports:
       - "8080:8080"
+  js:
+    image: node
+    container_name: node-react-vite
+    working_dir: /react
+    volumes:
+      - ./src/main/react:/react
+    command:
+      sh -c "npm install && npm run dev"
+    depends_on:
+      - app
+    ports:
+      - "5173:5173"
