@@ -31,7 +31,7 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(EmailExistsException.class)
+    @ExceptionHandler(OldPasswordIncorrectException.class)
     public ResponseEntity<String> handleOldPasswordIncorrectException(OldPasswordIncorrectException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
