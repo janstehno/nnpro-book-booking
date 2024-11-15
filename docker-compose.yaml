@@ -2,6 +2,7 @@ version: "3.9"
 services:
   db:
     image: postgres
+    container_name: postgres
     restart: always
     environment:
       POSTGRES_DB: book-booking
@@ -9,3 +10,20 @@ services:
       POSTGRES_PASSWORD: bb
     ports:
       - "5432:5432"
+  app:
+    image: eclipse-temurin:21-jdk
+    container_name: spring-boot
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ~/.gradle:/.gradle
+    command:
+      sh -c "./gradlew bootRun"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/book-booking
+      SPRING_DATASOURCE_USERNAME: bb
+      SPRING_DATASOURCE_PASSWORD: bb
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
