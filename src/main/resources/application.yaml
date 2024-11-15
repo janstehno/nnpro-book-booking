@@ -1,11 +1,14 @@
 spring:
   application:
-  name: nnpro-book-booking
+    name: nnpro-book-booking
   datasource:
     url: jdbc:postgresql://localhost:5432/book-booking
     username: bb
     password: bb
     driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    changelog: classpath:db/changelog/db.changelog-master.yaml
   jpa:
     hibernate:
       ddl-auto: create-drop
