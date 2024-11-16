@@ -2,7 +2,7 @@ version: "3.9"
 services:
   db:
     image: postgres
-    container_name: postgres
+    container_name: book-booking-postgres
     restart: always
     environment:
       POSTGRES_DB: book-booking
@@ -12,7 +12,7 @@ services:
       - "5432:5432"
   app:
     image: eclipse-temurin:21-jdk
-    container_name: spring-boot
+    container_name: book-booking-spring-boot
     working_dir: /app
     volumes:
       - .:/app
@@ -29,7 +29,7 @@ services:
       - "8080:8080"
   js:
     image: node
-    container_name: node-react-vite
+    container_name: book-booking-node-react-vite
     working_dir: /react
     volumes:
       - ./src/main/react:/react
