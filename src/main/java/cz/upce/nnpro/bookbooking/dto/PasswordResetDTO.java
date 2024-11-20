@@ -1,4 +1,4 @@
-package cz.upce.nnpro.bookbooking.security.dto;
+package cz.upce.nnpro.bookbooking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

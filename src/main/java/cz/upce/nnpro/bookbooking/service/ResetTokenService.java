@@ -1,8 +1,7 @@
-package cz.upce.nnpro.bookbooking.security.service;
+package cz.upce.nnpro.bookbooking.service;
 
 import cz.upce.nnpro.bookbooking.entity.ResetToken;
 import cz.upce.nnpro.bookbooking.repository.ResetTokenRepository;
-import cz.upce.nnpro.bookbooking.service.ServiceInterface;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

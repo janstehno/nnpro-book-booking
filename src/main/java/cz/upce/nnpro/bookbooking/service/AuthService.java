@@ -1,13 +1,11 @@
-package cz.upce.nnpro.bookbooking.security.service;
+package cz.upce.nnpro.bookbooking.service;
 
+import cz.upce.nnpro.bookbooking.dto.*;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.ResetToken;
 import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
-import cz.upce.nnpro.bookbooking.security.dto.*;
-import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
-import cz.upce.nnpro.bookbooking.service.RoleService;
-import cz.upce.nnpro.bookbooking.service.UserService;
+import cz.upce.nnpro.bookbooking.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package cz.upce.nnpro.bookbooking.security.jwt;
+package cz.upce.nnpro.bookbooking.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package cz.upce.nnpro.bookbooking.security.service;
+package cz.upce.nnpro.bookbooking.service;
 
 import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.entity.Purchase;

@@ -1,4 +1,4 @@
-package cz.upce.nnpro.bookbooking.security.dto;
+package cz.upce.nnpro.bookbooking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-    private Long id;
+public class RegisterRequest {
     private String firstname;
     private String lastname;
-    private String token;
+    private String email;
+    private String username;
+    private String password;
 }

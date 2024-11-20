@@ -1,4 +1,4 @@
-package cz.upce.nnpro.bookbooking.security.jwt;
+package cz.upce.nnpro.bookbooking.security;
 
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import io.jsonwebtoken.Claims;

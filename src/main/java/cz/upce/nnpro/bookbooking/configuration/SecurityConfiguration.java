@@ -1,6 +1,6 @@
 package cz.upce.nnpro.bookbooking.configuration;
 
-import cz.upce.nnpro.bookbooking.security.jwt.JwtFilter;
+import cz.upce.nnpro.bookbooking.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

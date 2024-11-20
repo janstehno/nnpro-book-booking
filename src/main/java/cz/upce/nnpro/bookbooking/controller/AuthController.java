@@ -1,10 +1,10 @@
-package cz.upce.nnpro.bookbooking.security.controller;
+package cz.upce.nnpro.bookbooking.controller;
 
-import cz.upce.nnpro.bookbooking.security.dto.LoginRequest;
-import cz.upce.nnpro.bookbooking.security.dto.PasswordResetDTO;
-import cz.upce.nnpro.bookbooking.security.dto.PasswordResetRequest;
-import cz.upce.nnpro.bookbooking.security.dto.RegisterRequest;
-import cz.upce.nnpro.bookbooking.security.service.AuthService;
+import cz.upce.nnpro.bookbooking.dto.LoginRequest;
+import cz.upce.nnpro.bookbooking.dto.PasswordResetDTO;
+import cz.upce.nnpro.bookbooking.dto.PasswordResetRequest;
+import cz.upce.nnpro.bookbooking.dto.RegisterRequest;
+import cz.upce.nnpro.bookbooking.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

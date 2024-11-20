@@ -7,7 +7,6 @@ import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
 import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
 import cz.upce.nnpro.bookbooking.repository.PurchaseRepository;
-import cz.upce.nnpro.bookbooking.security.service.MailService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -5,7 +5,7 @@ import cz.upce.nnpro.bookbooking.dto.UserDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.UserRepository;
-import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
+import cz.upce.nnpro.bookbooking.security.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
