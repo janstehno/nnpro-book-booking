@@ -41,7 +41,7 @@ public class ReviewController {
             RequestBookReviewDTO data,
             @AuthenticationPrincipal
             AppUser user) {
-        return ResponseEntity.ok(service.update(user, bookService.getById(bookId), data));
+        return ResponseEntity.ok(service.update(user, bookId, data));
     }
 
     @DeleteMapping

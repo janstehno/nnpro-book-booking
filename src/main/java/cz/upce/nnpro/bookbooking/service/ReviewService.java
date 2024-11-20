@@ -5,8 +5,8 @@ import cz.upce.nnpro.bookbooking.dto.ResponseBookReviewDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Review;
-import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.ReviewRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +24,8 @@ public class ReviewService implements ServiceInterface<Review> {
     }
 
     @Override
-    public Review getById(Long id) {
-        return reviewRepository.findById(id).orElse(null);
+    public Review getById(Long id) throws RuntimeException {
+        return reviewRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -47,34 +47,26 @@ public class ReviewService implements ServiceInterface<Review> {
         return reviewRepository.findAllByBookId(id);
     }
 
-    public Review getByUserIdAndBookId(Long userId, Long bookId) {
-        return reviewRepository.findByUserIdAndBookId(userId, bookId);
+    public Review getByUserIdAndBookId(Long userId, Long bookId) throws RuntimeException {
+        return reviewRepository.findByUserIdAndBookId(userId, bookId).orElseThrow(EntityNotFoundException::new);
     }
 
-    public ResponseBookReviewDTO create(AppUser user, Book book, RequestBookReviewDTO data) throws RuntimeException {
-        if (book == null) throw new CustomExceptionHandler.ItemNotFoundException();
-
+    public ResponseBookReviewDTO create(AppUser user, Book book, RequestBookReviewDTO data) {
         final Review review = Review.builder().user(user).book(book).rating(data.getRating()).text(data.getText()).build();
         create(review);
-
         return new ResponseBookReviewDTO(user.getFirstname(), user.getLastname(), review.getRating(), review.getText());
     }
 
-    public ResponseBookReviewDTO update(AppUser user, Book book, RequestBookReviewDTO data) throws RuntimeException {
-        final Review review = getByUserIdAndBookId(user.getId(), book.getId());
-        if (review == null) throw new CustomExceptionHandler.ItemNotFoundException();
-
+    public ResponseBookReviewDTO update(AppUser user, Long bookId, RequestBookReviewDTO data) {
+        final Review review = getByUserIdAndBookId(user.getId(), bookId);
         review.setRating(data.getRating());
         review.setText(data.getText());
         update(review);
-
         return new ResponseBookReviewDTO(user.getFirstname(), user.getLastname(), review.getRating(), review.getText());
     }
 
-    public void delete(AppUser user, Long bookId) throws RuntimeException {
+    public void delete(AppUser user, Long bookId) {
         final Review review = getByUserIdAndBookId(user.getId(), bookId);
-        if (review == null) throw new CustomExceptionHandler.ItemNotFoundException();
-
         deleteById(review.getId());
     }
 }

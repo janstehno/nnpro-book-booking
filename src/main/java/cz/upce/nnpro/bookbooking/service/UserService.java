@@ -6,6 +6,7 @@ import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.UserRepository;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,8 @@ public class UserService implements ServiceInterface<AppUser> {
     }
 
     @Override
-    public AppUser getById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public AppUser getById(Long id) throws RuntimeException {
+        return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -47,14 +48,16 @@ public class UserService implements ServiceInterface<AppUser> {
         userRepository.deleteById(id);
     }
 
-    public AppUser getByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null);
-    }
-
-    public AppUser getByEmail(String email) {return userRepository.findByEmail(email).orElse(null);}
-
     public UserDTO get(AppUser user) {
         return new UserDTO(user.getFirstname(), user.getLastname(), user.getEmail());
+    }
+
+    public AppUser getByUsername(String username) throws RuntimeException {
+        return userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public AppUser getByEmail(String email) throws RuntimeException {
+        return userRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
     }
 
     public String update(AppUser user, UserDTO data) throws RuntimeException {

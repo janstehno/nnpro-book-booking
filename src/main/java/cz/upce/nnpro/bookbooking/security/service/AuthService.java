@@ -1,19 +1,20 @@
 package cz.upce.nnpro.bookbooking.security.service;
 
-import cz.upce.nnpro.bookbooking.entity.ResetToken;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
+import cz.upce.nnpro.bookbooking.entity.ResetToken;
 import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.security.dto.*;
 import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
 import cz.upce.nnpro.bookbooking.service.RoleService;
 import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,61 +38,60 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    public ResponseEntity<?> register(RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(RegisterRequest registerRequest) throws RuntimeException {
         final AppUser foundByEmail = userService.getByEmail(registerRequest.getEmail());
         if (foundByEmail != null) {
-            return new ResponseEntity<>(new Exception("EMAIL_EXISTS"), HttpStatus.CONFLICT);
+            throw new CustomExceptionHandler.EmailExistsException();
         }
         final AppUser foundByUsername = userService.getByUsername(registerRequest.getUsername());
         if (foundByUsername != null) {
-            return new ResponseEntity<>(new Exception("USERNAME_EXISTS"), HttpStatus.CONFLICT);
+            throw new CustomExceptionHandler.UsernameExistsException();
         }
         final AppUser user = AppUser.builder()
-                              .firstname(registerRequest.getFirstname())
-                              .lastname(registerRequest.getLastname())
-                              .email(registerRequest.getEmail())
-                              .username(registerRequest.getUsername())
-                              .password(passwordEncoder.encode(registerRequest.getPassword()))
-                              .role(roleService.getByName(RoleE.USER))
-                              .build();
-        userService.create(user);
-        final AppUser found = userService.getByUsername(registerRequest.getUsername());
-        return returnAuthenticatedUser(found);
+                                    .firstname(registerRequest.getFirstname())
+                                    .lastname(registerRequest.getLastname())
+                                    .email(registerRequest.getEmail())
+                                    .username(registerRequest.getUsername())
+                                    .password(passwordEncoder.encode(registerRequest.getPassword()))
+                                    .role(roleService.getByName(RoleE.USER))
+                                    .build();
+
+        AppUser registered = userService.create(user);
+        return returnAuthenticatedUser(registered);
     }
 
-    public ResponseEntity<?> login(LoginRequest loginRequest) {
+    public ResponseEntity<?> login(LoginRequest loginRequest) throws RuntimeException {
         final AppUser found = userService.getByUsername(loginRequest.getUsername());
         if (found != null && passwordEncoder.matches(loginRequest.getPassword(), found.getPassword())) {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
             } catch (AuthenticationException e) {
-                return new ResponseEntity<>(new Exception("WRONG_PASSWORD"), HttpStatus.FORBIDDEN);
+                throw new CustomExceptionHandler.PasswordNotCorrectException();
             }
             return returnAuthenticatedUser(found);
         } else {
-            return new ResponseEntity<>(new Exception("USERNAME_NOT_FOUND"), HttpStatus.NOT_FOUND);
+            throw new UsernameNotFoundException("USERNAME_NOT_FOUND");
         }
     }
 
     public ResponseEntity<?> passwordMail(PasswordResetRequest passwordResetRequest, HttpServletRequest httpRequest) {
-        String token = null;
         AppUser user = userService.getByUsername(passwordResetRequest.getUsername());
 
         if (user != null) {
-            token = jwtService.generateResetToken(user);
+            final String token = jwtService.generateResetToken(user);
             ResetToken resetToken = ResetToken.builder().token(token).user(user).expiration(LocalDateTime.now().plusMinutes(15)).build();
             resetTokenService.create(resetToken);
 
             String appUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort();
-            String resetUrl = appUrl + "/auth/password/new?token=" + token;
+            String resetUrl = appUrl + "/password/reset?token=" + token;
 
             mailService.sendEmailAboutPasswordReset(user.getEmail(), resetUrl);
         }
 
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok("EMAIL_SENT");
     }
 
-    public ResponseEntity<?> passwordReset(PasswordResetDTO passwordResetDTO) {
+    public ResponseEntity<?> passwordReset(PasswordResetDTO passwordResetDTO) throws RuntimeException {
         if (passwordResetDTO.getNewPassword().equals(passwordResetDTO.getConfirmPassword())) {
             String token = passwordResetDTO.getToken();
             String username = jwtService.extractUsername(token);
@@ -99,12 +99,12 @@ public class AuthService {
 
             if (user != null) {
                 if (username == null || !jwtService.isTokenValid(token, user)) {
-                    return ResponseEntity.status(400).body("INVALID_TOKEN");
+                    throw new CustomExceptionHandler.InvalidTokenException();
                 }
 
                 String purpose = jwtService.extractClaim(token, claims -> (String) claims.get("usedFor"));
                 if (!"PASSWORD_RESET".equals(purpose)) {
-                    return ResponseEntity.status(400).body("INVALID_TOKEN");
+                    throw new CustomExceptionHandler.InvalidTokenException();
                 }
 
                 user.setPassword(passwordEncoder.encode(passwordResetDTO.getNewPassword()));
@@ -118,7 +118,7 @@ public class AuthService {
             }
         }
 
-        return ResponseEntity.status(400).body("PASSWORD_NOT_RESET");
+        throw new CustomExceptionHandler.PasswordNotCorrectException();
     }
 
     private ResponseEntity<?> returnAuthenticatedUser(AppUser user) {

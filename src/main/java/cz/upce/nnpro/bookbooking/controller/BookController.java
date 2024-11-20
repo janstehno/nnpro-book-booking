@@ -28,7 +28,7 @@ public class BookController {
     public ResponseEntity<ResponseBookDetailDTO> getBookById(
             @PathVariable
             Long id) {
-        return ResponseEntity.ok(service.getBookById(id));
+        return ResponseEntity.ok(service.get(id));
     }
 
 }

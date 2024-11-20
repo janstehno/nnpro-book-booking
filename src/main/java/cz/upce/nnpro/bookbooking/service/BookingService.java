@@ -3,8 +3,8 @@ package cz.upce.nnpro.bookbooking.service;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
-import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookingRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,8 +28,8 @@ public class BookingService implements ServiceInterface<Booking> {
     }
 
     @Override
-    public Booking getById(Long id) {
-        return bookingRepository.findById(id).orElse(null);
+    public Booking getById(Long id) throws RuntimeException {
+        return bookingRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -51,9 +51,8 @@ public class BookingService implements ServiceInterface<Booking> {
         return bookingRepository.findAllByOrderUserId(userId);
     }
 
-    public StatusE updateReturned(Long bookingId) throws RuntimeException {
+    public StatusE updateReturned(Long bookingId) {
         final Booking booking = getById(bookingId);
-        if (booking == null) throw new CustomExceptionHandler.ItemNotFoundException();
 
         booking.setStatus(StatusE.RETURNED);
         booking.setReturnDate(LocalDate.now());
@@ -79,9 +78,8 @@ public class BookingService implements ServiceInterface<Booking> {
         return bookingRepository.save(booking).getStatus();
     }
 
-    public StatusE updateLoaned(Long bookingId) throws RuntimeException {
+    public StatusE updateLoaned(Long bookingId) {
         final Booking booking = getById(bookingId);
-        if (booking == null) throw new CustomExceptionHandler.ItemNotFoundException();
 
         booking.setStatus(StatusE.LOANED);
         booking.setLoanDate(LocalDate.now());
