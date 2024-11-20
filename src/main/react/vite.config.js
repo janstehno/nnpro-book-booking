@@ -7,8 +7,10 @@ export default defineConfig({
     publicDir: path.resolve(__dirname, 'public'),
     resolve: {
         alias: {
-        '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
-        }
+            '~': path.resolve(__dirname),
+            '@': path.resolve(__dirname, 'src'),
+            '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
+        },
     },
     plugins: [react()],
     server: {

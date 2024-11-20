@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const api = axios.create({
@@ -9,32 +8,36 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+export const setupAxiosInterceptors = (addError) => {
+  api.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  );
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const status = error.response?.status;
-    const restrictedRoutes = [];
-    const currentPath = window.location.pathname;
-
-    if (!restrictedRoutes.includes(currentPath) && status >= 400 && status < 600) {
-      useNavigate(`/error?status=${status}`);
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response) {
+        addError({
+          message: error.response.data?.message || 'Server communication error.',
+          status: error.response.status,
+        });
+      } else if (error.request) {
+        addError({ message: 'Server is not responding.' });
+      } else {
+        addError({ message: error.message });
+      }
+      return Promise.reject(error);
     }
-
-    return Promise.reject(error);
-  }
-);
+  );
+};
 
 export default api;

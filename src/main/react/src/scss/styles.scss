@@ -1,7 +1,8 @@
 $primary: #413B61;
 $secondary: #37415C;
 $success: #8BC34A;
-$danger: #B4182D;
+$danger: #A34054;
+$dark-danger: #54162B;
 $warning: #ED9E59;
 $info: #AE7DAC;
 $light: #F5F5F5;
@@ -40,4 +41,24 @@ $dark: #03122F;
 
 .navbar-logo{
     height: 30px;
+}
+
+.error-toast{
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 100;
+    max-width: 300px;
+    border-radius: 5px;
+}
+
+.error-toast p{
+    padding: 15px 20px;
+    margin: 0;
+}
+
+.error-toast button{
+    width: 100%;
+    border-radius: 0 0 5px 5px;
+    background-color: darken($danger, 7%);
 }
