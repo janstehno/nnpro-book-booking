@@ -60,6 +60,14 @@ public class UserService implements ServiceInterface<AppUser> {
         return userRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
     }
 
+    public boolean emailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    public boolean usernameExists(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
     public String update(AppUser user, UserDTO data) throws RuntimeException {
         AppUser foundByEmail = getByEmail(data.getEmail());
         if (foundByEmail != null && !foundByEmail.getId().equals(user.getId())) throw new CustomExceptionHandler.EmailExistsException();

@@ -37,14 +37,9 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public ResponseEntity<?> register(RegisterRequest registerRequest) throws RuntimeException {
-        final AppUser foundByEmail = userService.getByEmail(registerRequest.getEmail());
-        if (foundByEmail != null) {
-            throw new CustomExceptionHandler.EmailExistsException();
-        }
-        final AppUser foundByUsername = userService.getByUsername(registerRequest.getUsername());
-        if (foundByUsername != null) {
-            throw new CustomExceptionHandler.UsernameExistsException();
-        }
+        if (userService.emailExists(registerRequest.getEmail())) throw new CustomExceptionHandler.EmailExistsException();
+        if (userService.usernameExists(registerRequest.getUsername())) throw new CustomExceptionHandler.UsernameExistsException();
+
         final AppUser user = AppUser.builder()
                                     .firstname(registerRequest.getFirstname())
                                     .lastname(registerRequest.getLastname())
@@ -60,7 +55,7 @@ public class AuthService {
 
     public ResponseEntity<?> login(LoginRequest loginRequest) throws RuntimeException {
         final AppUser found = userService.getByUsername(loginRequest.getUsername());
-        if (found != null && passwordEncoder.matches(loginRequest.getPassword(), found.getPassword())) {
+        if (passwordEncoder.matches(loginRequest.getPassword(), found.getPassword())) {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
             } catch (AuthenticationException e) {
@@ -68,7 +63,7 @@ public class AuthService {
             }
             return returnAuthenticatedUser(found);
         } else {
-            throw new UsernameNotFoundException("USERNAME_NOT_FOUND");
+            throw new CustomExceptionHandler.PasswordNotCorrectException();
         }
     }
 
