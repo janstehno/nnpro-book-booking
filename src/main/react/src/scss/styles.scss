@@ -62,3 +62,9 @@ $dark: #03122F;
     border-radius: 0 0 5px 5px;
     background-color: darken($danger, 7%);
 }
+
+.book-card-container{
+    max-width: 15rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}

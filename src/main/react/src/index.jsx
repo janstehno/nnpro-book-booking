@@ -15,6 +15,7 @@ import ProfileUpdate from "@/routes/ProfileUpdate";
 import ProfileUpdatePassword from "@/routes/ProfileUpdatePassword";
 import PasswordReset from "@/routes/PasswordReset";
 import PasswordResetSubmit from "@/routes/PasswordResetSubmit";
+import Books from "@/routes/Books";
 
 import * as bootstrap from 'bootstrap';
 import './scss/styles.scss';
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="/user/update-password" element={<ProfileUpdatePassword />} />
           <Route path="/password" element={<PasswordReset />} />
           <Route path="/password/reset" element={<PasswordResetSubmit />} />
+          <Route path="/books" element={<Books />} />
         </Routes>
       </div>
     </>
