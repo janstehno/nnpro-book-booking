@@ -1,0 +1,32 @@
+.main-container{
+    padding: 20px;
+}
+
+.main-container form input, .main-container form select{
+    margin-bottom: 10px;
+    max-width: 250px;
+}
+
+.login-container form{
+    margin-bottom: 10px;
+}
+
+.profile-container p{
+    margin: 0;
+}
+
+.profile-container button{
+    margin-top: 10px;
+}
+
+.navbar-toggler{
+    border: none;
+}
+
+.navbar-toggler-icon{
+    width: 15px;
+}
+
+.navbar-logo{
+    height: 30px;
+}
