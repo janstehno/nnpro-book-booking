@@ -1,3 +1,14 @@
+$primary: #413B61;
+$secondary: #37415C;
+$success: #8BC34A;
+$danger: #B4182D;
+$warning: #ED9E59;
+$info: #AE7DAC;
+$light: #F5F5F5;
+$dark: #03122F;
+
+@import "~bootstrap/scss/bootstrap";
+
 .main-container{
     padding: 20px;
 }

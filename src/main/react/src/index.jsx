@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import * as bootstrap from 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './index.css'
+import './scss/styles.scss'
 
 import Navbar from "./components/Navbar"
 import Home from './routes/Home'
