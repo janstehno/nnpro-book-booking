@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../axios.config.js";
+import api from "~/axios.config";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -12,7 +12,7 @@ function Login() {
     try {
       const response = await api.post("/auth/login", { username, password });
       localStorage.setItem("token", response.data.token);
-      navigate("/profile");
+      navigate("/user");
     } catch (error) {
       console.error("Login failed", error);
     }

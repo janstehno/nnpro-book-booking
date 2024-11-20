@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import api from "~/axios.config";
 import { useLocation, useNavigate } from "react-router-dom";
-import api from "../../axios.config.js";
 
 function PasswordResetSubmit() {
   const [token, setToken] = useState("");

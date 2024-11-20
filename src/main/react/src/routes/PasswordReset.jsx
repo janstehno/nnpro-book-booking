@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../axios.config.js";
+import api from "~/axios.config";
 import { useNavigate } from "react-router-dom";
 
 function PasswordReset() {

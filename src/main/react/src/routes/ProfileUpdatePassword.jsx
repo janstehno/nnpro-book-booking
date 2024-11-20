@@ -1,29 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import api from "../../axios.config.js";
 import { Link, useNavigate } from "react-router-dom";
 
-function ProfileUpdate() {
-  const [user, setUser] = useState({ firstname: "", lastname: "", email: "" });
+function UpdatePassword() {
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    password: "",
+  });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await api.get("/profile");
-        setUser(response.data);
-      } catch (error) {
-        console.error("Failed to get user", error);
-        navigate("/login");
-      }
-    };
-    fetchUser();
-  }, [navigate]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({
-      ...prevUser,
+    setPasswordData((prevData) => ({
+      ...prevData,
       [name]: value,
     }));
   };
@@ -31,52 +21,42 @@ function ProfileUpdate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.put("/profile", user);
-      navigate("/profile");
+      await api.put("/user/password", passwordData);
+      navigate("/user");
     } catch (error) {
-      setError("Failed to update profile");
+      setError("Failed to update password");
     }
   };
 
   return (
-    <div className="profile-update-container main-container">
-      <Link to="/profile">Back</Link><h1>Update Profile</h1>
+    <div className="profile-update-password-container main-container">
+      <Link to="/user">Back</Link><h1>Update Password</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>First Name</label>
+          <label>Old Password</label>
           <input
-            type="text"
-            name="firstname"
+            type="password"
+            name="oldPassword"
             className="form-control"
-            value={user.firstname}
+            value={passwordData.oldPassword}
             onChange={handleChange}
           />
         </div>
         <div className="form-group">
-          <label>Last Name</label>
+          <label>New Password</label>
           <input
-            type="text"
-            name="lastname"
+            type="password"
+            name="password"
             className="form-control"
-            value={user.lastname}
+            value={passwordData.password}
             onChange={handleChange}
           />
         </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            className="form-control"
-            value={user.email}
-            onChange={handleChange}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Update</button>
+        <button type="submit" className="btn btn-primary">Update Password</button>
       </form>
     </div>
   );
 }
 
-export default ProfileUpdate;
+export default UpdatePassword;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../axios.config.js";
+import api from "~/axios.config";
 import { Link, useNavigate } from "react-router-dom";
 
 function ProfileUpdate() {
@@ -10,7 +10,7 @@ function ProfileUpdate() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get("/profile");
+        const response = await api.get("/user");
         setUser(response.data);
       } catch (error) {
         console.error("Failed to get user", error);
@@ -31,8 +31,8 @@ function ProfileUpdate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.put("/profile", user);
-      navigate("/profile");
+      await api.put("/user", user);
+      navigate("/user");
     } catch (error) {
       setError("Failed to update profile");
     }
@@ -40,7 +40,7 @@ function ProfileUpdate() {
 
   return (
     <div className="profile-update-container main-container">
-      <Link to="/profile">Back</Link><h1>Update Profile</h1>
+      <Link to="/user">Back</Link><h1>Update Profile</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">

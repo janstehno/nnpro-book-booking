@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../axios.config.js";
+import api from "~/axios.config";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
@@ -9,7 +9,7 @@ function Profile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get("/profile");
+        const response = await api.get("/user");
         setUser(response.data);
       } catch (error) {
         console.error("Failed to get user", error);
@@ -19,6 +19,14 @@ function Profile() {
     fetchUser();
   }, [navigate]);
 
+  const handleUpdateProfile = () => {
+    navigate("/user/update");
+  };
+
+  const handleUpdateProfilePassword = () => {
+      navigate("/user/update-password");
+  };
+
   return user ? (
     <div className="profile-container main-container">
       <h1>User Profile</h1>
@@ -26,10 +34,10 @@ function Profile() {
       <p>{user.email}</p>
       <div className="controls col">
           <div>
-              <button onClick={navigate("/profile/update")} className="btn btn-outline-primary">Update Profile</button>
+              <button onClick={handleUpdateProfile} className="btn btn-outline-primary">Update Profile</button>
           </div>
           <div>
-              <button onClick={navigate("/profile/update-password")} className="btn btn-outline-secondary">Update Password</button>
+              <button onClick={handleUpdateProfilePassword} className="btn btn-outline-secondary">Update Password</button>
           </div>
       </div>
     </div>
