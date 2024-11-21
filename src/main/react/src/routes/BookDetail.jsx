@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import CartItem from "@/utils/CartItem";
+import CartItemType from "@/utils/CartItemType";
 
 function BookDetail() {
   const { bookId } = useParams();
@@ -28,12 +28,13 @@ function BookDetail() {
     );
 
     if (existingItemIndex > -1) {
-      if(type !== CartItem.PURCHASE) cart[existingItemIndex].quantity += 1;
+      if(type !== CartItemType.PURCHASE) cart[existingItemIndex].quantity += 1;
     } else {
       cart.push({ ...item, type, quantity });
     }
 
     localStorage.setItem("booking-cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cart-updated"));
   };
 
   if (!detail) {
@@ -59,10 +60,10 @@ function BookDetail() {
       </div>
       <div className="row justify-content-end">
         {physical && (
-          <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItem.BOOKING)}}>Zarezervovat</button>
+          <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItemType.BOOKING)}}>Zarezervovat</button>
         )}
         {ebook && (
-          <button className="btn btn-warning" onClick={() => {addToCart(detail.book, CartItem.PURCHASE)}}>Objednat</button>
+          <button className="btn btn-warning" onClick={() => {addToCart(detail.book, CartItemType.PURCHASE)}}>Objednat</button>
         )}
       </div>
     </div>

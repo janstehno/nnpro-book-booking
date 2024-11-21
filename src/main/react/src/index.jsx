@@ -17,6 +17,7 @@ import PasswordReset from "@/routes/PasswordReset";
 import PasswordResetSubmit from "@/routes/PasswordResetSubmit";
 import Books from "@/routes/Books";
 import BookDetail from "@/routes/BookDetail";
+import Cart from "@/routes/Cart";
 
 import * as bootstrap from 'bootstrap';
 import './scss/styles.scss';
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/password/reset" element={<PasswordResetSubmit />} />
           <Route path="/books" element={<Books />} />
           <Route path="/books/:bookId" element={<BookDetail />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </div>
     </>

@@ -4,12 +4,26 @@ import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [itemsInCart, setItemsInCart] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(token != null ? true : false);
-  }, [localStorage.getItem("token")]);
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(token != null ? true : false);
+
+      const cart = JSON.parse(localStorage.getItem("booking-cart")) || [];
+      setItemsInCart(cart.length > 0);
+
+      const handleCartUpdated = () => {
+        const cart = JSON.parse(localStorage.getItem("booking-cart")) || [];
+        setItemsInCart(cart.length > 0);
+      };
+
+      window.addEventListener("cart-updated", handleCartUpdated);
+      return () => {
+        window.removeEventListener("cart-updated", handleCartUpdated);
+      };
+    }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -45,6 +59,14 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <button className="btn btn-link nav-link" onClick={handleLogout}>Logout</button>
+                </li>
+              </>
+            )}
+            {itemsInCart && (
+              <>
+                <div className="vr"></div>
+                <li className="nav-item">
+                  <Link className="nav-link shopping-cart" to="/cart"><img src="shopping-cart.png" alt="Cart" /></Link>
                 </li>
               </>
             )}
