@@ -9,7 +9,7 @@ function Book({book}) {
       <div className="card-body">
         <h3 className="card-title">{book.title}</h3>
         <p className="book-price">{book.description}</p>
-        <p className="card-text">${book.ebookPrice}</p>
+        {book.ebook && <p className="card-text">${book.ebookPrice}</p>}
         <Link className="btn btn-primary" to={`/books/${book.id}`}>Detail</Link>
       </div>
     </div>
