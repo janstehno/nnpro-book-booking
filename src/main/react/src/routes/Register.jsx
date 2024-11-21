@@ -28,7 +28,7 @@ function Register() {
 
   return (
       <div className="register-container main-container">
-        <h1>Register</h1>
+        <h1 className="text-primary">Register</h1>
         <form onSubmit={handleRegister}>
           <input
             type="text"

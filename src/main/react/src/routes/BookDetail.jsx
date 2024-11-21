@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 function BookDetail() {
   const { bookId } = useParams();
@@ -29,11 +29,13 @@ function BookDetail() {
 
   return (
     <div className="detail-container main-container">
-      <h1>{detail.book.title}</h1>
-      <img src="https://placehold.co/100x100" alt="Book cover" />
-      <div>
-        <p>{detail.book.description}</p>
-        <p>${detail.book.ebookPrice}</p>
+      <Link to="/books">Back</Link><h1 className="text-primary">{detail.book.title}</h1>
+      <div className="row">
+        <img className="col-1" src="https://placehold.co/100x100" alt="Book cover" />
+        <div className="col">
+          <p>{detail.book.description}</p>
+          <p>${detail.book.ebookPrice}</p>
+        </div>
       </div>
     </div>
   );

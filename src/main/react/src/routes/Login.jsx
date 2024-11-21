@@ -20,7 +20,7 @@ function Login() {
 
   return (
       <div className="login-container main-container">
-        <h1>Login</h1>
+        <h1 className="text-primary">Login</h1>
         <form onSubmit={handleLogin}>
           <input
             type="text"

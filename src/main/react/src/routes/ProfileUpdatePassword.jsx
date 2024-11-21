@@ -30,7 +30,7 @@ function UpdatePassword() {
 
   return (
     <div className="profile-update-password-container main-container">
-      <Link to="/user">Back</Link><h1>Update Password</h1>
+      <Link to="/user">Back</Link><h1 className="text-primary">Update Password</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">

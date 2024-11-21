@@ -29,7 +29,7 @@ function Profile() {
 
   return user ? (
     <div className="profile-container main-container">
-      <h1>User Profile</h1>
+      <h1 className="text-primary">User Profile</h1>
       <p>{user.firstname} {user.lastname}</p>
       <p>{user.email}</p>
       <div className="controls col">

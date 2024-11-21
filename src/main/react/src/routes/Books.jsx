@@ -19,10 +19,10 @@ function Books() {
 
   return (
     <div className="books-container main-container">
-        <h1>Books</h1>
+        <h1 className="text-primary">Books</h1>
         <div className="d-flex flex-wrap justify-content-between">
             {books.map((book)=>(
-                <Book book={book}/>
+                <Book key={book.id} book={book}/>
             ))}
         </div>
     </div>

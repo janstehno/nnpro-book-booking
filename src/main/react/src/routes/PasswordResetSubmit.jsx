@@ -37,7 +37,7 @@ function PasswordResetSubmit() {
 
   return (
     <div className="password-reset-submit-container main-container">
-      <h1>Reset Password</h1>
+      <h1 className="text-primary">Reset Password</h1>
       <form onSubmit={handlePasswordReset}>
         <input
           type="password"

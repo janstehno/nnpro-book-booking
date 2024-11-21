@@ -40,7 +40,7 @@ function ProfileUpdate() {
 
   return (
     <div className="profile-update-container main-container">
-      <Link to="/user">Back</Link><h1>Update Profile</h1>
+      <Link to="/user">Back</Link><h1 className="text-primary">Update Profile</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
