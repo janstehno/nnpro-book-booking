@@ -79,13 +79,7 @@ public class OrderService implements ServiceInterface<Order> {
             final int count = entry.getValue();
             Booking booking = Booking.builder().order(order).book(book).count(count).build();
 
-            //TODO expirationDate
-            if (book.getAvailableCopies() >= count) {
-                booking.setStatus(StatusE.AVAILABLE);
-                book.setAvailableCopies(book.getAvailableCopies() - count);
-            } else {
-                booking.setStatus(StatusE.WAITING);
-            }
+            handleReservation(book.getId(), count, booking);
 
             bookings.add(booking);
             bookService.update(book);
@@ -97,5 +91,36 @@ public class OrderService implements ServiceInterface<Order> {
         mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
 
         return new ResponseOrderDTO(savedOrder.getDate(), null);
+    }
+
+    private void handleReservation(Long bookId, int count, Booking booking) {
+        if (reserveBooks(bookId, count)) {
+            booking.setStatus(StatusE.AVAILABLE);
+            booking.setExpirationDate(booking.getBookingDate().plusDays(RESERVATION_VALIDITY_DAYS));
+        } else {
+            booking.setStatus(StatusE.WAITING);
+        }
+    }
+
+    private boolean reserveBooks(Long bookId, int count) {
+        try {
+            entityManager.getTransaction().begin();
+
+            Book book = entityManager.find(Book.class, bookId, LockModeType.PESSIMISTIC_WRITE);
+
+            if (book.getAvailableCopies() >= count) {
+                book.setAvailableCopies(book.getAvailableCopies() - count);
+                entityManager.getTransaction().commit();
+                return true;
+            }
+
+            entityManager.getTransaction().rollback();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+        }
+
+        return false;
     }
 }
