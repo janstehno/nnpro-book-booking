@@ -16,6 +16,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class OrderService implements ServiceInterface<Order> {
             if (book == null || !book.isPhysical()) continue;
 
             final int count = entry.getValue();
-            Booking booking = Booking.builder().order(order).book(book).count(count).bookingDate(LocalDate.now().build();
+            Booking booking = Booking.builder().order(order).book(book).count(count).bookingDate(LocalDate.now()).build();
 
             handleReservation(book.getId(), count, booking);
 
