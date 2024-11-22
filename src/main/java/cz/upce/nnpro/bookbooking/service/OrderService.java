@@ -10,6 +10,9 @@ import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,11 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class OrderService implements ServiceInterface<Order> {
+
+    private static final int RESERVATION_VALIDITY_DAYS = 30;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private final OrderRepository orderRepository;
 
@@ -77,7 +85,7 @@ public class OrderService implements ServiceInterface<Order> {
             if (book == null || !book.isPhysical()) continue;
 
             final int count = entry.getValue();
-            Booking booking = Booking.builder().order(order).book(book).count(count).build();
+            Booking booking = Booking.builder().order(order).book(book).count(count).bookingDate(LocalDate.now().build();
 
             handleReservation(book.getId(), count, booking);
 
