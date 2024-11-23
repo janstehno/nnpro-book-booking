@@ -4,7 +4,10 @@ import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import cz.upce.nnpro.bookbooking.repository.BookingRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +20,14 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class BookingService implements ServiceInterface<Booking> {
+
+    private static final int AVAILABILITY_DAYS = 3;
+
+    private static final int RESERVATION_VALIDITY_DAYS = 30;
+    private final MailService mailService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private final BookingRepository bookingRepository;
 
@@ -65,11 +76,10 @@ public class BookingService implements ServiceInterface<Booking> {
         List<Booking> waitingBookings = waitingBookingsPage.getContent();
 
         for (Booking waitingBooking : waitingBookings) {
-            if (book.getAvailableCopies() >= waitingBooking.getCount()) {
-                waitingBooking.setStatus(StatusE.AVAILABLE);
-                // TODO when to send the email about available books?
-                book.setAvailableCopies(book.getAvailableCopies() - waitingBooking.getCount());
+            if (reserveBooks(book.getId(), waitingBooking.getCount())) {
                 bookingRepository.save(waitingBooking);
+                setBookAvailable(booking);
+                mailService.sendEmailAboutAvailableReservedBook(booking.getOrder().getUser().getEmail(), waitingBooking);
             } else break;
         }
 
@@ -83,8 +93,43 @@ public class BookingService implements ServiceInterface<Booking> {
 
         booking.setStatus(StatusE.LOANED);
         booking.setLoanDate(LocalDate.now());
-        booking.setExpirationDate(LocalDate.now().plusDays(30));
+        booking.setExpirationDate(LocalDate.now().plusDays(RESERVATION_VALIDITY_DAYS));
 
         return bookingRepository.save(booking).getStatus();
+    }
+
+    public void handleReservation(Long bookId, int count, Booking booking) {
+        if (reserveBooks(bookId, count)) {
+            setBookAvailable(booking);
+        } else {
+            booking.setStatus(StatusE.WAITING);
+        }
+    }
+
+    private void setBookAvailable(Booking booking) {
+        booking.setStatus(StatusE.AVAILABLE);
+        booking.setExpirationDate(LocalDate.now().plusDays(AVAILABILITY_DAYS));
+    }
+
+    private boolean reserveBooks(Long bookId, int count) {
+        try {
+            entityManager.getTransaction().begin();
+
+            Book book = entityManager.find(Book.class, bookId, LockModeType.PESSIMISTIC_WRITE);
+
+            if (book.getAvailableCopies() >= count) {
+                book.setAvailableCopies(book.getAvailableCopies() - count);
+                entityManager.getTransaction().commit();
+                return true;
+            }
+
+            entityManager.getTransaction().rollback();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+        }
+
+        return false;
     }
 }

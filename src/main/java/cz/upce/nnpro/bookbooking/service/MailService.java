@@ -1,5 +1,6 @@
 package cz.upce.nnpro.bookbooking.service;
 
+import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ public class MailService {
 
         content.append("Total Price: ").append(purchase.getPrice()).append(" USD\n");
 
+        addSignature(content);
         message.setText(content.toString());
         mailSender.send(message);
     }
@@ -90,8 +92,33 @@ public class MailService {
                    .append("\n");
         });
 
+        addSignature(content);
         message.setText(content.toString());
         mailSender.send(message);
     }
 
+    public void sendEmailAboutAvailableReservedBook(String to, Booking booking) {
+        if (!isServiceMailEnabled) return;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("Book Booking");
+        message.setTo(to);
+        message.setSubject("Reserved Book Available Now");
+
+        StringBuilder content = new StringBuilder();
+        content.append("Dear Customer,\n\n");
+        content.append(String.format("We are pleased to inform you that the book \\\"%s\\\" you reserved is now available to pick up from the library.\n", booking.getBook().getTitle()));
+        content.append(String.format("The reserved book will be available until following date: %s\n", booking.getExpirationDate()));
+
+        addSignature(content);
+        message.setText(content.toString());
+        mailSender.send(message);
+    }
+
+    private void addSignature(StringBuilder emailContent) {
+        emailContent.append("\n");
+        emailContent.append("Thank you for using Book Booking!\n\n");
+        emailContent.append("Best regards,\n");
+        emailContent.append("The Book Booking Team");
+    }
 }
