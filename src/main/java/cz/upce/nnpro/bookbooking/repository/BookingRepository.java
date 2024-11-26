@@ -15,4 +15,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByOrderUserId(Long userId);
 
     Page<Booking> findByBookAndStatusOrderByOrderDateAsc(Book book, StatusE status, Pageable pageable);
+
+    Page<Booking> findByStatus(StatusE status, Pageable pageable);
 }

@@ -97,12 +97,12 @@ public class MailService {
         mailSender.send(message);
     }
 
-    public void sendEmailAboutAvailableReservedBook(String to, Booking booking) {
+    public void sendEmailAboutAvailableReservedBook(Booking booking) {
         if (!isServiceMailEnabled) return;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("Book Booking");
-        message.setTo(to);
+        message.setTo(booking.getOrder().getUser().getEmail());
         message.setSubject("Reserved Book Available Now");
 
         StringBuilder content = new StringBuilder();
