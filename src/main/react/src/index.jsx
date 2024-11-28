@@ -13,6 +13,7 @@ import Register from "@/routes/Register";
 import Profile from "@/routes/Profile";
 import ProfileUpdate from "@/routes/ProfileUpdate";
 import ProfileUpdatePassword from "@/routes/ProfileUpdatePassword";
+import History from "@/routes/History";
 import PasswordReset from "@/routes/PasswordReset";
 import PasswordResetSubmit from "@/routes/PasswordResetSubmit";
 import Books from "@/routes/Books";
@@ -41,6 +42,7 @@ const App = () => {
           <Route path="/user" element={<Profile />} />
           <Route path="/user/update" element={<ProfileUpdate />} />
           <Route path="/user/update-password" element={<ProfileUpdatePassword />} />
+          <Route path="/user/history" element={<History />} />
           <Route path="/password" element={<PasswordReset />} />
           <Route path="/password/reset" element={<PasswordResetSubmit />} />
           <Route path="/books" element={<Books />} />

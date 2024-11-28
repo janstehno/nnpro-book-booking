@@ -19,6 +19,10 @@ function Profile() {
     fetchUser();
   }, [navigate]);
 
+  const handleHistory = () => {
+    navigate("/user/history");
+  };
+
   const handleUpdateProfile = () => {
     navigate("/user/update");
   };
@@ -33,6 +37,9 @@ function Profile() {
       <p>{user.firstname} {user.lastname}</p>
       <p>{user.email}</p>
       <div className="controls col">
+          <div>
+              <button onClick={handleHistory} className="btn btn-outline-primary">History</button>
+          </div>
           <div>
               <button onClick={handleUpdateProfile} className="btn btn-outline-primary">Update Profile</button>
           </div>
