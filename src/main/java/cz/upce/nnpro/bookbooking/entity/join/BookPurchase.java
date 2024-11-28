@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "book_purchase", uniqueConstraints = {@UniqueConstraint(columnNames = {"purchase_id", "book_id"})})
 public class BookPurchase {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,5 +29,18 @@ public class BookPurchase {
     @JoinColumn(name = "book_id")
     @NotNull
     private Book book;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookPurchase that = (BookPurchase) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 + (id != null ? id.hashCode() : 0);
+    }
 }
 

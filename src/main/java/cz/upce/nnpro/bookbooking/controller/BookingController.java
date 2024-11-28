@@ -27,7 +27,6 @@ public class BookingController {
     public ResponseEntity<StatusE> updateReturnedBooking(
             @PathVariable
             Long id) {
-        // TODO lock?
         return ResponseEntity.ok(service.updateReturned(id));
     }
 

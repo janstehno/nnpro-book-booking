@@ -44,9 +44,7 @@ public class Booking {
     @NotNull
     private LocalDate bookingDate;
 
-    @Column
-    @NotNull
-    private LocalDate expirationDate;
+    @Column private LocalDate expirationDate;
 
     @Column private LocalDate loanDate;
 
@@ -56,5 +54,17 @@ public class Booking {
     protected void onCreate() {
         bookingDate = LocalDate.now();
     }
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return id != null && id.equals(booking.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 + (id != null ? id.hashCode() : 0);
+    }
+}

@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Entity
@@ -24,17 +24,27 @@ public class Order {
     @NotNull
     private AppUser user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @NotNull
-    private Set<Booking> bookings;
-
     @Column
     @NotNull
     private LocalDate date;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER) private List<Booking> bookings;
 
     @PrePersist
     protected void onCreate() {
         date = LocalDate.now();
     }
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return id != null && id.equals(order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 + (id != null ? id.hashCode() : 0);
+    }
+}

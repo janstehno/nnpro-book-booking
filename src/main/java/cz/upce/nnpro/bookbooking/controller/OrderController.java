@@ -42,7 +42,6 @@ public class OrderController {
             RequestOrderDTO data,
             @AuthenticationPrincipal
             AppUser user) {
-        //TODO lock?
         return ResponseEntity.ok(service.create(user, data));
     }
 

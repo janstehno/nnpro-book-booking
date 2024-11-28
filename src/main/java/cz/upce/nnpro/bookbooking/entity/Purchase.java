@@ -29,17 +29,25 @@ public class Purchase {
     @NotNull
     private LocalDate date;
 
-    @Column
-    @NotNull
-    private double price;
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER) private Set<BookPurchase> bookPurchases;
 
-    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @NotNull
-    private Set<BookPurchase> bookPurchases;
+    @Column private double price;
 
     @PrePersist
     protected void onCreate() {
         date = LocalDate.now();
     }
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Purchase purchase = (Purchase) o;
+        return id != null && id.equals(purchase.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 + (id != null ? id.hashCode() : 0);
+    }
+}

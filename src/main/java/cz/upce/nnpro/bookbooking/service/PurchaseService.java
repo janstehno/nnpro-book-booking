@@ -62,6 +62,7 @@ public class PurchaseService implements ServiceInterface<Purchase> {
     public ResponsePurchaseDTO create(AppUser user, RequestPurchaseDTO data) {
         Purchase purchase = new Purchase();
         purchase.setUser(user);
+        purchase = create(purchase);
 
         Set<BookPurchase> bookPurchases = new HashSet<>();
         double price = 0.0;
@@ -69,14 +70,15 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         for (Long bookId : data.getBookIds()) {
             Book book = bookService.getById(bookId);
             if (book == null || !book.isEbook()) continue;
+
             bookPurchases.add(BookPurchase.builder().book(book).purchase(purchase).build());
             price += book.getEbookPrice();
         }
 
         purchase.setPrice(price);
         purchase.setBookPurchases(bookPurchases);
+        Purchase savedPurchase = purchaseRepository.save(purchase);
 
-        Purchase savedPurchase = create(purchase);
         mailService.sendEmailAboutPurchase(user.getEmail(), savedPurchase);
 
         return new ResponsePurchaseDTO(savedPurchase.getDate(), savedPurchase.getPrice(), null);

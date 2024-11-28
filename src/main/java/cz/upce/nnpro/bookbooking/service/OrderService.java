@@ -9,10 +9,10 @@ import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -68,9 +68,11 @@ public class OrderService implements ServiceInterface<Order> {
                                          .toList());
     }
 
+    @Transactional
     public ResponseOrderDTO create(AppUser user, RequestOrderDTO data) {
         Order order = new Order();
         order.setUser(user);
+        order = create(order);
 
         Set<Booking> bookings = new HashSet<>();
 
@@ -81,15 +83,15 @@ public class OrderService implements ServiceInterface<Order> {
             final int count = entry.getValue();
             Booking booking = Booking.builder().order(order).book(book).count(count).build();
 
-            bookingService.handleReservation(book.getId(), count, booking);
+            bookingService.handleReservation(booking);
 
             bookings.add(booking);
             bookService.update(book);
         }
 
-        order.setBookings(bookings);
-
+        order.setBookings(bookingService.createAll(bookings));
         Order savedOrder = orderRepository.save(order);
+
         mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
 
         return new ResponseOrderDTO(savedOrder.getDate(), null);
