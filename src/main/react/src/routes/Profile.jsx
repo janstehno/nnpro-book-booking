@@ -7,12 +7,15 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const response = await api.get("/user");
-      setUser(response.data);
-    };
     fetchUser();
   }, [navigate]);
+
+  const fetchUser = async () => {
+    try {
+      const response = await api.get("/user");
+      setUser(response.data);
+    } catch {}
+  };
 
   const handleHistory = () => {
     navigate("/user/history");

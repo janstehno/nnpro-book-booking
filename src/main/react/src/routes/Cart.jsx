@@ -73,12 +73,13 @@ const Cart = () => {
     for (const { type, items, url, transformData } of endpoints) {
       if (items.length > 0) {
         const data = transformData(items);
-        await api.post(url, data);
+        try {
+          await api.post(url, data);
+          localStorage.removeItem("booking-cart");
+          navigate("/user/history");
+        } catch {}
       }
     }
-
-    localStorage.removeItem("booking-cart");
-    navigate("/user/history");
   };
 
   const hasItemsInCart = bookingItems.length > 0 || purchaseItems.length > 0;

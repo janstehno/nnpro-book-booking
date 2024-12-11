@@ -17,8 +17,10 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    await api.post("/auth/register", formData);
-    navigate("/login");
+    try {
+      await api.post("/auth/register", formData);
+      navigate("/login");
+    } catch {}
   };
 
   return (

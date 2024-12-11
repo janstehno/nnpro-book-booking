@@ -15,10 +15,12 @@ const History = () => {
 
   const fetchHistoryData = async () => {
     setLoading(true);
-    const ordersResponse = await api.get("/orders");
-    const purchasesResponse = await api.get("/purchases");
-    setOrders(ordersResponse.data);
-    setPurchases(purchasesResponse.data);
+    try {
+      const ordersResponse = await api.get("/orders");
+      const purchasesResponse = await api.get("/purchases");
+      setOrders(ordersResponse.data);
+      setPurchases(purchasesResponse.data);
+    } catch {}
     setLoading(false);
   };
 

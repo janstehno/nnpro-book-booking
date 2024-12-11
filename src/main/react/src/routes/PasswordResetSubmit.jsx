@@ -24,8 +24,10 @@ const PasswordResetSubmit = () => {
       throw new Error("Passwords do not match");
     }
 
-    await api.post("/auth/password/reset", { token, newPassword, confirmPassword });
-    navigate("/login");
+    try {
+      await api.post("/auth/password/reset", { token, newPassword, confirmPassword });
+      navigate("/login");
+    } catch {}
   };
 
   return (

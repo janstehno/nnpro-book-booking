@@ -7,12 +7,15 @@ const ProfileUpdate = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const response = await api.get("/user");
-      setUser(response.data);
-    };
     fetchUser();
   }, [navigate]);
+
+  const fetchUser = async () => {
+    try {
+      const response = await api.get("/user");
+      setUser(response.data);
+    } catch {}
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,14 +24,15 @@ const ProfileUpdate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.put("/user", user);
-    navigate("/user");
+    try {
+      await api.put("/user", user);
+      navigate("/user");
+    } catch {}
   };
 
   return (
     <div className="profile-update-container main-container">
       <Link to="/user">Back</Link><h1 className="text-primary">Update Profile</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>First Name</label>

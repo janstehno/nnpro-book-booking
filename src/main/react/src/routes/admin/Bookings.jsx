@@ -17,8 +17,10 @@ const Bookings = () => {
 
   const fetchBookings = async () => {
     setLoading(true);
-    const response = await api.get(`/admin/bookings/${userId}`);
-    setBookings(response.data);
+    try {
+      const response = await api.get(`/admin/bookings/${userId}`);
+      setBookings(response.data);
+    } catch {}
     setLoading(false);
   };
 
@@ -43,9 +45,11 @@ const Bookings = () => {
   };
 
   const submitReturnIds = async () => {
-    const response = await api.put(`/admin/bookings/${userId}`,
-        { "returningBookIds": returningIds, "loaningBookIds": loaningIds });
-    setBookings(response.data);
+    try {
+      const response = await api.put(`/admin/bookings/${userId}`,
+          { "returningBookIds": returningIds, "loaningBookIds": loaningIds });
+      setBookings(response.data);
+    } catch {}
   };
 
   if (loading) {

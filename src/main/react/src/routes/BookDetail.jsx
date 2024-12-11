@@ -11,12 +11,15 @@ const BookDetail = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-      const fetchBookDetail = async () => {
-        const response = await api.get(`/books/${bookId}`);
-        setDetail(response.data);
-      };
       fetchBookDetail();
     }, [bookId]);
+
+  const fetchBookDetail = async () => {
+    try {
+      const response = await api.get(`/books/${bookId}`);
+      setDetail(response.data);
+    } catch {}
+  };
 
   const addToCart = (item, type) => {
     const quantity = 1;

@@ -13,8 +13,10 @@ const UpdatePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.put("/user/password", passwordData);
-    navigate("/user");
+    try {
+      await api.put("/user/password", passwordData);
+      navigate("/user");
+    } catch {}
   };
 
   return (

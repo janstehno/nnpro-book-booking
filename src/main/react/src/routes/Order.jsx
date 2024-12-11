@@ -15,14 +15,18 @@ const Order = () => {
 
   const fetchOrder = async () => {
     setLoading(true);
-    const response = await api.get(`/orders/${orderId}`);
-    setOrder(response.data);
+    try {
+      const response = await api.get(`/orders/${orderId}`);
+      setOrder(response.data);
+    } catch {}
     setLoading(false);
   };
 
   const handleCancel = async (bookingId) => {
-    const response = await api.post(`/orders/${orderId}/bookings/${bookingId}/cancel`);
-    fetchOrder();
+    try {
+      const response = await api.post(`/orders/${orderId}/bookings/${bookingId}/cancel`);
+      fetchOrder();
+    } catch {}
   }
 
   if (loading) {

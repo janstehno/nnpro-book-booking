@@ -23,7 +23,7 @@ const Navbar = () => {
       return () => {
         window.removeEventListener("cart-updated", handleCartUpdated);
       };
-    }, []);
+    }, [isLoggedIn, itemsInCart, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");

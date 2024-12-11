@@ -8,8 +8,10 @@ const PasswordReset = () => {
 
   const handleResetRequest = async (e) => {
     e.preventDefault();
-    await api.post("/auth/password", { username });
-    navigate("/");
+    try {
+      await api.post("/auth/password", { username });
+      navigate("/");
+    } catch {}
   };
 
   return (

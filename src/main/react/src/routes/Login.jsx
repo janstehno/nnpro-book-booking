@@ -8,9 +8,11 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const response = await api.post("/auth/login", credentials);
-    localStorage.setItem("token", response.data.token);
-    navigate("/user");
+    try {
+      const response = await api.post("/auth/login", credentials);
+      localStorage.setItem("token", response.data.token);
+      navigate("/user");
+    } catch {}
   };
 
   const handleChange = (e) => {

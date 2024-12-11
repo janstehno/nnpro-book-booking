@@ -6,12 +6,15 @@ const Books = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      const response = await api.get("/books");
-      setBooks(response.data);
-    };
     fetchBooks();
   }, []);
+
+  const fetchBooks = async () => {
+    try {
+      const response = await api.get("/books");
+      setBooks(response.data);
+    } catch {}
+  };
 
   return (
     <div className="books-container main-container">
