@@ -7,8 +7,8 @@ import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class OrderService implements ServiceInterface<Order> {
 
     @Override
     public Order getById(Long id) throws RuntimeException {
-        return orderRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return orderRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class OrderService implements ServiceInterface<Order> {
     }
 
     public ResponseOrderDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
-        final Order order = orderRepository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new);
+        final Order order = orderRepository.findByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
         return new ResponseOrderDTO(order.getDate(),
                                     order.getBookings()
                                          .stream()

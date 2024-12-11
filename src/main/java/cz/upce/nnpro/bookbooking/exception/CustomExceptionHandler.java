@@ -3,7 +3,6 @@ package cz.upce.nnpro.bookbooking.exception;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -12,31 +11,43 @@ public class CustomExceptionHandler {
 
     public static class EmailExistsException extends RuntimeException {
         public EmailExistsException() {
-            super("EMAIL_EXISTS");
+            super("Email already exists.");
         }
     }
 
     public static class UsernameExistsException extends RuntimeException {
         public UsernameExistsException() {
-            super("USERNAME_EXISTS");
+            super("Username already exists.");
+        }
+    }
+
+    public static class UsernameNotFoundException extends RuntimeException {
+        public UsernameNotFoundException() {
+            super("Username does not exist.");
         }
     }
 
     public static class PasswordNotCorrectException extends RuntimeException {
         public PasswordNotCorrectException() {
-            super("PASSWORD_NOT_CORRECT");
+            super("Password is not correct.");
         }
     }
 
     public static class OldPasswordIncorrectException extends RuntimeException {
         public OldPasswordIncorrectException() {
-            super("OLD_PASSWORD_INCORRECT");
+            super("Old password is not correct.");
         }
     }
 
     public static class InvalidTokenException extends RuntimeException {
         public InvalidTokenException() {
-            super("INVALID_TOKEN");
+            super("Invalid authentication token.");
+        }
+    }
+
+    public static class EntityNotFoundException extends RuntimeException {
+        public EntityNotFoundException() {
+            super("Resource was not found.");
         }
     }
 
@@ -48,6 +59,11 @@ public class CustomExceptionHandler {
     @ExceptionHandler(UsernameExistsException.class)
     public ResponseEntity<String> handleUsernameExistsException(UsernameExistsException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(PasswordNotCorrectException.class)
@@ -67,11 +83,6 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

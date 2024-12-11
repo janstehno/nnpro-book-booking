@@ -6,7 +6,6 @@ import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.UserRepository;
 import cz.upce.nnpro.bookbooking.security.JwtService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class UserService implements ServiceInterface<AppUser> {
 
     @Override
     public AppUser getById(Long id) throws RuntimeException {
-        return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return userRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override
@@ -53,11 +52,11 @@ public class UserService implements ServiceInterface<AppUser> {
     }
 
     public AppUser getByUsername(String username) throws RuntimeException {
-        return userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        return userRepository.findByUsername(username).orElseThrow(CustomExceptionHandler.UsernameNotFoundException::new);
     }
 
     public AppUser getByEmail(String email) throws RuntimeException {
-        return userRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        return userRepository.findByEmail(email).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     public boolean emailExists(String email) {

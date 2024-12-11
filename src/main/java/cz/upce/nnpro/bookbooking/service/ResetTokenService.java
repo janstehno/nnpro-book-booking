@@ -1,8 +1,8 @@
 package cz.upce.nnpro.bookbooking.service;
 
 import cz.upce.nnpro.bookbooking.entity.ResetToken;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.ResetTokenRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class ResetTokenService implements ServiceInterface<ResetToken> {
 
     @Override
     public ResetToken getById(Long id) throws RuntimeException {
-        return resetTokenRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return resetTokenRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ResetTokenService implements ServiceInterface<ResetToken> {
     }
 
     public ResetToken getByToken(String token) throws RuntimeException {
-        return resetTokenRepository.findByToken(token).orElseThrow(EntityNotFoundException::new);
+        return resetTokenRepository.findByToken(token).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Scheduled(cron = "0 0 0 * * *")

@@ -3,8 +3,8 @@ package cz.upce.nnpro.bookbooking.service;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Review;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class BookService implements ServiceInterface<Book> {
 
     @Override
     public Book getById(Long id) throws RuntimeException {
-        return bookRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return bookRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override

@@ -6,8 +6,8 @@ import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
 import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.PurchaseRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,7 @@ public class PurchaseService implements ServiceInterface<Purchase> {
 
     @Override
     public Purchase getById(Long id) throws RuntimeException {
-        return purchaseRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return purchaseRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class PurchaseService implements ServiceInterface<Purchase> {
     }
 
     public ResponsePurchaseDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
-        final Purchase purchase = purchaseRepository.findAllByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new);
+        final Purchase purchase = purchaseRepository.findAllByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
         return new ResponsePurchaseDTO(purchase.getDate(), purchase.getPrice(), purchase.getBookPurchases().stream().map(BookPurchase::getBook).toList());
     }
 

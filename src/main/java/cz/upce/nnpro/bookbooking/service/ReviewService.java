@@ -5,8 +5,8 @@ import cz.upce.nnpro.bookbooking.dto.ResponseBookReviewDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Review;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.ReviewRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class ReviewService implements ServiceInterface<Review> {
 
     @Override
     public Review getById(Long id) throws RuntimeException {
-        return reviewRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return reviewRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ReviewService implements ServiceInterface<Review> {
     }
 
     public Review getByUserIdAndBookId(Long userId, Long bookId) throws RuntimeException {
-        return reviewRepository.findByUserIdAndBookId(userId, bookId).orElseThrow(EntityNotFoundException::new);
+        return reviewRepository.findByUserIdAndBookId(userId, bookId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     public ResponseBookReviewDTO create(AppUser user, Book book, RequestBookReviewDTO data) {

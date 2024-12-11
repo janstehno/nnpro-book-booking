@@ -80,7 +80,7 @@ public class AuthService {
             mailService.sendEmailAboutPasswordReset(user.getEmail(), resetUrl);
         }
 
-        return ResponseEntity.ok("EMAIL_SENT");
+        return ResponseEntity.ok("Email was sent to the email address.");
     }
 
     public ResponseEntity<?> passwordReset(PasswordResetDTO passwordResetDTO) throws RuntimeException {
@@ -105,7 +105,7 @@ public class AuthService {
                 ResetToken resetToken = resetTokenService.getByToken(token);
                 if (resetToken != null) resetTokenService.deleteById(resetToken.getId());
 
-                return ResponseEntity.ok("PASSWORD_RESET");
+                return ResponseEntity.ok("Password reset successful.");
 
             }
         }
