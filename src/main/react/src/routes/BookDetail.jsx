@@ -55,10 +55,10 @@ const BookDetail = () => {
       </div>
       <div className="d-flex flex-row justify-content-end">
         {physical && (
-          <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItemType.BOOKING)}}>Zarezervovat</button>
+          <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItemType.BOOKING)}}>Reservation</button>
         )}
         {ebook && (
-          <button className="btn btn-warning" onClick={() => {addToCart(detail.book, CartItemType.PURCHASE)}}>Objednat</button>
+          <button className="btn btn-warning" onClick={() => {addToCart(detail.book, CartItemType.PURCHASE)}}>Buy</button>
         )}
       </div>
     </div>
