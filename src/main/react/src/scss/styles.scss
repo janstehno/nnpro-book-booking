@@ -112,3 +112,46 @@ $dark: #03122F;
 .error-container {
     height: calc(100vh - 80px);
 }
+
+.admin-bookings-container ul{
+    padding: 0;
+}
+
+.admin-bookings-container ul li{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.admin-bookings-container ul li p{
+    margin: 0;
+    padding: 0;
+    &.status{
+        text-align: center;
+        padding: 5px;
+        border-radius: 8px;
+    }
+    &.waiting{
+        color: var(--bs-dark);
+        background-color: var(--bs-light);
+    }
+    &.available{
+        color: var(--bs-dark);
+        background-color: var(--bs-success);
+    }
+    &.loaned{
+        color: var(--bs-dark);
+        background-color: var(--bs-warning);
+    }
+    &.returned{
+        color: var(--bs-light);
+        background-color: var(--bs-dark);
+    }
+    &.unclaimed{
+        color: var(--bs-dark);
+        background-color: var(--bs-gray);
+    }
+    &.canceled{
+        color: var(--bs-light);
+        background-color: var(--bs-danger);
+    }
+}

@@ -45,7 +45,7 @@ const BookDetail = () => {
     <div className="detail-container main-container">
       <Link to="/books">Back</Link>
       <h1 className="text-primary">{title}</h1>
-      <div className="row">
+      <div className="d-flex flex-row">
         <img className="col-2" src="https://placehold.co/100x100" alt="Book cover" />
         <div className="col">
           <p>{description}</p>
@@ -53,7 +53,7 @@ const BookDetail = () => {
           {physical && <p>Available physical copies: <b>{physicalCopies}</b></p>}
         </div>
       </div>
-      <div className="row justify-content-end">
+      <div className="d-flex flex-row justify-content-end">
         {physical && (
           <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItemType.BOOKING)}}>Zarezervovat</button>
         )}
