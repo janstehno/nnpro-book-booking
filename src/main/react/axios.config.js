@@ -27,7 +27,7 @@ export const setupAxiosInterceptors = (addError) => {
     (error) => {
       if (error.response) {
         addError({
-          message: error.response.data?.message || 'Server communication error.',
+          message: error.response.data || 'Unknown response error.',
           status: error.response.status,
         });
       } else if (error.request) {

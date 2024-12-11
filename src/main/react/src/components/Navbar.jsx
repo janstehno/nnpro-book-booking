@@ -34,7 +34,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/"><img className="navbar-logo" src="favicon.ico" alt="Book Booking logo" /></Link>
+        <Link className="navbar-brand" to="/"><img className="navbar-logo" src="/favicon.ico" alt="Book Booking logo" /></Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -66,7 +66,7 @@ const Navbar = () => {
               <>
                 <div className="vr"></div>
                 <li className="nav-item">
-                  <Link className="nav-link shopping-cart" to="/cart"><img src="shopping-cart.png" alt="Cart" /></Link>
+                  <Link className="nav-link shopping-cart" to="/cart"><img src="/shopping-cart.png" alt="Cart" /></Link>
                 </li>
               </>
             )}

@@ -2,18 +2,14 @@ import React, { useState } from "react";
 import api from "~/axios.config";
 import { useNavigate } from "react-router-dom";
 
-function PasswordReset() {
+const PasswordReset = () => {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
 
   const handleResetRequest = async (e) => {
     e.preventDefault();
-    try {
-      await api.post("/auth/password", { username });
-      navigate("/");
-    } catch (error) {
-      console.error("Error sending password reset email", error);
-    }
+    await api.post("/auth/password", { username });
+    navigate("/");
   };
 
   return (

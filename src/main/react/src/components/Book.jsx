@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Book({book}) {
+const Book = ({book}) => {
 
   return (
     <div className="book-card-container card">

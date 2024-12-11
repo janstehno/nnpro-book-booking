@@ -7,7 +7,6 @@ export const ErrorProvider = ({ children }) => {
 
   const addError = (e) => {
     setError(e);
-    // console.error(e);
   };
 
   const clearError = () => {

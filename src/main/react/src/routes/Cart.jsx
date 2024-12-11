@@ -3,7 +3,7 @@ import api from "~/axios.config";
 import { useNavigate } from "react-router-dom";
 import CartItemType from "@/utils/CartItemType";
 
-function Cart() {
+const Cart = () => {
   const navigate = useNavigate();
 
   const cart = JSON.parse(localStorage.getItem("booking-cart")) || [];
@@ -45,13 +45,8 @@ function Cart() {
 
     for (const { type, items, url, transformData } of endpoints) {
       if (items.length > 0) {
-        try {
-          const data = transformData(items);
-          await api.post(url, data);
-        } catch (error) {
-          console.error(`Error submitting ${type}:`, error);
-          return;
-        }
+        const data = transformData(items);
+        await api.post(url, data);
       }
     }
 

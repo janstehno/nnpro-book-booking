@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
 import { setupAxiosInterceptors } from '~/axios.config';
+
 import { ErrorProvider, useError } from '@/context/ErrorContext';
+import ErrorToast from "@/components/ErrorToast";
 
 import Navbar from "@/components/Navbar";
-import ErrorToast from "@/components/ErrorToast";
 import Home from '@/routes/Home';
 import Login from "@/routes/Login";
 import Register from "@/routes/Register";
@@ -24,7 +24,7 @@ import * as bootstrap from 'bootstrap';
 import './scss/styles.scss';
 
 const App = () => {
-  const { addError } = useError();
+  const { error, addError } = useError();
 
   React.useEffect(() => {
     setupAxiosInterceptors(addError);
@@ -32,9 +32,8 @@ const App = () => {
 
   return (
     <>
-      <ErrorToast />
       <Navbar />
-      <div>
+        {error && <ErrorToast />}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -49,17 +48,16 @@ const App = () => {
           <Route path="/books/:bookId" element={<BookDetail />} />
           <Route path="/cart" element={<Cart />} />
         </Routes>
-      </div>
     </>
   );
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ErrorProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <ErrorProvider>
         <App />
-      </Router>
-    </ErrorProvider>
+      </ErrorProvider>
+    </Router>
   </React.StrictMode>
 );

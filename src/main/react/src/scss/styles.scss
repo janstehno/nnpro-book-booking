@@ -53,22 +53,37 @@ $dark: #03122F;
 
 .error-toast{
     position: absolute;
+    padding: 5px 10px;
+    margin-top: 15px;
     bottom: 15px;
-    right: 15px;
+    right: 25px;
+    margin-left: 15px;
     z-index: 100;
-    max-width: 300px;
+    max-width: 100%;
+    border: 2px solid var(--bs-danger);
     border-radius: 5px;
 }
 
-.error-toast p{
-    padding: 15px 20px;
+.error-toast *{
+    transition: all 200ms;
+}
+
+.error-toast .text{
+    padding: 15px;
+}
+
+.error-toast p, .error-toast h5{
     margin: 0;
+    line-height: 1.1em;
+    font-size: 1rem;
 }
 
 .error-toast button{
-    width: 100%;
-    border-radius: 0 0 5px 5px;
-    background-color: darken($danger, 7%);
+    width: 50px;
+}
+
+.error-toast button img{
+    width: 15px;
 }
 
 .book-card-container{
@@ -88,4 +103,12 @@ $dark: #03122F;
 .detail-container button{
     margin-right: 10px;
     max-width: 200px;
+}
+
+.history-container p{
+    margin-bottom: 3px;
+}
+
+.error-container {
+    height: calc(100vh - 80px);
 }

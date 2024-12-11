@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from "react";
 import api from "~/axios.config";
+import { Link } from "react-router-dom";
+import Loading from "@/components/Loading";
 
-function History() {
+const History = () => {
   const [orders, setOrders] = useState([]);
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHistoryData = async () => {
-      try {
-        const [ordersResponse, purchasesResponse] = await Promise.all([
-          api.get("/orders"),
-          api.get("/purchases"),
-        ]);
-
-        setOrders(ordersResponse.data);
-        setPurchases(purchasesResponse.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching history data:", error);
-        setLoading(false);
-      }
+      const [ordersResponse, purchasesResponse] = await Promise.all([
+        api.get("/orders"),
+        api.get("/purchases"),
+      ]);
+      setOrders(ordersResponse.data);
+      setPurchases(purchasesResponse.data);
+      setLoading(false);
     };
 
     fetchHistoryData();
@@ -44,12 +40,12 @@ function History() {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   return (
     <div className="history-container main-container">
-      <h1 className="text-primary">History</h1>
+      <Link to="/user">Back</Link><h1 className="text-primary">History</h1>
 
       <div className="orders-section">
         <h2 className="text-secondary">Orders</h2>

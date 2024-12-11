@@ -1,4 +1,4 @@
-function Home() {
+const Home = () => {
   return (
     <>
       <div className="home-container main-container">

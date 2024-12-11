@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Loading from "@/components/Loading";
 
 import CartItemType from "@/utils/CartItemType";
 
-function BookDetail() {
+const BookDetail = () => {
   const { bookId } = useParams();
   const [detail, setDetail] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    api
-      .get(`/books/${bookId}`)
-      .then((response) => {
+      const fetchBookDetail = async () => {
+        const response = await api.get(`/books/${bookId}`);
         setDetail(response.data);
-      })
-      .catch((error) => {
-        console.error("Failed to get detail.", error);
-      });
-  }, [bookId]);
+      };
+      fetchBookDetail();
+    }, [bookId]);
 
   const addToCart = (item, type) => {
     const quantity = 1;
@@ -37,17 +35,13 @@ function BookDetail() {
     window.dispatchEvent(new Event("cart-updated"));
   };
 
-  if (!detail) {
-    return <div>Loading...</div>;
+  if(!detail){
+    return <Loading />;
   }
 
-  if (!detail.book) {
-    return <div>Detail is not available.</div>;
-  }
+  const { title, description, ebookPrice, physical, physicalCopies, ebook } = detail.book;
 
-  const { title, description, ebookPrice, physical, ebook } = detail.book;
-
-  return (
+  return detail && (
     <div className="detail-container main-container">
       <Link to="/books">Back</Link>
       <h1 className="text-primary">{title}</h1>
@@ -56,6 +50,7 @@ function BookDetail() {
         <div className="col">
           <p>{description}</p>
           {ebook && <p>${ebookPrice}</p>}
+          {physical && <p>Available physical copies: <b>{physicalCopies}</b></p>}
         </div>
       </div>
       <div className="row justify-content-end">

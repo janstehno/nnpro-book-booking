@@ -2,40 +2,27 @@ import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
 import { Link, useNavigate } from "react-router-dom";
 
-function ProfileUpdate() {
+const ProfileUpdate = () => {
   const [user, setUser] = useState({ firstname: "", lastname: "", email: "" });
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const response = await api.get("/user");
-        setUser(response.data);
-      } catch (error) {
-        console.error("Failed to get user", error);
-        navigate("/login");
-      }
+      const response = await api.get("/user");
+      setUser(response.data);
     };
     fetchUser();
   }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({
-      ...prevUser,
-      [name]: value,
-    }));
+    setUser((prevUser) => ({...prevUser, [name]: value}));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await api.put("/user", user);
-      navigate("/user");
-    } catch (error) {
-      setError("Failed to update profile");
-    }
+    await api.put("/user", user);
+    navigate("/user");
   };
 
   return (

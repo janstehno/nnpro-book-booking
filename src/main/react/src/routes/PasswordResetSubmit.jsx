@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function PasswordResetSubmit() {
+const PasswordResetSubmit = () => {
   const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,17 +21,11 @@ function PasswordResetSubmit() {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
+      throw new Error("Passwords do not match");
     }
 
-    try {
-      await api.post("/auth/password/reset", { token, newPassword, confirmPassword });
-      navigate("/login");
-    } catch (error) {
-      console.error("Error resetting password", error);
-      setError("Failed to reset password.");
-    }
+    await api.post("/auth/password/reset", { token, newPassword, confirmPassword });
+    navigate("/login");
   };
 
   return (
@@ -55,13 +48,6 @@ function PasswordResetSubmit() {
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
-
-        {error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
-
         <button type="submit" className="btn btn-primary">Reset Password</button>
       </form>
     </div>

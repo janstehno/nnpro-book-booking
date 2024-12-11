@@ -2,36 +2,24 @@ import React, { useState } from "react";
 import api from "../../axios.config.js";
 import { Link, useNavigate } from "react-router-dom";
 
-function UpdatePassword() {
-  const [passwordData, setPasswordData] = useState({
-    oldPassword: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
+const UpdatePassword = () => {
+  const [passwordData, setPasswordData] = useState({ oldPassword: "", password: "" });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setPasswordData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setPasswordData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await api.put("/user/password", passwordData);
-      navigate("/user");
-    } catch (error) {
-      setError("Failed to update password");
-    }
+    await api.put("/user/password", passwordData);
+    navigate("/user");
   };
 
   return (
     <div className="profile-update-password-container main-container">
       <Link to="/user">Back</Link><h1 className="text-primary">Update Password</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Old Password</label>
