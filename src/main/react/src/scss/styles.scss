@@ -113,23 +113,21 @@ $dark: #03122F;
     height: calc(100vh - 80px);
 }
 
-.admin-bookings-container ul{
-    padding: 0;
+.table td{
+    vertical-align: middle;
+    &.disabled{
+       color: var(--bs-gray-400);
+    }
 }
 
-.admin-bookings-container ul li{
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.admin-bookings-container ul li p{
+.table td .status{
     margin: 0;
     padding: 0;
-    &.status{
-        text-align: center;
-        padding: 5px;
-        border-radius: 8px;
-    }
+    line-height: 1rem;
+    font-size: 0.7em;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 5px;
     &.waiting{
         color: var(--bs-dark);
         background-color: var(--bs-light);
