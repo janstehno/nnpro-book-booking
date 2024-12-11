@@ -21,8 +21,6 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private static final String BEARER_PREFIX = "Bearer ";
-
     private final JwtService jwtService;
 
     private final UserDetailsService userDetailsService;
@@ -52,8 +50,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private String extractToken(HttpServletRequest request) {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header == null || !header.startsWith(BEARER_PREFIX)) return null;
-        return header.substring(BEARER_PREFIX.length()).trim();
+        if (header == null || !header.startsWith(JwtService.BEARER_PREFIX)) return null;
+        return header.substring(JwtService.BEARER_PREFIX.length()).trim();
     }
 
     private void authenticateUser(HttpServletRequest request, String username, String token) {

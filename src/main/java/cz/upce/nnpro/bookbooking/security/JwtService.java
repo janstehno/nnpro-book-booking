@@ -20,8 +20,10 @@ public class JwtService {
 
     @Value("${jwt.secret}") private String SECRET;
 
+    public static final String BEARER_PREFIX = "Bearer ";
+
     public String extractToken(String token) {
-        return token.replaceFirst("Bearer ", "").trim();
+        return token.replaceFirst(BEARER_PREFIX, "").trim();
     }
 
     public Long extractUserId(String token) {
