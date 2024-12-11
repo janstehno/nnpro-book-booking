@@ -1,21 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
 import { useNavigate } from "react-router-dom";
 import CartItemType from "@/utils/CartItemType";
 
 const Cart = () => {
+  const [cart, setCart] = useState(JSON.parse(localStorage.getItem("booking-cart")) || []);
   const navigate = useNavigate();
 
-  const cart = JSON.parse(localStorage.getItem("booking-cart")) || [];
   const bookingItems = cart.filter(item => item.type === CartItemType.BOOKING);
   const purchaseItems = cart.filter(item => item.type === CartItemType.PURCHASE);
+
+  useEffect(() => {
+    localStorage.setItem("booking-cart", JSON.stringify(cart));
+  }, [cart]);
+
+  const handleQuantityChange = (itemId, increment) => {
+    let updatedCart = [...cart];
+    const itemIndex = updatedCart.findIndex(item => item.id === itemId);
+    if (itemIndex !== -1) {
+      let updatedQuantity = updatedCart[itemIndex].quantity + increment;
+      if (updatedQuantity <= updatedCart[itemIndex].physicalCopies && updatedQuantity >= 0) {
+        updatedCart[itemIndex].quantity = updatedQuantity;
+      }
+      if (updatedQuantity === 0) {
+        updatedCart.splice(itemIndex, 1);
+      }
+    setCart(updatedCart);
+    }
+  };
 
   const renderCartItems = (items) => {
     return items.map(item => (
       <tr key={item.id}>
         <td>{item.title}</td>
-        <td>{item.quantity}</td>
-        {item.type === CartItemType.PURCHASE && <td>${item.ebookPrice}</td>}
+        { item.type === CartItemType.BOOKING && <td>
+          <button className="btn btn-light minus" onClick={() => handleQuantityChange(item.id, -1)} disabled={item.quantity <= 0}>
+          <img src="/minus.png" alt="Minus" />
+          </button>
+          {item.quantity}
+          <button className="btn btn-light plus" onClick={() => handleQuantityChange(item.id, 1)} disabled={item.quantity >= item.physicalCopies}>
+          <img src="/plus.png" alt="Plus" />
+          </button>
+        </td> }
+        { item.type === CartItemType.PURCHASE && <td>{item.ebookPrice}</td> }
       </tr>
     ));
   };
@@ -66,7 +93,7 @@ const Cart = () => {
             <thead>
               <tr>
                 <th className="col-3">Title</th>
-                <th className="col-2">Quantity</th>
+                <th className="col-1">Quantity</th>
               </tr>
             </thead>
             <tbody>
@@ -84,7 +111,6 @@ const Cart = () => {
             <thead>
               <tr>
                 <th className="col-3">Title</th>
-                <th className="col-1">Quantity</th>
                 <th className="col-1">Price</th>
               </tr>
             </thead>
