@@ -139,7 +139,6 @@ public class BookingService implements ServiceInterface<Booking> {
             bookService.update(book);
             return true;
         }
-
         return false;
     }
 
