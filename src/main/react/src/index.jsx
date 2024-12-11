@@ -20,6 +20,8 @@ import Books from "@/routes/Books";
 import BookDetail from "@/routes/BookDetail";
 import Cart from "@/routes/Cart";
 
+import AdminBookings from "@/routes/admin/Bookings";
+
 import * as bootstrap from 'bootstrap';
 import './scss/styles.scss';
 
@@ -47,6 +49,7 @@ const App = () => {
           <Route path="/books" element={<Books />} />
           <Route path="/books/:bookId" element={<BookDetail />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/admin/bookings" element={<AdminBookings />} />
         </Routes>
     </>
   );
