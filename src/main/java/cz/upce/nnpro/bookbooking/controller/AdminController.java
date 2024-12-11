@@ -25,7 +25,7 @@ public class AdminController {
     }
 
     @PutMapping("/bookings/{userId}")
-    public ResponseEntity<Void> updateBookings(
+    public ResponseEntity<List<ResponseBookingDTO>> updateBookings(
             @PathVariable
             Long userId,
             @Valid
@@ -33,7 +33,7 @@ public class AdminController {
             RequestBookingsDTO requestBookingsDTO) {
         service.updateReturnedBooks(userId, requestBookingsDTO.getReturningBookIds());
         service.updateLoanedBooks(userId, requestBookingsDTO.getLoaningBookIds());
-        return ResponseEntity.ok().build();
+        return getAllBookingsOfUser(userId);
     }
 
 }

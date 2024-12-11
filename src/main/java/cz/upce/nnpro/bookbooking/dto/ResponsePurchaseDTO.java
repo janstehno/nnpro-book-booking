@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class ResponsePurchaseDTO {
+    private Long id;
     private LocalDate date;
     private double price;
     @Nullable private List<Book> books;

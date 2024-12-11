@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -19,4 +20,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Page<Booking> findByStatus(StatusE status, Pageable pageable);
 
     List<Booking> findAllByOrderUserIdAndBookIdIn(Long userId, List<Long> bookIds);
+
+    Optional<Booking> findByOrderUserIdAndOrderIdAndId(Long userId, Long orderId, Long bookingId);
 }

@@ -56,15 +56,20 @@ public class OrderService implements ServiceInterface<Order> {
     }
 
     public List<ResponseOrderDTO> getAllByUserId(Long userId) {
-        return orderRepository.findAllByUserId(userId).stream().map(o -> new ResponseOrderDTO(o.getDate(), null)).toList();
+        return orderRepository.findAllByUserId(userId).stream().map(o -> new ResponseOrderDTO(o.getId(), o.getDate(), null)).toList();
     }
 
     public ResponseOrderDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
         final Order order = orderRepository.findByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
-        return new ResponseOrderDTO(order.getDate(),
+        return new ResponseOrderDTO(order.getId(), order.getDate(),
                                     order.getBookings()
                                          .stream()
-                                         .map(b -> new ResponseBookingDTO(b.getBook(), b.getCount(), b.getStatus(), b.getBookingDate(), b.getExpirationDate()))
+                                         .map(b -> new ResponseBookingDTO(b.getId(),
+                                                                          b.getBook(),
+                                                                          b.getCount(),
+                                                                          b.getStatus(),
+                                                                          b.getBookingDate(),
+                                                                          b.getExpirationDate()))
                                          .toList());
     }
 
@@ -94,6 +99,6 @@ public class OrderService implements ServiceInterface<Order> {
 
         mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
 
-        return new ResponseOrderDTO(savedOrder.getDate(), null);
+        return new ResponseOrderDTO(savedOrder.getId(), savedOrder.getDate(), null);
     }
 }

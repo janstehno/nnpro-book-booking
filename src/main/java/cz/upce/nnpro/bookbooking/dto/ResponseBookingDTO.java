@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 public class ResponseBookingDTO {
+    private Long id;
     private Book book;
     private int count;
     private StatusE status;

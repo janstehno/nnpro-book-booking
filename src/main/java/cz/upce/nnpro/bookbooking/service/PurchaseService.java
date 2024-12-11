@@ -51,12 +51,15 @@ public class PurchaseService implements ServiceInterface<Purchase> {
     }
 
     public List<ResponsePurchaseDTO> getAllByUserId(Long userId) {
-        return purchaseRepository.findAllByUserId(userId).stream().map(p -> new ResponsePurchaseDTO(p.getDate(), p.getPrice(), null)).toList();
+        return purchaseRepository.findAllByUserId(userId).stream().map(p -> new ResponsePurchaseDTO(p.getId(), p.getDate(), p.getPrice(), null)).toList();
     }
 
     public ResponsePurchaseDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
         final Purchase purchase = purchaseRepository.findAllByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
-        return new ResponsePurchaseDTO(purchase.getDate(), purchase.getPrice(), purchase.getBookPurchases().stream().map(BookPurchase::getBook).toList());
+        return new ResponsePurchaseDTO(purchase.getId(),
+                                       purchase.getDate(),
+                                       purchase.getPrice(),
+                                       purchase.getBookPurchases().stream().map(BookPurchase::getBook).toList());
     }
 
     public ResponsePurchaseDTO create(AppUser user, RequestPurchaseDTO data) {
@@ -81,6 +84,6 @@ public class PurchaseService implements ServiceInterface<Purchase> {
 
         mailService.sendEmailAboutPurchase(user.getEmail(), savedPurchase);
 
-        return new ResponsePurchaseDTO(savedPurchase.getDate(), savedPurchase.getPrice(), null);
+        return new ResponsePurchaseDTO(savedPurchase.getId(), savedPurchase.getDate(), savedPurchase.getPrice(), null);
     }
 }

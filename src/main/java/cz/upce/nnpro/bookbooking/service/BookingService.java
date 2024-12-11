@@ -5,6 +5,7 @@ import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookingRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,9 +63,20 @@ public class BookingService implements ServiceInterface<Booking> {
         return bookingRepository.findAllByOrderUserId(userId);
     }
 
-    public StatusE updateReturned(Long bookingId) {
-        final Booking booking = getById(bookingId);
+    public List<Booking> getAllByOrderUserId(Long userId) {
+        return bookingRepository.findAllByOrderUserId(userId);
+    }
 
+    public List<Booking> getAllByOrderUserIdAndBookIdIn(Long userId, List<Long> bookIds) {
+        return bookingRepository.findAllByOrderUserIdAndBookIdIn(userId, bookIds);
+    }
+
+    public Booking getByOrderUserIdAndOrderIdAndId(Long userId, Long orderId, Long bookingId) throws RuntimeException {
+        return bookingRepository.findByOrderUserIdAndOrderIdAndId(userId, orderId, bookingId)
+                                .orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
+    }
+
+    public void updateReturned(Booking booking) {
         booking.setStatus(StatusE.RETURNED);
         booking.setReturnDate(LocalDate.now());
 
@@ -72,13 +84,12 @@ public class BookingService implements ServiceInterface<Booking> {
         freeBooks(book, booking.getCount());
 
         reserveBookForNextInLine(book);
-
-        return bookingRepository.save(booking).getStatus();
+        bookingRepository.save(booking);
     }
 
     @Scheduled(cron = "0 0 1 * * ?")
     public void checkAvailableBookingExpiration() {
-        var today = LocalDate.now();
+        LocalDate today = LocalDate.now();
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Booking> availableBookingsPage = bookingRepository.findByStatus(StatusE.AVAILABLE, pageable);
@@ -102,7 +113,7 @@ public class BookingService implements ServiceInterface<Booking> {
         for (Booking waitingBooking : waitingBookings) {
             if (reserveBooks(book, waitingBooking.getCount())) {
                 setBookingAvailable(waitingBooking);
-                bookingRepository.save(waitingBooking);
+                update(waitingBooking);
                 mailService.sendEmailAboutAvailableReservedBook(waitingBooking);
             } else break;
         }
@@ -110,14 +121,11 @@ public class BookingService implements ServiceInterface<Booking> {
         bookService.update(book);
     }
 
-    public StatusE updateLoaned(Long bookingId) {
-        final Booking booking = getById(bookingId);
-
+    public void updateLoaned(Booking booking) {
         booking.setStatus(StatusE.LOANED);
         booking.setLoanDate(LocalDate.now());
         booking.setExpirationDate(LocalDate.now().plusDays(RESERVATION_VALIDITY_DAYS));
-
-        return bookingRepository.save(booking).getStatus();
+        update(booking);
     }
 
     public void handleReservation(Booking booking) {
@@ -145,5 +153,13 @@ public class BookingService implements ServiceInterface<Booking> {
     private void freeBooks(Book book, int count) {
         book.setAvailableCopies(book.getAvailableCopies() + count);
         bookService.update(book);
+    }
+
+    @Transactional
+    public void cancelBooking(Long userId, Long orderId, Long bookingId) {
+        Booking booking = getByOrderUserIdAndOrderIdAndId(userId, orderId, bookingId);
+        freeBooks(booking.getBook(), booking.getCount());
+        booking.setStatus(StatusE.CANCELED);
+        update(booking);
     }
 }

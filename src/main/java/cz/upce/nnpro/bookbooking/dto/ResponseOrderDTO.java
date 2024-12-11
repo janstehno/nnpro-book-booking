@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class ResponseOrderDTO {
+    private Long id;
     private LocalDate date;
     @Nullable private List<ResponseBookingDTO> bookings;
 }
