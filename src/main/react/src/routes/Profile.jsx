@@ -29,24 +29,35 @@ const Profile = () => {
     navigate("/user/update-password");
   };
 
-  return user && (
-    <div className="profile-container main-container">
-      <h1 className="text-primary">User Profile</h1>
-      <p>{user.firstname} {user.lastname}</p>
-      <p>{user.email}</p>
-      <div className="controls col">
+  const handleManagement = () => {
+    navigate("/admin");
+  };
+
+  return (
+    user && (
+      <div className="profile-container main-container">
+        <h1 className="text-primary">Profile</h1>
+        <p>{user.firstname} {user.lastname}</p>
+        <p>{user.email}</p>
+        <div className="controls col">
           <div>
-              <button onClick={handleHistory} className="btn btn-primary">History</button>
+            <button onClick={handleHistory} className="btn btn-primary">History</button>
           </div>
           <div>
-              <button onClick={handleUpdateProfile} className="btn btn-outline-primary">Update Profile</button>
+            <button onClick={handleUpdateProfile} className="btn btn-outline-primary">Update Profile</button>
           </div>
           <div>
-              <button onClick={handleUpdateProfilePassword} className="btn btn-outline-secondary">Update Password</button>
+            <button onClick={handleUpdateProfilePassword} className="btn btn-outline-secondary">Update Password</button>
           </div>
+          {user.role === "ADMIN" && (
+            <div>
+              <button onClick={handleManagement} className="btn btn-danger text-light">Management</button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-    );
-}
+    )
+  );
+};
 
 export default Profile;

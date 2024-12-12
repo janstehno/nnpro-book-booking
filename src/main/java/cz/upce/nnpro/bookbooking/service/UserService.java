@@ -48,7 +48,7 @@ public class UserService implements ServiceInterface<AppUser> {
     }
 
     public UserDTO get(AppUser user) {
-        return new UserDTO(user.getFirstname(), user.getLastname(), user.getEmail());
+        return new UserDTO(user.getFirstname(), user.getLastname(), user.getEmail(), user.getRole().getName());
     }
 
     public AppUser getByUsername(String username) throws RuntimeException {

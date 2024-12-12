@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Loading from "@/components/Loading";
 
-const Bookings = () => {
+const UserBookings = () => {
   const { userId } = useParams();
   const [bookings, setBookings] = useState(null);
   const [returningIds, setReturningIds] = useState([]);
@@ -18,7 +18,7 @@ const Bookings = () => {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const response = await api.get(`/admin/bookings/${userId}`);
+      const response = await api.get(`/admin/users/${userId}/bookings`);
       setBookings(response.data);
     } catch {}
     setLoading(false);
@@ -46,7 +46,7 @@ const Bookings = () => {
 
   const submitReturnIds = async () => {
     try {
-      const response = await api.put(`/admin/bookings/${userId}`,
+      const response = await api.put(`/admin/users/${userId}/bookings`,
           { "returningBookIds": returningIds, "loaningBookIds": loaningIds });
       setBookings(response.data);
     } catch {}
@@ -59,6 +59,7 @@ const Bookings = () => {
   return (
     bookings && (
       <div className="admin-bookings-container main-container">
+        <Link to="/admin/users">Back</Link>
         <h1 className="text-primary">User Bookings</h1>
         <table className="table table-hover">
           <thead>
@@ -140,4 +141,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default UserBookings;
