@@ -29,7 +29,9 @@ const BookDetail = () => {
     );
 
     if (existingItemIndex > -1) {
-      if(type !== CartItemType.PURCHASE) cart[existingItemIndex].quantity += 1;
+      if(cart[existingItemIndex].quantity < item.physicalCopies && type !== CartItemType.PURCHASE) {
+        cart[existingItemIndex].quantity += 1;
+      }
     } else {
       cart.push({ ...item, type, quantity });
     }

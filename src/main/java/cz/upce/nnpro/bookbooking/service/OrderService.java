@@ -85,7 +85,9 @@ public class OrderService implements ServiceInterface<Order> {
             Book book = bookService.getById(entry.getKey());
             if (book == null || !book.isPhysical()) continue;
 
-            final int count = entry.getValue();
+            int count = entry.getValue();
+            if (count <= 0) continue;
+            if (count > book.getPhysicalCopies()) count = book.getPhysicalCopies();
             Booking booking = Booking.builder().order(order).book(book).count(count).build();
 
             bookingService.handleReservation(booking);
