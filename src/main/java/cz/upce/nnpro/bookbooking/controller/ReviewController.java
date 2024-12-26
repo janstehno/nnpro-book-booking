@@ -20,6 +20,19 @@ public class ReviewController {
 
     private final BookService bookService;
 
+    @GetMapping
+    public ResponseEntity<ResponseBookReviewDTO> getReview(
+            @PathVariable
+            Long bookId,
+            @AuthenticationPrincipal
+            AppUser user) {
+        try {
+            return ResponseEntity.ok(service.get(user, bookId));
+        } catch (Exception e) {
+            return ResponseEntity.ok(null);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<ResponseBookReviewDTO> createReview(
             @PathVariable
