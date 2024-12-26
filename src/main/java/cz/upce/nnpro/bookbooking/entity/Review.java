@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "reviews")
+@Table(name = "reviews", uniqueConstraints = {@UniqueConstraint(columnNames = {"USER_ID", "BOOK_ID"})})
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,9 @@ public class Review {
     @NotNull
     private int rating;
 
-    @Column private String text;
+    @Column
+    @NotNull
+    private String text;
 
     @Column private LocalDate date;
 
@@ -48,4 +50,3 @@ public class Review {
         date = LocalDate.now();
     }
 }
-
