@@ -4,15 +4,21 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Loading from "@/components/Loading";
 
 import CartItemType from "@/utils/CartItemType";
+import Reviews from "@/components/BookDetailReviews";
+import Review from "@/components/Review";
 
 const BookDetail = () => {
   const { bookId } = useParams();
   const [detail, setDetail] = useState(null);
+  const [review, setReview] = useState(null);
+  const [editedText, setEditedText] = useState("");
+  const [editedRating, setEditedRating] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-      fetchBookDetail();
-    }, [bookId]);
+    fetchBookDetail();
+    fetchBookReview();
+  }, []);
 
   const fetchBookDetail = async () => {
     try {
@@ -20,6 +26,17 @@ const BookDetail = () => {
       setDetail(response.data);
     } catch {}
   };
+
+  const fetchBookReview = async () => {
+    try {
+      const response = await api.get(`/books/${bookId}/review`);
+      setReview(response.data);
+    } catch {}
+  };
+
+  const onUpdate = (review) => {
+    setReview(review);
+  }
 
   const addToCart = (item, type) => {
     const quantity = 1;
@@ -29,7 +46,7 @@ const BookDetail = () => {
     );
 
     if (existingItemIndex > -1) {
-      if(cart[existingItemIndex].quantity < item.physicalCopies && type !== CartItemType.PURCHASE) {
+      if (cart[existingItemIndex].quantity < item.physicalCopies && type !== CartItemType.PURCHASE) {
         cart[existingItemIndex].quantity += 1;
       }
     } else {
@@ -40,35 +57,48 @@ const BookDetail = () => {
     window.dispatchEvent(new Event("cart-updated"));
   };
 
-  if(!detail){
-    return <Loading />;
-  }
+  if (!detail) return <Loading />;
 
   const { title, description, ebookPrice, physical, physicalCopies, availableCopies, ebook } = detail.book;
+  const reviews = detail.reviews;
 
-  return detail && (
+  return (
     <div className="detail-container main-container">
       <Link to="/books">Back</Link>
       <h1 className="text-primary">{title}</h1>
       <div className="d-flex flex-row">
-        <img className="col-2" src="https://placehold.co/100x100" alt="Book cover" />
+        <img className="col-2 me-3" src="https://placehold.co/140x210" alt="Book cover" />
         <div className="col">
-          <p>{description}</p>
-          {ebook && <p>${ebookPrice}</p>}
-          {physical && <p>PHYSICAL COPIES: <b>{physicalCopies}</b></p>}
-          {physical && <p>CURRENTLY AVAILABLE: <b>{availableCopies}</b></p>}
+          <p className="mb-4">{description}</p>
         </div>
       </div>
-      <div className="d-flex flex-row justify-content-end">
-        {physical && (
-          <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItemType.BOOKING)}}>Reservation</button>
-        )}
-        {ebook && (
-          <button className="btn btn-warning" onClick={() => {addToCart(detail.book, CartItemType.PURCHASE)}}>Buy</button>
-        )}
+      <div className="actions">
+        <div className="d-flex flex-row justify-content-end align-items-center mb-2">
+          {physical && (
+            <>
+              <p className="me-4">COPIES <b className="tag copies">{physicalCopies}</b></p>
+              <p className="me-4">CURRENTLY AVAILABLE <b className="tag copies">{availableCopies}</b></p>
+              <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItemType.BOOKING);}}>
+                Reservation
+              </button>
+            </>
+          )}
+        </div>
+        <div className="d-flex flex-row justify-content-end align-items-center mb-2">
+          {ebook && (
+            <>
+              <p className="me-4">PRICE <b className="tag price">${ebookPrice}</b></p>
+              <button className="btn btn-warning" onClick={() => {addToCart(detail.book, CartItemType.PURCHASE);}}>
+                Buy
+              </button>
+            </>
+          )}
+        </div>
       </div>
+
+      <Reviews review={review} reviews={reviews} onUpdate={onUpdate} />
     </div>
   );
-}
+};
 
 export default BookDetail;
