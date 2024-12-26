@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ResponseBookDetailDTO {
     private Book book;
-    private List<Review> reviews;
+    private List<ResponseBookReviewDTO> reviews;
 }

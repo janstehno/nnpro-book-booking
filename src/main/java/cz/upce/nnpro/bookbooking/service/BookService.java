@@ -1,8 +1,8 @@
 package cz.upce.nnpro.bookbooking.service;
 
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponseBookReviewDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
-import cz.upce.nnpro.bookbooking.entity.Review;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookRepository;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,15 @@ public class BookService implements ServiceInterface<Book> {
 
     public ResponseBookDetailDTO get(Long bookId) {
         final Book book = getById(bookId);
-        final List<Review> reviews = reviewService.getAllByBookId(book.getId());
+        final List<ResponseBookReviewDTO> reviews = reviewService.getAllByBookId(book.getId())
+                                                                 .stream()
+                                                                 .map(r -> new ResponseBookReviewDTO(r.getId(),
+                                                                                                     r.getUser().getFirstname(),
+                                                                                                     r.getUser().getLastname(),
+                                                                                                     r.getRating(),
+                                                                                                     r.getText(),
+                                                                                                     r.getDate()))
+                                                                 .toList();
         return new ResponseBookDetailDTO(book, reviews);
     }
 }

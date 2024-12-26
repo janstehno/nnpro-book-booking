@@ -51,10 +51,15 @@ public class ReviewService implements ServiceInterface<Review> {
         return reviewRepository.findByUserIdAndBookId(userId, bookId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
+    public ResponseBookReviewDTO get(AppUser user, Long bookId) throws RuntimeException {
+        final Review review = getByUserIdAndBookId(user.getId(), bookId);
+        return new ResponseBookReviewDTO(review.getId(), user.getFirstname(), user.getLastname(), review.getRating(), review.getText(), review.getDate());
+    }
+
     public ResponseBookReviewDTO create(AppUser user, Book book, RequestBookReviewDTO data) {
         final Review review = Review.builder().user(user).book(book).rating(data.getRating()).text(data.getText()).build();
         create(review);
-        return new ResponseBookReviewDTO(user.getFirstname(), user.getLastname(), review.getRating(), review.getText());
+        return new ResponseBookReviewDTO(review.getId(), user.getFirstname(), user.getLastname(), review.getRating(), review.getText(), review.getDate());
     }
 
     public ResponseBookReviewDTO update(AppUser user, Long bookId, RequestBookReviewDTO data) {
@@ -62,7 +67,7 @@ public class ReviewService implements ServiceInterface<Review> {
         review.setRating(data.getRating());
         review.setText(data.getText());
         update(review);
-        return new ResponseBookReviewDTO(user.getFirstname(), user.getLastname(), review.getRating(), review.getText());
+        return new ResponseBookReviewDTO(review.getId(), user.getFirstname(), user.getLastname(), review.getRating(), review.getText(), review.getDate());
     }
 
     public void delete(AppUser user, Long bookId) {
