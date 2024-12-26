@@ -6,8 +6,8 @@ import Loading from "@/components/Loading";
 const UserBookings = () => {
   const { userId } = useParams();
   const [bookings, setBookings] = useState(null);
-  const [returningIds, setReturningIds] = useState([]);
-  const [loaningIds, setLoaningIds] = useState([]);
+  const [returnIds, setReturnIds] = useState([]);
+  const [loanIds, setLoanIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -24,22 +24,22 @@ const UserBookings = () => {
     setLoading(false);
   };
 
-  const handleReturnChange = (bookId, isChecked) => {
-    setReturningIds((prev) => {
+  const handleReturnChange = (bookingId, isChecked) => {
+    setReturnIds((prev) => {
       if (isChecked) {
-        return [...prev, bookId];
+        return [...prev, bookingId];
       } else {
-        return prev.filter((id) => id !== bookId);
+        return prev.filter((id) => id !== bookingId);
       }
     });
   };
 
-  const handleLoanChange = (bookId, isChecked) => {
-    setLoaningIds((prev) => {
+  const handleLoanChange = (bookingId, isChecked) => {
+    setLoanIds((prev) => {
       if (isChecked) {
-        return [...prev, bookId];
+        return [...prev, bookingId];
       } else {
-        return prev.filter((id) => id !== bookId);
+        return prev.filter((id) => id !== bookingId);
       }
     });
   };
@@ -47,7 +47,7 @@ const UserBookings = () => {
   const submitReturnIds = async () => {
     try {
       const response = await api.put(`/admin/users/${userId}/bookings`,
-          { "returningBookIds": returningIds, "loaningBookIds": loaningIds });
+          { "returnIds": returnIds, "loanIds": loanIds });
       setBookings(response.data);
     } catch {}
   };
@@ -90,15 +90,15 @@ const UserBookings = () => {
                 booking.status === "CANCELED";
 
               return (
-                <tr key={booking.book.id}>
+                <tr key={booking.id}>
                   <td>
                     <input
                       type="checkbox"
                       disabled={isLockedForReturn}
-                      checked={returningIds.includes(booking.book.id)}
+                      checked={returnIds.includes(booking.id)}
                       onChange={(e) =>
                         handleReturnChange(
-                          booking.book.id,
+                          booking.id,
                           e.target.checked && !e.target.disabled
                         )
                       }
@@ -108,10 +108,10 @@ const UserBookings = () => {
                     <input
                       type="checkbox"
                       disabled={isLockedForLoan}
-                      checked={loaningIds.includes(booking.book.id)}
+                      checked={loanIds.includes(booking.id)}
                       onChange={(e) =>
                         handleLoanChange(
-                          booking.book.id,
+                          booking.id,
                           e.target.checked && !e.target.disabled
                         )
                       }
@@ -132,7 +132,7 @@ const UserBookings = () => {
         <button
           className="btn btn-primary"
           onClick={submitReturnIds}
-          disabled={returningIds.length === 0 && loaningIds.length === 0}
+          disabled={returnIds.length === 0 && loanIds.length === 0}
         >
           Update Bookings
         </button>

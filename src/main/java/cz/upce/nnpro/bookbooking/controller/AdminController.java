@@ -35,8 +35,8 @@ public class AdminController {
             @Valid
             @RequestBody
             RequestBookingsDTO requestBookingsDTO) {
-        service.updateReturnedBooks(userId, requestBookingsDTO.getReturningBookIds());
-        service.updateLoanedBooks(userId, requestBookingsDTO.getLoaningBookIds());
+        service.updateReturnedBooks(userId, requestBookingsDTO.getReturnIds());
+        service.updateLoanedBooks(userId, requestBookingsDTO.getLoanIds());
         return getAllBookingsOfUser(userId);
     }
 

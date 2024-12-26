@@ -13,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class RequestBookingsDTO {
 
-    private List<Long> returningBookIds;
+    private List<Long> returnIds;
 
-    private List<Long> loaningBookIds;
+    private List<Long> loanIds;
 
 }

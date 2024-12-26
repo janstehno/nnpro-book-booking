@@ -67,8 +67,8 @@ public class BookingService implements ServiceInterface<Booking> {
         return bookingRepository.findAllByOrderUserId(userId);
     }
 
-    public List<Booking> getAllByOrderUserIdAndBookIdIn(Long userId, List<Long> bookIds) {
-        return bookingRepository.findAllByOrderUserIdAndBookIdIn(userId, bookIds);
+    public List<Booking> getAllByOrderUserIdAndIdIn(Long userId, List<Long> bookIds) {
+        return bookingRepository.findAllByOrderUserIdAndIdIn(userId, bookIds);
     }
 
     public Booking getByOrderUserIdAndOrderIdAndId(Long userId, Long orderId, Long bookingId) throws RuntimeException {

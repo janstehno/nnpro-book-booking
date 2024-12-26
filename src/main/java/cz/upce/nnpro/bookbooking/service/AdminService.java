@@ -31,8 +31,9 @@ public class AdminService {
     }
 
     @Transactional
-    public void updateReturnedBooks(Long userId, List<Long> bookIds) {
-        List<Booking> bookings = bookingService.getAllByOrderUserIdAndBookIdIn(userId, bookIds);
+    public void updateReturnedBooks(Long userId, List<Long> bookingIds) {
+        if(bookingIds == null || bookingIds.isEmpty()) return;
+        List<Booking> bookings = bookingService.getAllByOrderUserIdAndIdIn(userId, bookingIds);
         for (Booking booking : bookings) {
             if (booking.getStatus().equals(StatusE.AVAILABLE) || restrictedStatus.contains(booking.getStatus())) continue;
             bookingService.updateReturned(booking);
@@ -40,8 +41,9 @@ public class AdminService {
     }
 
     @Transactional
-    public void updateLoanedBooks(Long userId, List<Long> bookIds) {
-        List<Booking> bookings = bookingService.getAllByOrderUserIdAndBookIdIn(userId, bookIds);
+    public void updateLoanedBooks(Long userId, List<Long> bookingIds) {
+        if(bookingIds == null || bookingIds.isEmpty()) return;
+        List<Booking> bookings = bookingService.getAllByOrderUserIdAndIdIn(userId, bookingIds);
         for (Booking booking : bookings) {
             if (booking.getStatus().equals(StatusE.LOANED) || restrictedStatus.contains(booking.getStatus())) continue;
             bookingService.updateLoaned(booking);
