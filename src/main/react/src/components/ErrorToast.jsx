@@ -7,7 +7,7 @@ const ErrorToast = () => {
   if (!error) return null;
 
   return (
-    <div className="error-toast bg-light row">
+    <div className="error-toast bg-light d-flex flex-row">
       <div className="justify-content-middle col text">
       <h5 className="text-black text-bold">{error.status}</h5>
       <p className="text-black">{error.message}</p>

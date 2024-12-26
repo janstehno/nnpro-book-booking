@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 const Book = ({book}) => {
 
   return (
-    <div className="book-card-container card">
-      <img className="card-img-top" src="https://placehold.co/100x100" alt="Book cover" />
+    <div className="book-card-container card m-3">
+      <img className="card-img-top" src="https://placehold.co/140x210" alt="Book cover" />
       <div className="card-body">
         <h3 className="card-title">{book.title}</h3>
         <p className="book-price">{book.description}</p>

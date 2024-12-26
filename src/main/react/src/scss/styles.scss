@@ -96,10 +96,6 @@ $dark: #03122F;
     margin: 0;
 }
 
-.detail-container .row{
-    margin-bottom: 20px;
-}
-
 .detail-container button{
     margin-right: 10px;
     max-width: 200px;
@@ -165,11 +161,45 @@ $dark: #03122F;
         background-color: var(--bs-dark);
     }
     &.unclaimed{
-        color: var(--bs-dark);
+        color: var(--bs-light);
         background-color: var(--bs-gray);
     }
     &.canceled{
         color: var(--bs-light);
         background-color: var(--bs-danger);
+    }
+}
+
+.tag{
+    margin: 0;
+    padding: 0;
+    line-height: 1rem;
+    font-size: 0.85em;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 500;
+    &.price{
+        color: var(--bs-warning);
+        background-color: var(--bs-dark);
+    }
+    &.copies{
+        color: var(--bs-primary);
+        background-color: var(--bs-light);
+    }
+}
+
+.review{
+    .date{
+        color: var(--bs-gray);
+    }
+    .author{
+        font-size: 0.7rem;
+    }
+}
+
+.rating{
+    .star{
+        width: 15px;
     }
 }
