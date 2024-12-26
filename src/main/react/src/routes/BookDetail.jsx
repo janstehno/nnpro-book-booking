@@ -44,7 +44,7 @@ const BookDetail = () => {
     return <Loading />;
   }
 
-  const { title, description, ebookPrice, physical, physicalCopies, ebook } = detail.book;
+  const { title, description, ebookPrice, physical, physicalCopies, availableCopies, ebook } = detail.book;
 
   return detail && (
     <div className="detail-container main-container">
@@ -55,7 +55,8 @@ const BookDetail = () => {
         <div className="col">
           <p>{description}</p>
           {ebook && <p>${ebookPrice}</p>}
-          {physical && <p>Available physical copies: <b>{physicalCopies}</b></p>}
+          {physical && <p>PHYSICAL COPIES: <b>{physicalCopies}</b></p>}
+          {physical && <p>CURRENTLY AVAILABLE: <b>{availableCopies}</b></p>}
         </div>
       </div>
       <div className="d-flex flex-row justify-content-end">

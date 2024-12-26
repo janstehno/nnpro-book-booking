@@ -27,6 +27,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("booking-cart");
     setIsLoggedIn(false);
     navigate("/login");
   };
@@ -62,7 +63,7 @@ const Navbar = () => {
                 </li>
               </>
             )}
-            {itemsInCart && (
+            {isLoggedIn && itemsInCart && (
               <>
                 <div className="vr"></div>
                 <li className="nav-item">
