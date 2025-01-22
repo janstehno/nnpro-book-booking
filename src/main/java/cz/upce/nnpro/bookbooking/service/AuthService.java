@@ -80,7 +80,7 @@ public class AuthService {
             mailService.sendEmailAboutPasswordReset(user.getEmail(), resetUrl);
         }
 
-        return ResponseEntity.ok("Email was sent to the email address.");
+        return ResponseEntity.ok().build();
     }
 
     public ResponseEntity<?> passwordReset(PasswordResetDTO passwordResetDTO) throws RuntimeException {
@@ -95,7 +95,7 @@ public class AuthService {
                 }
 
                 String purpose = jwtService.extractClaim(token, claims -> (String) claims.get("usedFor"));
-                if (!"PASSWORD_RESET".equals(purpose)) {
+                if (!purpose.equals("PASSWORD_RESET")) {
                     throw new CustomExceptionHandler.InvalidTokenException();
                 }
 
@@ -105,8 +105,7 @@ public class AuthService {
                 ResetToken resetToken = resetTokenService.getByToken(token);
                 if (resetToken != null) resetTokenService.deleteById(resetToken.getId());
 
-                return ResponseEntity.ok("Password reset successful.");
-
+                return ResponseEntity.ok().build();
             }
         }
 
