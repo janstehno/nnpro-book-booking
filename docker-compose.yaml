@@ -23,7 +23,7 @@ services:
       - ./settings.gradle:/app/settings.gradle
       - gradle-data:/root/.gradle
     command:
-      sh -c "./gradlew bootRun"
+      sh -c "./gradlew test && ./gradlew bootRun"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/book-booking
       SPRING_DATASOURCE_USERNAME: bb
