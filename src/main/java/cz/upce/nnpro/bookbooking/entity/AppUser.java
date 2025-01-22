@@ -61,6 +61,14 @@ public class AppUser implements UserDetails {
     @NotNull
     private Role role;
 
+    public AppUser(String firstname, String lastname, String email, String username, String password) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(role.getName().name()));

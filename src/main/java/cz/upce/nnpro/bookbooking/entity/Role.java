@@ -24,4 +24,8 @@ public class Role {
     @Column(unique = true)
     @NotNull
     private RoleE name;
+
+    public Role(RoleE name) {
+        this.name = name;
+    }
 }
