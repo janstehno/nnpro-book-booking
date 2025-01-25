@@ -21,8 +21,8 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container main-container">
-      <h1 className="text-primary">Login</h1>
+    <div className="login-container main-container d-flex flex-column justify-content-center align-items-center">
+      <h1 className="text-primary mb-3">Login</h1>
       <form onSubmit={handleLogin}>
         <input
           type="text"
@@ -42,7 +42,7 @@ const Login = () => {
           onChange={handleChange}
           required
         />
-        <button type="submit" className="btn btn-primary">Login</button>
+        <button type="submit" className="btn btn-primary w-100">Login</button>
       </form>
       <a href="/password">Reset password</a>
     </div>

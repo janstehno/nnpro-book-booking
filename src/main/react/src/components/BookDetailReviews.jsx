@@ -48,7 +48,7 @@ const BookDetailReviews = ({ review, reviews, onUpdate }) => {
   if (!reviews) return <Loading />;
 
   return (
-      <div className="reviews-section mt-4">
+      <div className="reviews-section">
         <h3>Reviews</h3>
         {!review && localStorage["token"] && (
           <form className="form mb-5">
@@ -81,7 +81,7 @@ const BookDetailReviews = ({ review, reviews, onUpdate }) => {
               onUpdate={onUpdate}
             />
           ))
-        ) : review ? <></> : <p>No reviews available for this book.</p> }
+        ) : review ? <></> : <p className="m-0">No reviews available for this book.</p> }
       </div>
   );
 };

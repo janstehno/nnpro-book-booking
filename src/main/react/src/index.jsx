@@ -7,6 +7,8 @@ import { ErrorProvider, useError } from '@/context/ErrorContext';
 import ErrorToast from "@/components/ErrorToast";
 
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 import Home from '@/routes/Home';
 import Login from "@/routes/Login";
 import Register from "@/routes/Register";
@@ -39,26 +41,27 @@ const App = () => {
   return (
     <>
       <Navbar />
-        {error && <ErrorToast />}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/user" element={<Profile />} />
-          <Route path="/user/update" element={<ProfileUpdate />} />
-          <Route path="/user/update-password" element={<ProfileUpdatePassword />} />
-          <Route path="/user/history" element={<History />} />
-          <Route path="/orders/:orderId" element={<Order />} />
-          <Route path="/purchases/:purchaseId" element={<Purchase />} />
-          <Route path="/password" element={<PasswordReset />} />
-          <Route path="/password/reset" element={<PasswordResetSubmit />} />
-          <Route path="/books" element={<Books />} />
-          <Route path="/books/:bookId" element={<BookDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/admin" element={<AdminHome />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/users/:userId/bookings" element={<AdminBookings />} />
-        </Routes>
+      {error && <ErrorToast />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/user" element={<Profile />} />
+        <Route path="/user/update" element={<ProfileUpdate />} />
+        <Route path="/user/update-password" element={<ProfileUpdatePassword />} />
+        <Route path="/user/history" element={<History />} />
+        <Route path="/orders/:orderId" element={<Order />} />
+        <Route path="/purchases/:purchaseId" element={<Purchase />} />
+        <Route path="/password" element={<PasswordReset />} />
+        <Route path="/password/reset" element={<PasswordResetSubmit />} />
+        <Route path="/books" element={<Books />} />
+        <Route path="/books/:bookId" element={<BookDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/admin" element={<AdminHome />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/users/:userId/bookings" element={<AdminBookings />} />
+      </Routes>
+      <Footer />
     </>
   );
 };

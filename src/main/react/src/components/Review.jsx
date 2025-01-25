@@ -51,8 +51,8 @@ const Review = ({ bookId, review, editable, onUpdate }) => {
   return (
     <div className="review card my-3">
       <p className="date card-header">{new Date(review.date).toLocaleDateString()}</p>
-      <div className="card-body d-flex flex-row align-items-center">
-        <div className="col">
+      <div className="card-body d-flex flex-sm-row flex-column justify-content-between align-items-start">
+        <div>
           <p className="author mb-3">
             {review.firstname.toUpperCase()} {review.lastname.toUpperCase()}
           </p>
@@ -66,11 +66,11 @@ const Review = ({ bookId, review, editable, onUpdate }) => {
               onChange={(e) => setEditedText(e.target.value)}
             />
           ) : (
-            <p className="card-text">{review.text}</p>
+            <p className="card-text mb-sm-0 mb-2">{review.text}</p>
           )}
         </div>
         {editable && (
-          <div className="col-2 d-flex justify-content-end">
+          <div className="d-flex flex-row justify-content-end align-items-end">
             {isEditing ? (
               <>
                 <button className="btn btn-success btn-sm me-2" onClick={handleSave}>Save</button>
@@ -85,7 +85,7 @@ const Review = ({ bookId, review, editable, onUpdate }) => {
               </>
             ) : (
               <>
-                <button className="btn btn-primary btn-sm" onClick={() => setIsEditing(true)}>Edit</button>
+                <button className="btn btn-primary btn-sm me-2" onClick={() => setIsEditing(true)}>Edit</button>
                 <button className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
               </>
             )}

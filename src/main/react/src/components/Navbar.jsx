@@ -65,7 +65,6 @@ const Navbar = () => {
             )}
             {isLoggedIn && itemsInCart && (
               <>
-                <div className="vr"></div>
                 <li className="nav-item">
                   <Link className="nav-link shopping-cart" to="/cart"><img src="/shopping-cart.png" alt="Cart" /></Link>
                 </li>

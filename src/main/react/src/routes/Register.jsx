@@ -24,8 +24,8 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container main-container">
-      <h1 className="text-primary">Register</h1>
+    <div className="register-container main-container d-flex flex-column justify-content-center align-items-center">
+      <h1 className="text-primary mb-3">Register</h1>
       <form onSubmit={handleRegister}>
         <input
           type="text"
@@ -72,7 +72,7 @@ const Register = () => {
           onChange={handleChange}
           required
         />
-        <button type="submit" className="btn btn-primary">Register</button>
+        <button type="submit" className="btn btn-primary w-100">Register</button>
       </form>
     </div>
   );

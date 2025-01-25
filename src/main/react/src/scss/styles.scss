@@ -10,8 +10,16 @@ $dark: #03122F;
 
 @import "~bootstrap/scss/bootstrap";
 
+body{
+    background-image: url('../assets/images/1ea849f8-5830-4069-8fbb-1df73e4d1ac8.jpg');
+    background-attachment: fixed;
+    background-size: auto;
+    background-position: center;
+}
+
 .main-container{
-    padding: 20px;
+    padding: 1.5rem;
+    min-height: calc(100vh - 55px);
 }
 
 .main-container form input, .main-container form select{
@@ -84,12 +92,6 @@ $dark: #03122F;
 
 .error-toast button img{
     width: 15px;
-}
-
-.book-card-container{
-    max-width: 15rem;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
 }
 
 .detail-container p{
@@ -201,5 +203,69 @@ $dark: #03122F;
 .rating{
     .star{
         width: 15px;
+    }
+}
+
+.home-header{
+    min-height: 50vh;
+    height: 100%;
+    background-image: url('../assets/images/1ea849f8-5830-4069-8fbb-1df73e4d1ac8.jpg');
+    background-attachment: fixed;
+    background-size: auto;
+    background-position: center;
+}
+
+.home-header-overshadow{
+    min-height: inherit;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(6,6,6,.7);
+}
+
+.home-header h1{
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 3rem;
+}
+
+.home-header p, .home-header-search{
+    width: 50%;
+}
+
+.home-container-best-choice, .home-container-text{
+    width: 75%;
+}
+
+.home-container-banner {
+    min-height: 50vh;
+    background-image: url("../assets/images/2810b6fc-b077-4f11-81bb-db16b321ef61.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+.home-container-banner-overshadow{
+    min-height: inherit;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(6,6,6,.7);
+}
+
+.footer-socials img {
+    height: 2rem;
+}
+
+@media (max-width: 1200px){
+    .home-container-text, .home-container-best-choice{
+        width: 85%;
+    }
+}
+
+@media (max-width: 768px){
+    .container{
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .home-header p, .home-header-search{
+        width: 100%;
     }
 }

@@ -19,7 +19,7 @@ const Books = () => {
   return (
     <div className="books-container main-container">
         <h1 className="text-primary">Books</h1>
-        <div className="d-flex flex-wrap justify-content-around">
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
             {books.map((book)=>(
                 <Book key={book.id} book={book}/>
             ))}

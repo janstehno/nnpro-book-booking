@@ -63,41 +63,50 @@ const BookDetail = () => {
   const reviews = detail.reviews;
 
   return (
-    <div className="detail-container main-container">
-      <Link to="/books">Back</Link>
-      <h1 className="text-primary">{title}</h1>
-      <div className="d-flex flex-row">
-        <img className="col-2 me-3" src="https://placehold.co/140x210" alt="Book cover" />
-        <div className="col">
-          <p className="mb-4">{description}</p>
+      <>
+        <div className="detail-container p-4">
+          <Link to="/books">Back</Link>
+          <h1 className="text-primary">{title}</h1>
+          <div className="d-flex flex-wrap row-cols-1 row-cols-sm-2">
+            <img className="" src="https://placehold.co/140x210" alt="Book cover" />
+            <div className="">
+              <p className="mb-0 ms-sm-4 ms-0 my-sm-0 my-4">{description}</p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="actions">
-        <div className="d-flex flex-row justify-content-end align-items-center mb-2">
-          {physical && (
-            <>
-              <p className="me-4">COPIES <b className="tag copies">{physicalCopies}</b></p>
-              <p className="me-4">CURRENTLY AVAILABLE <b className="tag copies">{availableCopies}</b></p>
-              <button className="btn btn-primary" onClick={() => {addToCart(detail.book, CartItemType.BOOKING);}}>
-                Reservation
-              </button>
-            </>
-          )}
+        <div className="detail-container-actions">
+            {physical && (
+              <div className="d-flex flex-wrap justify-content-around align-items-center p-4 bg-dark text-light gap-3">
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                    <p className="fw-bold fs-3 m-0 text-center">{physicalCopies}</p>
+                    <p className="text-uppercase m-0 text-center">Copies</p>
+                </div>
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                    <p className="fw-bold fs-3 m-0 text-center">{availableCopies}</p>
+                    <p className="text-uppercase m-0 text-center">Currently available</p>
+                </div>
+                <button className="btn btn-warning text-dark" onClick={() => {addToCart(detail.book, CartItemType.BOOKING);}}>
+                    Reservation
+                </button>
+              </div>
+            )}
+            {ebook && (
+              <div className="d-flex flex-wrap justify-content-around align-items-center p-4 bg-light text-dark gap-md-3 gap-0">
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                    <p className="fw-bold fs-3 m-0 text-center">${ebookPrice}</p>
+                    <p className="text-uppercase m-0 text-center">Price</p>
+                </div>
+                <div className="spacer"></div>
+                <button className="btn btn-dark text-light" onClick={() => {addToCart(detail.book, CartItemType.PURCHASE);}}>
+                    Buy
+                </button>
+              </div>
+            )}
         </div>
-        <div className="d-flex flex-row justify-content-end align-items-center mb-2">
-          {ebook && (
-            <>
-              <p className="me-4">PRICE <b className="tag price">${ebookPrice}</b></p>
-              <button className="btn btn-warning" onClick={() => {addToCart(detail.book, CartItemType.PURCHASE);}}>
-                Buy
-              </button>
-            </>
-          )}
+        <div className="p-4">
+          <Reviews review={review} reviews={reviews} onUpdate={onUpdate} />
         </div>
-      </div>
-
-      <Reviews review={review} reviews={reviews} onUpdate={onUpdate} />
-    </div>
+    </>
   );
 };
 
