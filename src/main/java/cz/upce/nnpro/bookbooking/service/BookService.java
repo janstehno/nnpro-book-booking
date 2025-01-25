@@ -1,14 +1,19 @@
 package cz.upce.nnpro.bookbooking.service;
 
+import cz.upce.nnpro.bookbooking.dto.ResponseBookDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookReviewDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
+import cz.upce.nnpro.bookbooking.entity.Review;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -56,4 +61,37 @@ public class BookService implements ServiceInterface<Book> {
                                                                  .toList();
         return new ResponseBookDetailDTO(book, reviews);
     }
+
+    public List<ResponseBookDTO> getBest(int limit) {
+        List<Book> allBooks = getAll();
+        Map<Book, Double> bookRatings = calculateAverageRatings(allBooks);
+        return getTopRatedBooks(bookRatings, limit);
+    }
+
+    private Map<Book, Double> calculateAverageRatings(List<Book> books) {
+        return books.stream()
+                    .collect(Collectors.toMap(
+                            book -> book,
+                            book -> {
+                                List<Review> reviews = reviewService.getAllByBookId(book.getId());
+                                return reviews.stream()
+                                              .mapToInt(Review::getRating)
+                                              .average()
+                                              .orElse(0.0);
+                            }
+                    ));
+    }
+
+    private List<ResponseBookDTO> getTopRatedBooks(Map<Book, Double> bookRatings, int limit) {
+        return bookRatings.entrySet().stream()
+                          .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                          .limit(limit)
+                          .map(e -> {
+                              Book b = e.getKey();
+                              return ResponseBookDTO.builder().id(b.getId()).title(b.getTitle()).author(b.getAuthor()).rating(bookRatings.get(b)).build();
+                          })
+                          .toList();
+    }
+
+
 }
