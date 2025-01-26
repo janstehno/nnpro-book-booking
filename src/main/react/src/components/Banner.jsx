@@ -11,7 +11,7 @@ const Banner = () => {
             className="home-container-banner-overshadow overshadow p-4 d-flex flex-column justify-content-center
             align-items-center text-white">
             <div className="d-flex flex-column justify-content-center align-items-center">
-                <h2 className="section-title my-4 fs-1 text-uppercase">Subscribe to newsletter</h2>
+                <h2 className="section-title my-4 fs-1 text-uppercase text-center">Subscribe to newsletter</h2>
                 <p className="text-center">
                     Stay updated! Subscribe to our newsletter for the latest books, exclusive
                     offers, and more.

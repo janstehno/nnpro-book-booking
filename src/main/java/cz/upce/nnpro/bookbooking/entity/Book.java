@@ -1,7 +1,7 @@
 package cz.upce.nnpro.bookbooking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import cz.upce.nnpro.bookbooking.entity.enums.GenreE;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -52,7 +52,7 @@ public class Book {
     @Transient private Double rating = 0.0;
 
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
-    @Nullable
+    @JsonIgnore
     private List<Review> reviews;
 
     public Book(String title, String author, GenreE genre, String description, boolean isPhysical, boolean isEbook, int physicalCopies, int availableCopies,

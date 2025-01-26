@@ -265,7 +265,13 @@ body{
         width: 100% !important;
         max-width: 100% !important;
     }
-    .home-header p, .home-header-search{
+    .home-header p, .home-header-search, .home-container-text, .home-container-best-choice{
         width: 100%;
+    }
+    .home-container-best-choice .col{
+        padding: 0;
+    }
+    .home-container-banner .w-75{
+        width: 100% !important;
     }
 }

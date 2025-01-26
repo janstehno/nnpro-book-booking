@@ -31,7 +31,9 @@ const Home = () => {
 
   const filterBooks = (inputValue) => {
     return books.filter((b) =>
-      b.title.toLowerCase().includes(inputValue.toLowerCase())
+      b.title.toLowerCase().includes(inputValue.toLowerCase()) ||
+      b.author.toLowerCase().includes(inputValue.toLowerCase()) ||
+      b.genre.toLowerCase().includes(inputValue.toLowerCase())
     ).slice(0,7);
   };
 
@@ -78,12 +80,12 @@ const Home = () => {
             isClearable={true}
             isSearchable={true}
             formatOptionLabel={formatOptionLabel}
-            placeholder="Find your book..."
+            placeholder="Search by title, author, or genre..."
           />
         </div>
       </header>
       <div className="home-container main-container d-flex flex-column justify-content-center align-items-center">
-          <h2 className="text-uppercase my-4 text-start fs-1">Welcome in our library</h2>
+          <h2 className="my-4 fs-1 text-uppercase text-center fs-1">Welcome in our library</h2>
           <div className="home-container-text">
             <p>
               Vítejte v naší online knihovně, místě, kde se literatura setkává s moderní technologií. Nabízíme
@@ -99,7 +101,7 @@ const Home = () => {
               nadšenců do knih a objevte, jak snadné je mít svou vlastní knihovnu na dosah ruky.
             </p>
           </div>
-          <h2 className="text-uppercase my-4 text-start fs-1">Our best choices</h2>
+          <h2 className="my-4 fs-1 text-uppercase text-center fs-1">Our best choices</h2>
           <div className="home-container-best-choice row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
             {bestBooks.map((book)=>(
               <Book key={book.id} book={book}/>
