@@ -19,7 +19,6 @@ const Home = () => {
     try {
       const response = await api.get("/books");
       setBooks(response.data);
-      console.log(books);
     } catch {}
   };
   
@@ -27,7 +26,6 @@ const Home = () => {
       try {
         const response = await api.get("/books/best?limit=4");
         setBestBooks(response.data);
-        console.log(books);
       } catch {}
     };
 

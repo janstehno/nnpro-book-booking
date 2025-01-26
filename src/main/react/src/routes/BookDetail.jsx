@@ -68,7 +68,7 @@ const BookDetail = () => {
           <Link to="/books">Back</Link>
           <h1 className="text-primary">{title}</h1>
           <div className="d-flex flex-wrap row-cols-1 row-cols-sm-2">
-            <img className="" src="https://placehold.co/140x210" alt="Book cover" />
+            <img className="" src="https://placehold.co/170x210" alt="Book cover" />
             <div className="">
               <p className="mb-0 ms-sm-4 ms-0 my-sm-0 my-4">{description}</p>
             </div>
