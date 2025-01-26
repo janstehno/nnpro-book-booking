@@ -4,7 +4,6 @@ import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +11,6 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bookings")
@@ -53,6 +51,12 @@ public class Booking {
     @PrePersist
     protected void onCreate() {
         bookingDate = LocalDate.now();
+    }
+
+    public Booking(Order order, Book book, int count) {
+        this.order = order;
+        this.book = book;
+        this.count = count;
     }
 
     @Override

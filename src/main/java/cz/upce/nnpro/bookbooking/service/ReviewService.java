@@ -53,13 +53,13 @@ public class ReviewService implements ServiceInterface<Review> {
 
     public ResponseBookReviewDTO get(AppUser user, Long bookId) throws RuntimeException {
         final Review review = getByUserIdAndBookId(user.getId(), bookId);
-        return new ResponseBookReviewDTO(review.getId(), user.getFirstname(), user.getLastname(), review.getRating(), review.getText(), review.getDate());
+        return new ResponseBookReviewDTO(review);
     }
 
     public ResponseBookReviewDTO create(AppUser user, Book book, RequestBookReviewDTO data) {
-        final Review review = Review.builder().user(user).book(book).rating(data.getRating()).text(data.getText()).build();
+        final Review review = new Review(data.getText(), data.getRating(), user, book);
         create(review);
-        return new ResponseBookReviewDTO(review.getId(), user.getFirstname(), user.getLastname(), review.getRating(), review.getText(), review.getDate());
+        return new ResponseBookReviewDTO(review);
     }
 
     public ResponseBookReviewDTO update(AppUser user, Long bookId, RequestBookReviewDTO data) {
@@ -67,7 +67,7 @@ public class ReviewService implements ServiceInterface<Review> {
         review.setRating(data.getRating());
         review.setText(data.getText());
         update(review);
-        return new ResponseBookReviewDTO(review.getId(), user.getFirstname(), user.getLastname(), review.getRating(), review.getText(), review.getDate());
+        return new ResponseBookReviewDTO(review);
     }
 
     public void delete(AppUser user, Long bookId) {

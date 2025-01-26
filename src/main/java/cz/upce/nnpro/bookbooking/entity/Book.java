@@ -1,11 +1,14 @@
 package cz.upce.nnpro.bookbooking.entity;
 
 import cz.upce.nnpro.bookbooking.entity.enums.GenreE;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -45,5 +48,33 @@ public class Book {
     @Column
     @NotNull
     private double ebookPrice;
+
+    @Transient private Double rating = 0.0;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @Nullable
+    private List<Review> reviews;
+
+    public Book(String title, String author, GenreE genre, String description, boolean isPhysical, boolean isEbook, int physicalCopies, int availableCopies,
+                double ebookPrice) {
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.description = description;
+        this.isPhysical = isPhysical;
+        this.isEbook = isEbook;
+        this.physicalCopies = physicalCopies;
+        this.availableCopies = availableCopies;
+        this.ebookPrice = ebookPrice;
+    }
+
+    public Double getRating() {
+        int rating = 0;
+        assert reviews != null;
+        for (Review review : reviews) {
+            rating += review.getRating();
+        }
+        return rating == 0 ? 0.0 : (double) rating / reviews.size();
+    }
 }
 

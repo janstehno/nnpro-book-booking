@@ -2,17 +2,19 @@ package cz.upce.nnpro.bookbooking.service;
 
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
-import cz.upce.nnpro.bookbooking.dto.ResponseBookReviewDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponseBooksDTO;
 import cz.upce.nnpro.bookbooking.entity.Book;
-import cz.upce.nnpro.bookbooking.entity.Review;
+import cz.upce.nnpro.bookbooking.entity.enums.GenreE;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.BookRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,8 +22,6 @@ import java.util.stream.Collectors;
 public class BookService implements ServiceInterface<Book> {
 
     private final BookRepository bookRepository;
-
-    private final ReviewService reviewService;
 
     @Override
     public List<Book> getAll() {
@@ -48,50 +48,41 @@ public class BookService implements ServiceInterface<Book> {
         bookRepository.deleteById(id);
     }
 
-    public ResponseBookDetailDTO get(Long bookId) {
+    public ResponseBookDetailDTO getBookDetail(Long bookId) {
         final Book book = getById(bookId);
-        final List<ResponseBookReviewDTO> reviews = reviewService.getAllByBookId(book.getId())
-                                                                 .stream()
-                                                                 .map(r -> new ResponseBookReviewDTO(r.getId(),
-                                                                                                     r.getUser().getFirstname(),
-                                                                                                     r.getUser().getLastname(),
-                                                                                                     r.getRating(),
-                                                                                                     r.getText(),
-                                                                                                     r.getDate()))
-                                                                 .toList();
-        return new ResponseBookDetailDTO(book, reviews);
+        return new ResponseBookDetailDTO(book);
     }
 
     public List<ResponseBookDTO> getBest(int limit) {
         List<Book> allBooks = getAll();
-        Map<Book, Double> bookRatings = calculateAverageRatings(allBooks);
-        return getTopRatedBooks(bookRatings, limit);
+        return allBooks.stream().sorted(Comparator.comparing(Book::getRating)).limit(limit).map(ResponseBookDTO::new).toList();
     }
 
-    private Map<Book, Double> calculateAverageRatings(List<Book> books) {
-        return books.stream()
-                    .collect(Collectors.toMap(
-                            book -> book,
-                            book -> {
-                                List<Review> reviews = reviewService.getAllByBookId(book.getId());
-                                return reviews.stream()
-                                              .mapToInt(Review::getRating)
-                                              .average()
-                                              .orElse(0.0);
-                            }
-                    ));
+    public ResponseBooksDTO getAllBooksFiltered(List<String> genres, String sort, int page, int size) {
+        Pageable pageable = getAllBooksFilteredPageable(sort, page, size);
+
+        Page<ResponseBookDTO> bookPage;
+        Set<GenreE> genreEnums = genres.stream()
+                                       .map(String::toUpperCase)
+                                       .filter(name -> Arrays.stream(GenreE.values()).anyMatch(e -> e.name().equals(name)))
+                                       .map(GenreE::valueOf)
+                                       .collect(Collectors.toSet());
+        if (!genreEnums.isEmpty()) {
+            bookPage = bookRepository.findByGenreIn(genreEnums, pageable).map(ResponseBookDTO::new);
+        } else {
+            bookPage = bookRepository.findAll(pageable).map(ResponseBookDTO::new);
+        }
+
+        return new ResponseBooksDTO(bookPage.getContent(), bookPage.getTotalElements());
     }
 
-    private List<ResponseBookDTO> getTopRatedBooks(Map<Book, Double> bookRatings, int limit) {
-        return bookRatings.entrySet().stream()
-                          .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
-                          .limit(limit)
-                          .map(e -> {
-                              Book b = e.getKey();
-                              return ResponseBookDTO.builder().id(b.getId()).title(b.getTitle()).author(b.getAuthor()).rating(bookRatings.get(b)).build();
-                          })
-                          .toList();
+    private Pageable getAllBooksFilteredPageable(String sortBy, int page, int size) {
+        Sort sort = switch (sortBy) {
+            case "rating" -> Sort.by(Sort.Direction.DESC, "rating");
+            case "price-desc" -> Sort.by(Sort.Direction.DESC, "ebookPrice");
+            case "price-asc" -> Sort.by(Sort.Direction.ASC, "ebookPrice");
+            default -> Sort.by(Sort.Direction.ASC, "title");
+        };
+        return PageRequest.of(page - 1, size, sort);
     }
-
-
 }

@@ -1,7 +1,6 @@
 package cz.upce.nnpro.bookbooking.service;
 
 import cz.upce.nnpro.bookbooking.dto.RequestOrderDTO;
-import cz.upce.nnpro.bookbooking.dto.ResponseBookingDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseOrderDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
@@ -56,21 +55,12 @@ public class OrderService implements ServiceInterface<Order> {
     }
 
     public List<ResponseOrderDTO> getAllByUserId(Long userId) {
-        return orderRepository.findAllByUserId(userId).stream().map(o -> new ResponseOrderDTO(o.getId(), o.getDate(), null)).toList();
+        return orderRepository.findAllByUserId(userId).stream().map(ResponseOrderDTO::new).toList();
     }
 
     public ResponseOrderDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
         final Order order = orderRepository.findByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
-        return new ResponseOrderDTO(order.getId(), order.getDate(),
-                                    order.getBookings()
-                                         .stream()
-                                         .map(b -> new ResponseBookingDTO(b.getId(),
-                                                                          b.getBook(),
-                                                                          b.getCount(),
-                                                                          b.getStatus(),
-                                                                          b.getBookingDate(),
-                                                                          b.getExpirationDate()))
-                                         .toList());
+        return new ResponseOrderDTO(order);
     }
 
     @Transactional
@@ -88,7 +78,7 @@ public class OrderService implements ServiceInterface<Order> {
             int count = entry.getValue();
             if (count <= 0) continue;
             if (count > book.getPhysicalCopies()) count = book.getPhysicalCopies();
-            Booking booking = Booking.builder().order(order).book(book).count(count).build();
+            Booking booking = new Booking(order, book, count);
 
             bookingService.handleReservation(booking);
 
@@ -101,6 +91,6 @@ public class OrderService implements ServiceInterface<Order> {
 
         mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
 
-        return new ResponseOrderDTO(savedOrder.getId(), savedOrder.getDate(), null);
+        return new ResponseOrderDTO(savedOrder);
     }
 }

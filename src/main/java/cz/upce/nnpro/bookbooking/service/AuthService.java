@@ -39,14 +39,12 @@ public class AuthService {
         if (userService.emailExists(registerRequest.getEmail())) throw new CustomExceptionHandler.EmailExistsException();
         if (userService.usernameExists(registerRequest.getUsername())) throw new CustomExceptionHandler.UsernameExistsException();
 
-        final AppUser user = AppUser.builder()
-                                    .firstname(registerRequest.getFirstname())
-                                    .lastname(registerRequest.getLastname())
-                                    .email(registerRequest.getEmail())
-                                    .username(registerRequest.getUsername())
-                                    .password(passwordEncoder.encode(registerRequest.getPassword()))
-                                    .role(roleService.getByName(RoleE.USER))
-                                    .build();
+        final AppUser user = new AppUser(registerRequest.getFirstname(),
+                                         registerRequest.getLastname(),
+                                         registerRequest.getEmail(),
+                                         registerRequest.getUsername(),
+                                         passwordEncoder.encode(registerRequest.getPassword()),
+                                         roleService.getByName(RoleE.USER));
 
         AppUser registered = userService.create(user);
         return returnAuthenticatedUser(registered);
@@ -71,7 +69,7 @@ public class AuthService {
 
         if (user != null) {
             final String token = jwtService.generateResetToken(user);
-            ResetToken resetToken = ResetToken.builder().token(token).user(user).expiration(LocalDateTime.now().plusMinutes(15)).build();
+            ResetToken resetToken = new ResetToken(token, user, LocalDateTime.now().plusMinutes(15));
             resetTokenService.create(resetToken);
 
             String appUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort();
@@ -114,11 +112,6 @@ public class AuthService {
 
     private ResponseEntity<?> returnAuthenticatedUser(AppUser user) {
         final String token = jwtService.generateToken(user);
-        return ResponseEntity.ok(AuthenticationResponse.builder()
-                                                       .id(user.getId())
-                                                       .firstname(user.getFirstname())
-                                                       .lastname(user.getLastname())
-                                                       .token(token)
-                                                       .build());
+        return ResponseEntity.ok(new ResponseAuthentication(user, token));
     }
 }

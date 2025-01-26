@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -18,7 +17,6 @@ import java.util.Collections;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
@@ -61,12 +59,13 @@ public class AppUser implements UserDetails {
     @NotNull
     private Role role;
 
-    public AppUser(String firstname, String lastname, String email, String username, String password) {
+    public AppUser(String firstname, String lastname, String email, String username, String password, Role role) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     @Override

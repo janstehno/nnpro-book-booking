@@ -1,15 +1,23 @@
 package cz.upce.nnpro.bookbooking.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import cz.upce.nnpro.bookbooking.entity.Book;
 import lombok.Data;
 
 @Data
-@Builder
-@AllArgsConstructor
 public class ResponseBookDTO {
     private Long id;
     private String title;
     private String author;
-    private double rating;
+    private Integer available;
+    private Double price;
+    private Double rating;
+
+    public ResponseBookDTO(Book book) {
+        this.id = book.getId();
+        this.title = book.getTitle();
+        this.author = book.getAuthor();
+        this.available = book.getAvailableCopies();
+        this.price = book.getEbookPrice();
+        this.rating = book.getRating();
+    }
 }

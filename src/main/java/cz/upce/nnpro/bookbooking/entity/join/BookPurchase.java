@@ -30,6 +30,11 @@ public class BookPurchase {
     @NotNull
     private Book book;
 
+    public BookPurchase(Book book, Purchase purchase) {
+        this.book = book;
+        this.purchase = purchase;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -21,18 +21,13 @@ public class AdminService {
     public List<ResponseBookingDTO> getAllByUserId(Long userId) {
         return bookingService.getAllByOrderUserId(userId)
                              .stream()
-                             .map(b -> new ResponseBookingDTO(b.getId(),
-                                                              b.getBook(),
-                                                              b.getCount(),
-                                                              b.getStatus(),
-                                                              b.getBookingDate(),
-                                                              b.getExpirationDate()))
+                             .map(ResponseBookingDTO::new)
                              .toList();
     }
 
     @Transactional
     public void updateReturnedBooks(Long userId, List<Long> bookingIds) {
-        if(bookingIds == null || bookingIds.isEmpty()) return;
+        if (bookingIds == null || bookingIds.isEmpty()) return;
         List<Booking> bookings = bookingService.getAllByOrderUserIdAndIdIn(userId, bookingIds);
         for (Booking booking : bookings) {
             if (booking.getStatus().equals(StatusE.AVAILABLE) || restrictedStatus.contains(booking.getStatus())) continue;
@@ -42,7 +37,7 @@ public class AdminService {
 
     @Transactional
     public void updateLoanedBooks(Long userId, List<Long> bookingIds) {
-        if(bookingIds == null || bookingIds.isEmpty()) return;
+        if (bookingIds == null || bookingIds.isEmpty()) return;
         List<Booking> bookings = bookingService.getAllByOrderUserIdAndIdIn(userId, bookingIds);
         for (Booking booking : bookings) {
             if (booking.getStatus().equals(StatusE.LOANED) || restrictedStatus.contains(booking.getStatus())) continue;
