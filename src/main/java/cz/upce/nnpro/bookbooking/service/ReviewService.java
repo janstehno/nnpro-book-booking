@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -57,8 +58,18 @@ public class ReviewService implements ServiceInterface<Review> {
     }
 
     public ResponseBookReviewDTO create(AppUser user, Book book, RequestBookReviewDTO data) {
-        final Review review = new Review(data.getText(), data.getRating(), user, book);
-        create(review);
+        Optional<Review> existingReview = reviewRepository.findByUserIdAndBookId(user.getId(), book.getId());
+        Review review;
+
+        if (existingReview.isPresent()) {
+            review = existingReview.get();
+            review.setRating(data.getRating());
+            review.setText(data.getText());
+            update(review);
+        } else {
+            review = create(new Review(data.getText(), data.getRating(), user, book));
+        }
+
         return new ResponseBookReviewDTO(review);
     }
 

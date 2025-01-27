@@ -1,7 +1,6 @@
 package cz.upce.nnpro.bookbooking.dto;
 
 import cz.upce.nnpro.bookbooking.entity.Book;
-import cz.upce.nnpro.bookbooking.entity.Review;
 import lombok.Data;
 
 import java.util.List;

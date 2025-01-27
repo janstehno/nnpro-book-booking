@@ -38,6 +38,10 @@ public class BookService implements ServiceInterface<Book> {
         return bookRepository.save(book);
     }
 
+    public List<Book> createAll(List<Book> books) {
+        return bookRepository.saveAll(books);
+    }
+
     @Override
     public Book update(Book book) {
         return bookRepository.save(book);

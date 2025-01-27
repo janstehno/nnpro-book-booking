@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -53,7 +54,7 @@ public class Book {
 
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
     @JsonIgnore
-    private List<Review> reviews;
+    private List<Review> reviews = Collections.emptyList();
 
     public Book(String title, String author, GenreE genre, String description, boolean isPhysical, boolean isEbook, int physicalCopies, int availableCopies,
                 double ebookPrice) {
@@ -69,8 +70,9 @@ public class Book {
     }
 
     public Double getRating() {
+        if (reviews.isEmpty()) return 0.0;
+
         int rating = 0;
-        assert reviews != null;
         for (Review review : reviews) {
             rating += review.getRating();
         }

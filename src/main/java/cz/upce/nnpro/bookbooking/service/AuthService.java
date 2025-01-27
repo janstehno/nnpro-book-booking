@@ -84,8 +84,16 @@ public class AuthService {
     public ResponseEntity<?> passwordReset(PasswordResetDTO passwordResetDTO) throws RuntimeException {
         if (passwordResetDTO.getNewPassword().equals(passwordResetDTO.getConfirmPassword())) {
             String token = passwordResetDTO.getToken();
-            String username = jwtService.extractUsername(token);
-            AppUser user = userService.getByUsername(username);
+
+            String username;
+            AppUser user;
+
+            try {
+                username = jwtService.extractUsername(token);
+                user = userService.getByUsername(username);
+            } catch (Exception e) {
+                throw new CustomExceptionHandler.InvalidTokenException();
+            }
 
             if (user != null) {
                 if (username == null || !jwtService.isTokenValid(token, user)) {

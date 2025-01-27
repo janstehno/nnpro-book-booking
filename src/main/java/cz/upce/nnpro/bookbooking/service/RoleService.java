@@ -13,6 +13,10 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
 
+    public Role create(Role role) {
+        return roleRepository.save(role);
+    }
+
     public Role getById(Long id) throws RuntimeException {
         return roleRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
