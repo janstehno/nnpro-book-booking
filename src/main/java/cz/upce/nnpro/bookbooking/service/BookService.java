@@ -55,7 +55,7 @@ public class BookService implements ServiceInterface<Book> {
 
     public List<ResponseBookDTO> getBest(int limit) {
         List<Book> allBooks = getAll();
-        return allBooks.stream().sorted(Comparator.comparing(Book::getRating)).limit(limit).map(ResponseBookDTO::new).toList();
+        return allBooks.stream().sorted(Comparator.comparing(Book::getRating, Comparator.reverseOrder())).limit(limit).map(ResponseBookDTO::new).toList();
     }
 
     public ResponseBooksDTO getAllBooksFiltered(List<String> genres, String sort, int page, int size) {
@@ -78,7 +78,6 @@ public class BookService implements ServiceInterface<Book> {
 
     private Pageable getAllBooksFilteredPageable(String sortBy, int page, int size) {
         Sort sort = switch (sortBy) {
-            case "rating" -> Sort.by(Sort.Direction.DESC, "rating");
             case "price-desc" -> Sort.by(Sort.Direction.DESC, "ebookPrice");
             case "price-asc" -> Sort.by(Sort.Direction.ASC, "ebookPrice");
             default -> Sort.by(Sort.Direction.ASC, "title");

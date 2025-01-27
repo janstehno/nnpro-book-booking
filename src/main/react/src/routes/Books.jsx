@@ -91,12 +91,6 @@ const Books = () => {
             }`}
             onClick={() => setSortOption("price-desc")}
           >Price-high to low</button>
-          <button
-            className={`btn rounded-0 ${
-              sortOption === "rating" ? "btn-primary" : "btn-outline-primary"
-            }`}
-            onClick={() => setSortOption("rating")}
-          >Average ratings</button>
         </div>
       </div>
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
