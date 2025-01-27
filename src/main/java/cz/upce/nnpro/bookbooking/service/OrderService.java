@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -64,27 +63,12 @@ public class OrderService implements ServiceInterface<Order> {
     }
 
     @Transactional
-    public ResponseOrderDTO create(AppUser user, RequestOrderDTO data) {
+    public ResponseOrderDTO create(AppUser user, List<RequestOrderDTO> data) {
         Order order = new Order();
         order.setUser(user);
         order = create(order);
 
-        Set<Booking> bookings = new HashSet<>();
-
-        for (Map.Entry<Long, Integer> entry : data.getBooks().entrySet()) {
-            Book book = bookService.getById(entry.getKey());
-            if (book == null || !book.isPhysical()) continue;
-
-            int count = entry.getValue();
-            if (count <= 0) continue;
-            if (count > book.getPhysicalCopies()) count = book.getPhysicalCopies();
-            Booking booking = new Booking(order, book, count);
-
-            bookingService.handleReservation(booking);
-
-            bookings.add(booking);
-            bookService.update(book);
-        }
+        Set<Booking> bookings = new HashSet<>(createBookings(order, data));
 
         order.setBookings(bookingService.createAll(bookings));
         Order savedOrder = orderRepository.save(order);
@@ -92,5 +76,34 @@ public class OrderService implements ServiceInterface<Order> {
         mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
 
         return new ResponseOrderDTO(savedOrder);
+    }
+
+    private Set<Booking> createBookings(Order order, List<RequestOrderDTO> data) {
+        Set<Booking> bookings = new HashSet<>();
+
+        for (RequestOrderDTO d : data) {
+            Book book = bookService.getById(d.getId());
+            if (book == null || !book.isPhysical()) continue;
+
+            boolean online = d.isOnline();
+            int count = d.getCount();
+
+            if (d.isOnline()) {
+                count = 0;
+                if (!book.isOnline()) online = false;
+            } else {
+                if (count <= 0) continue;
+                if (count > book.getPhysicalCopies()) count = book.getPhysicalCopies();
+            }
+
+            Booking booking = new Booking(order, book, count, online);
+
+            bookingService.handleReservation(booking);
+
+            bookings.add(booking);
+            bookService.update(book);
+        }
+
+        return bookings;
     }
 }

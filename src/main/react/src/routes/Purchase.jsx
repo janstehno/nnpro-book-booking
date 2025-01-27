@@ -18,6 +18,7 @@ const Purchase = () => {
     try {
       const response = await api.get(`/purchases/${purchaseId}`);
       setPurchase(response.data);
+      console.log(response.data);
     } catch {}
     setLoading(false);
   };
@@ -35,6 +36,7 @@ const Purchase = () => {
           <thead>
             <tr>
               <th scope="col">Title</th>
+              <th scope="col">Count</th>
               <th scope="col">Price</th>
             </tr>
           </thead>
@@ -43,11 +45,19 @@ const Purchase = () => {
               return (
                 <tr key={book.id}>
                   <td>{book.title}</td>
-                  <td>${book.ebookPrice}</td>
+                  <td>{book.count}</td>
+                  <td>${book.count * book.price}</td>
                 </tr>
               );
             })}
           </tbody>
+          <tfoot className="table-group-divider">
+            <tr>
+              <td className="border-0">Summary</td>
+              <td className="border-0">{purchase.books.reduce((total, book) => total + book.count, 0)}</td>
+              <td className="border-0">${purchase.books.reduce((total, book) => total + book.price * book.count, 0)}</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     )

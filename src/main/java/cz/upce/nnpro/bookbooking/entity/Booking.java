@@ -33,6 +33,10 @@ public class Booking {
     @NotNull
     private int count;
 
+    @Column
+    @NotNull
+    private boolean online;
+
     @Enumerated(EnumType.STRING)
     @Column
     @NotNull
@@ -53,10 +57,11 @@ public class Booking {
         bookingDate = LocalDate.now();
     }
 
-    public Booking(Order order, Book book, int count) {
+    public Booking(Order order, Book book, int count, boolean online) {
         this.order = order;
         this.book = book;
         this.count = count;
+        this.online = online;
     }
 
     @Override

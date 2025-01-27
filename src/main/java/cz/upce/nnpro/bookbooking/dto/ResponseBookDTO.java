@@ -9,6 +9,7 @@ public class ResponseBookDTO {
     private String title;
     private String author;
     private Integer available;
+    private Boolean online;
     private Double price;
     private Double rating;
 
@@ -17,6 +18,7 @@ public class ResponseBookDTO {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.available = book.getAvailableCopies();
+        this.online = book.isOnline();
         this.price = book.getEbookPrice();
         this.rating = book.getRating();
     }

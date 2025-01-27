@@ -38,19 +38,24 @@ const BookDetail = () => {
     setReview(review);
   }
 
-  const addToCart = (item, type) => {
-    const quantity = 1;
+  const addToCart = (item, type, online = false) => {
     const cart = JSON.parse(localStorage.getItem("booking-cart")) || [];
     const existingItemIndex = cart.findIndex(
-      (cartItem) => cartItem.id === item.id && cartItem.type === type
+      (cartItem) => cartItem.id === item.id && cartItem.type === type && cartItem.online === online
     );
 
     if (existingItemIndex > -1) {
-      if (cart[existingItemIndex].quantity < item.physicalCopies && type !== CartItemType.PURCHASE) {
+      if (!online && cart[existingItemIndex].quantity < item.physicalCopies) {
         cart[existingItemIndex].quantity += 1;
       }
     } else {
-      cart.push({ ...item, type, quantity });
+      const newItem = {
+        ...item,
+        type,
+        quantity: online ? 0 : 1,
+        online,
+      };
+      cart.push(newItem);
     }
 
     localStorage.setItem("booking-cart", JSON.stringify(cart));
@@ -59,7 +64,7 @@ const BookDetail = () => {
 
   if (!detail) return <Loading />;
 
-  const { title, description, ebookPrice, physical, physicalCopies, availableCopies, ebook } = detail.book;
+  const { title, description, ebookPrice, physical, online, physicalCopies, availableCopies, ebook } = detail.book;
   const reviews = detail.reviews;
 
   return (
@@ -68,9 +73,15 @@ const BookDetail = () => {
           <Link to="/books">Back</Link>
           <h1 className="text-primary">{title}</h1>
           <div className="d-flex flex-wrap row-cols-1 row-cols-sm-2">
-            <img className="" src="https://placehold.co/170x210" alt="Book cover" />
-            <div className="">
+            <img src="https://placehold.co/170x210" alt="Book cover" />
+            <div className="d-flex flex-column gap-2 justify-content-between">
               <p className="mb-0 ms-sm-4 ms-0 my-sm-0 my-4">{description}</p>
+              {online && (
+                <button className="mb-0 ms-sm-4 ms-0 my-sm-0 my-4 btn btn-primary text-light d-flex align-self-end"
+                  onClick={() => {addToCart(detail.book, CartItemType.ONLINE, true);}}>
+                  Book Online
+                </button>
+              )}
             </div>
           </div>
         </div>

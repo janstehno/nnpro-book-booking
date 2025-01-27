@@ -55,11 +55,11 @@ public class PurchaseService implements ServiceInterface<Purchase> {
     }
 
     public ResponsePurchaseDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
-        final Purchase purchase = purchaseRepository.findAllByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
+        final Purchase purchase = purchaseRepository.findByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
         return new ResponsePurchaseDTO(purchase);
     }
 
-    public ResponsePurchaseDTO create(AppUser user, RequestPurchaseDTO data) {
+    public ResponsePurchaseDTO create(AppUser user, List<RequestPurchaseDTO> data) {
         Purchase purchase = new Purchase();
         purchase.setUser(user);
         purchase = create(purchase);
@@ -67,12 +67,12 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         Set<BookPurchase> bookPurchases = new HashSet<>();
         double price = 0.0;
 
-        for (Long bookId : data.getBookIds()) {
-            Book book = bookService.getById(bookId);
-            if (book == null || !book.isEbook()) continue;
+        for (RequestPurchaseDTO d : data) {
+            Book book = bookService.getById(d.getId());
+            if (book == null || !book.isEbook() || d.getCount() <= 0) continue;
 
-            bookPurchases.add(new BookPurchase(book, purchase));
-            price += book.getEbookPrice();
+            bookPurchases.add(new BookPurchase(book, purchase, d.getCount()));
+            price += book.getEbookPrice() * d.getCount();
         }
 
         purchase.setPrice(price);

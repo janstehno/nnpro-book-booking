@@ -88,23 +88,27 @@ public class BookingService implements ServiceInterface<Booking> {
     }
 
     @Scheduled(cron = "0 0 1 * * ?")
-    public void checkAvailableBookingExpiration() {
+    public void checkOnlineBookingExpiration() {
+        checkExpirationFor(StatusE.AVAILABLE, StatusE.UNCLAIMED);
+        checkExpirationFor(StatusE.ONLINE, StatusE.RETURNED);
+    }
+
+    private void checkExpirationFor(StatusE status, StatusE target) {
         LocalDate today = LocalDate.now();
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Booking> availableBookingsPage = bookingRepository.findByStatus(StatusE.AVAILABLE, pageable);
+        Page<Booking> availableBookingsPage = bookingRepository.findByStatus(status, pageable);
         List<Booking> availableBookings = availableBookingsPage.getContent();
 
         for (Booking booking : availableBookings) {
             if (booking.getExpirationDate().isAfter(today)) {
-                booking.setStatus(StatusE.UNCLAIMED);
+                booking.setStatus(target);
                 bookingRepository.save(booking);
-
-                reserveBookForNextInLine(booking.getBook());
             }
         }
     }
 
+    @Transactional
     public void reserveBookForNextInLine(Book book) {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Booking> waitingBookingsPage = bookingRepository.findByBookAndStatusOrderByOrderDateAsc(book, StatusE.WAITING, pageable);
@@ -129,11 +133,16 @@ public class BookingService implements ServiceInterface<Booking> {
     }
 
     public void handleReservation(Booking booking) {
-        if (reserveBooks(booking.getBook(), booking.getCount())) {
-            setBookingAvailable(booking);
-        } else {
-            booking.setStatus(StatusE.WAITING);
-        }
+        if (booking.isOnline()) setOnlineBookingAvailable(booking);
+        else if (reserveBooks(booking.getBook(), booking.getCount())) setBookingAvailable(booking);
+        else booking.setStatus(StatusE.WAITING);
+    }
+
+    private void setOnlineBookingAvailable(Booking booking) {
+        booking.setStatus(StatusE.ONLINE);
+        booking.setLoanDate(LocalDate.now());
+        booking.setExpirationDate(LocalDate.now().plusDays(RESERVATION_VALIDITY_DAYS));
+        update(booking);
     }
 
     private void setBookingAvailable(Booking booking) {
@@ -158,6 +167,8 @@ public class BookingService implements ServiceInterface<Booking> {
     @Transactional
     public void cancelBooking(Long userId, Long orderId, Long bookingId) {
         Booking booking = getByOrderUserIdAndOrderIdAndId(userId, orderId, bookingId);
+
+        if (booking.isOnline()) return;
         freeBooks(booking.getBook(), booking.getCount());
         booking.setStatus(StatusE.CANCELED);
         update(booking);

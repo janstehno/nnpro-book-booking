@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import utils.TestUtils;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,7 +43,7 @@ class OrderBookingServiceIntegrationTest {
         AppUser user = userService.getByUsername(testRegisterRequest.getUsername());
         Book b1 = bookService.create(TestUtils.testBook("Book 1"));
         Book b2 = bookService.create(TestUtils.testBook("Book 2"));
-        RequestOrderDTO request = new RequestOrderDTO(Map.of(b1.getId(), 2, b2.getId(), 1));
+        List<RequestOrderDTO> request = List.of(new RequestOrderDTO(b1.getId(), 2, false), new RequestOrderDTO(b2.getId(), 1, false));
         ResponseOrderDTO response = orderService.create(user, request);
         assertNotNull(response.getBookings());
         return orderService.getById(response.getId());

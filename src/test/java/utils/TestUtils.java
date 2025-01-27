@@ -13,7 +13,7 @@ public class TestUtils {
     }
 
     public static Book testBook() {
-        return new Book("Test Book", "Author", GenreE.ACTION, "Description", true, true, 5, 3, 20.0);
+        return new Book("Test Book", "Author", GenreE.ACTION, "Description", true, true, true, 5, 3, 20.0);
     }
 
     public static Book testBook(String title) {
@@ -33,6 +33,10 @@ public class TestUtils {
     }
 
     public static Booking testBooking(Order order, Book book) {
-        return new Booking(order, book, 2);
+        return new Booking(order, book, 2, false);
+    }
+
+    public static Booking testOnlineBooking(Order order, Book book) {
+        return new Booking(order, book, 0, true);
     }
 }

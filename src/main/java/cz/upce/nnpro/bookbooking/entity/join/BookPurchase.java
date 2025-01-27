@@ -30,9 +30,14 @@ public class BookPurchase {
     @NotNull
     private Book book;
 
-    public BookPurchase(Book book, Purchase purchase) {
+    @Column
+    @NotNull
+    private Integer count;
+
+    public BookPurchase(Book book, Purchase purchase, Integer count) {
         this.book = book;
         this.purchase = purchase;
+        this.count = count;
     }
 
     @Override

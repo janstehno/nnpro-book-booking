@@ -1,50 +1,46 @@
 import React, { useState, useEffect } from "react";
 import api from "~/axios.config";
 import { useNavigate } from "react-router-dom";
+
 import CartItemType from "@/utils/CartItemType";
+import CartItems from "@/components/CartItems";
 
 const Cart = () => {
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("booking-cart")) || []);
   const navigate = useNavigate();
 
-  const bookingItems = cart.filter(item => item.type === CartItemType.BOOKING);
+  const bookingItems = cart.filter(item => item.type === CartItemType.BOOKING || item.type === CartItemType.ONLINE);
   const purchaseItems = cart.filter(item => item.type === CartItemType.PURCHASE);
 
   useEffect(() => {
     localStorage.setItem("booking-cart", JSON.stringify(cart));
   }, [cart]);
 
-  const handleQuantityChange = (itemId, increment) => {
-    let updatedCart = [...cart];
-    const itemIndex = updatedCart.findIndex(item => item.id === itemId);
-    if (itemIndex !== -1) {
-      let updatedQuantity = updatedCart[itemIndex].quantity + increment;
-      if (updatedQuantity <= updatedCart[itemIndex].physicalCopies && updatedQuantity >= 0) {
-        updatedCart[itemIndex].quantity = updatedQuantity;
-      }
-      if (updatedQuantity === 0) {
-        updatedCart.splice(itemIndex, 1);
-      }
-    setCart(updatedCart);
+  const handleQuantityChange = (changedItem, increment) => {
+      let updatedCart = [...cart];
+      const itemIndex = updatedCart.findIndex(item => item.id === changedItem.id && item.type === changedItem.type && item.online === changedItem.online);
+      if (itemIndex !== -1) {
+        let updatedQuantity = updatedCart[itemIndex].quantity + increment;
+        if (updatedQuantity <= updatedCart[itemIndex].physicalCopies && updatedQuantity >= 0) {
+         updatedCart[itemIndex].quantity = updatedQuantity;
+        }
+        if (updatedQuantity === 0) {
+          updatedCart.splice(itemIndex, 1);
+        }
+      setCart(updatedCart);
     }
   };
 
-  const renderCartItems = (items) => {
-    return items.map(item => (
-      <tr key={item.id}>
-        <td>{item.title}</td>
-        { item.type === CartItemType.BOOKING && <td>
-          <button className="btn btn-light minus" onClick={() => handleQuantityChange(item.id, -1)} disabled={item.quantity <= 0}>
-          <img src="/minus.png" alt="Minus" />
-          </button>
-          {item.quantity}
-          <button className="btn btn-light plus" onClick={() => handleQuantityChange(item.id, 1)} disabled={item.quantity >= item.physicalCopies}>
-          <img src="/plus.png" alt="Plus" />
-          </button>
-        </td> }
-        { item.type === CartItemType.PURCHASE && <td>{item.ebookPrice}</td> }
-      </tr>
-    ));
+  const handleOnlineToggle = (changedItem) => {
+    const updatedCart = cart.filter((item) => {
+      if (item.id === changedItem.id && item.type === changedItem.type && item.type == CartItemType.ONLINE && item.online === changedItem.online && item.online) {
+        return false;
+      }
+      return true;
+    });
+
+    setCart(updatedCart);
+    localStorage.setItem("booking-cart", JSON.stringify(updatedCart));
   };
 
   const handleSubmitAll = async () => {
@@ -53,20 +49,20 @@ const Cart = () => {
         type: "booking",
         items: bookingItems,
         url: "/orders/new",
-        transformData: (items) => ({
-          books: items.reduce((map, item) => {
-            map[item.id] = item.quantity;
-            return map;
-          }, {})
-        }),
+        transformData: (items) => items.map((item) => ({
+          id: item.id,
+          count: item.quantity,
+          online: item.online,
+        })),
       },
       {
         type: "purchase",
         items: purchaseItems,
         url: "/purchases/new",
-        transformData: (items) => ({
-          bookIds: items.map(item => item.id),
-        }),
+        transformData: (items) => items.map((item) => ({
+          id: item.id,
+          count: item.quantity,
+        })),
       },
     ];
 
@@ -95,10 +91,15 @@ const Cart = () => {
               <tr>
                 <th className="col-3">Title</th>
                 <th className="col-1">Quantity</th>
+                <th className="col-1">Book Online</th>
               </tr>
             </thead>
             <tbody>
-              {renderCartItems(bookingItems)}
+              <CartItems
+                items={bookingItems}
+                onQuantityChange={handleQuantityChange}
+                onOnlineToggle={handleOnlineToggle}
+              />
             </tbody>
           </table>
         ) : (
@@ -112,11 +113,16 @@ const Cart = () => {
             <thead>
               <tr>
                 <th className="col-3">Title</th>
+                <th className="col-1">Quantity</th>
                 <th className="col-1">Price</th>
               </tr>
             </thead>
             <tbody>
-              {renderCartItems(purchaseItems)}
+              <CartItems
+                items={purchaseItems}
+                onQuantityChange={handleQuantityChange}
+                onOnlineToggle={handleOnlineToggle}
+              />
             </tbody>
           </table>
         ) : (
@@ -133,6 +139,6 @@ const Cart = () => {
       )}
     </div>
   );
-}
+};
 
 export default Cart;

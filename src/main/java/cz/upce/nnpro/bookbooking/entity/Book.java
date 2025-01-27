@@ -42,6 +42,8 @@ public class Book {
     @NotNull
     private boolean isEbook;
 
+    @Column private boolean isOnline;
+
     @Column private int physicalCopies;
 
     @Column private int availableCopies;
@@ -56,7 +58,8 @@ public class Book {
     @JsonIgnore
     private List<Review> reviews = Collections.emptyList();
 
-    public Book(String title, String author, GenreE genre, String description, boolean isPhysical, boolean isEbook, int physicalCopies, int availableCopies,
+    public Book(String title, String author, GenreE genre, String description, boolean isPhysical, boolean isEbook, boolean isOnline,
+                int physicalCopies, int availableCopies,
                 double ebookPrice) {
         this.title = title;
         this.author = author;
@@ -64,6 +67,7 @@ public class Book {
         this.description = description;
         this.isPhysical = isPhysical;
         this.isEbook = isEbook;
+        this.isOnline = isOnline;
         this.physicalCopies = physicalCopies;
         this.availableCopies = availableCopies;
         this.ebookPrice = ebookPrice;

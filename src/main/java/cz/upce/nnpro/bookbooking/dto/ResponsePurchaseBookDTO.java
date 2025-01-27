@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestOrderDTO {
+public class ResponsePurchaseBookDTO {
     private Long id;
+    private String title;
     private Integer count;
-    private boolean online;
+    private Double price;
 }

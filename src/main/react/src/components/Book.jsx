@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
 
 const Book = ({book}) => {
-
   return (
       <div className="col">
         <div className="book-card-container card h-100">
@@ -13,8 +11,9 @@ const Book = ({book}) => {
             {book.price && (
               <p className="book-price m-0 pt-2 border-top">${book.price}</p>
             )}
-            <div className="book-availability">
+            <div className="book-availability d-flex flex-wrap justify-content-between align-items-center">
               <p className="book-price m-0">Available: <b>{book.available}</b></p>
+              {book.online && ( <img className="book-online" src="online.svg" alt="Available online"/> )}
             </div>
           </div>
           <a className="text-decoration-none text-light" href={`/books/${book.id}`}>

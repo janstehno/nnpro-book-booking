@@ -67,7 +67,7 @@ const Order = () => {
               return (
                 <tr key={booking.book.id}>
                   <td>{booking.book.title}</td>
-                  <td>{booking.count}</td>
+                  <td>{booking.count === 0 ? null : booking.count}</td>
                   <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
                   <td>{new Date(booking.expirationDate).toLocaleDateString()}</td>
                   <td>

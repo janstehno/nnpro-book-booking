@@ -39,10 +39,10 @@ public class OrderController {
     public ResponseEntity<ResponseOrderDTO> createOrder(
             @RequestBody
             @Valid
-            RequestOrderDTO data,
+            List<RequestOrderDTO> orders,
             @AuthenticationPrincipal
             AppUser user) {
-        return ResponseEntity.ok(service.create(user, data));
+        return ResponseEntity.ok(service.create(user, orders));
     }
 
 }

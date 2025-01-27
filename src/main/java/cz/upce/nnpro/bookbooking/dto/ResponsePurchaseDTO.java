@@ -1,9 +1,6 @@
 package cz.upce.nnpro.bookbooking.dto;
 
-import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
-import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
-import jakarta.annotation.Nullable;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -14,12 +11,15 @@ public class ResponsePurchaseDTO {
     private Long id;
     private LocalDate date;
     private double price;
-    @Nullable private List<Book> books;
+    private List<ResponsePurchaseBookDTO> books;
 
     public ResponsePurchaseDTO(Purchase purchase) {
         this.id = purchase.getId();
         this.date = purchase.getDate();
         this.price = purchase.getPrice();
-        this.books = purchase.getBookPurchases().stream().map(BookPurchase::getBook).toList();
+        this.books = purchase.getBookPurchases()
+                             .stream()
+                             .map(bp -> new ResponsePurchaseBookDTO(bp.getBook().getId(), bp.getBook().getTitle(), bp.getCount(), bp.getBook().getEbookPrice()))
+                             .toList();
     }
 }

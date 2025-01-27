@@ -80,14 +80,16 @@ const UserBookings = () => {
                 booking.status === "AVAILABLE" ||
                 booking.status === "RETURNED" ||
                 booking.status === "UNCLAIMED" ||
-                booking.status === "CANCELED";
+                booking.status === "CANCELED" ||
+                booking.status === "ONLINE";
 
               const isLockedForLoan =
                 booking.status === "WAITING" ||
                 booking.status === "LOANED" ||
                 booking.status === "RETURNED" ||
                 booking.status === "UNCLAIMED" ||
-                booking.status === "CANCELED";
+                booking.status === "CANCELED" ||
+                booking.status === "ONLINE";
 
               return (
                 <tr key={booking.id}>
@@ -118,7 +120,7 @@ const UserBookings = () => {
                     />
                   </td>
                   <td>{booking.book.title}</td>
-                  <td>{booking.count}</td>
+                  <td>{booking.count === 0 ? null : booking.count}</td>
                   <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
                   <td>{new Date(booking.expirationDate).toLocaleDateString()}</td>
                   <td>

@@ -39,10 +39,10 @@ public class PurchaseController {
     public ResponseEntity<ResponsePurchaseDTO> createPurchase(
             @RequestBody
             @Valid
-            RequestPurchaseDTO data,
+            List<RequestPurchaseDTO> purchases,
             @AuthenticationPrincipal
             AppUser user) {
-        return ResponseEntity.ok(service.create(user, data));
+        return ResponseEntity.ok(service.create(user, purchases));
     }
 
 }

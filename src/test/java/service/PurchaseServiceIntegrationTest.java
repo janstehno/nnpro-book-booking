@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import utils.TestUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,8 +35,10 @@ class PurchaseServiceIntegrationTest {
         authService.register(testRegisterRequest);
         AppUser user = userService.getByUsername(testRegisterRequest.getUsername());
         Book b1 = bookService.create(TestUtils.testBook("Book 1"));
-        RequestPurchaseDTO request = new RequestPurchaseDTO(List.of(b1.getId()));
+
+        List<RequestPurchaseDTO> request = Collections.singletonList(new RequestPurchaseDTO(b1.getId(), 2));
         ResponsePurchaseDTO response = purchaseService.create(user, request);
+
         assertNotNull(response.getBooks());
         return purchaseService.getById(response.getId());
     }
@@ -74,13 +77,13 @@ class PurchaseServiceIntegrationTest {
         Book book1 = bookService.create(TestUtils.testBook("Book 1", 8.99));
         Book book2 = bookService.create(TestUtils.testBook("Book 2", 12.49));
 
-        RequestPurchaseDTO request = new RequestPurchaseDTO(List.of(book1.getId(), book2.getId()));
+        List<RequestPurchaseDTO> request = List.of(new RequestPurchaseDTO(book1.getId(), 1), new RequestPurchaseDTO(book2.getId(), 2));
 
         ResponsePurchaseDTO response = purchaseService.create(user, request);
         assertNotNull(response);
         assertNotNull(response.getBooks());
         assertEquals(2, response.getBooks().size());
-        assertEquals(response.getPrice(), 8.99 + 12.49);
+        assertEquals(response.getPrice(), 8.99 + 12.49 * 2);
     }
 
     @Test
@@ -91,9 +94,10 @@ class PurchaseServiceIntegrationTest {
         Book nonEbook = TestUtils.testBook("Non-Ebook Book");
         nonEbook.setEbook(false);
         Book nonEbookBook = bookService.create(nonEbook);
-        RequestPurchaseDTO request = new RequestPurchaseDTO(List.of(nonEbookBook.getId()));
 
+        List<RequestPurchaseDTO> request = Collections.singletonList(new RequestPurchaseDTO(nonEbookBook.getId(), 2));
         ResponsePurchaseDTO response = purchaseService.create(user, request);
+
         assertNotNull(response);
         assertNotNull(response.getBooks());
         assertTrue(response.getBooks().isEmpty());
@@ -104,9 +108,9 @@ class PurchaseServiceIntegrationTest {
         authService.register(testRegisterRequest);
         AppUser user = userService.getByUsername(testRegisterRequest.getUsername());
 
-        RequestPurchaseDTO request = new RequestPurchaseDTO(List.of());
-
+        List<RequestPurchaseDTO> request = Collections.emptyList();
         ResponsePurchaseDTO response = purchaseService.create(user, request);
+
         assertNotNull(response);
         assertNotNull(response.getBooks());
         assertTrue(response.getBooks().isEmpty());
