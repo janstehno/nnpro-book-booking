@@ -4,7 +4,6 @@ import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +11,6 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bookings")
@@ -35,6 +33,10 @@ public class Booking {
     @NotNull
     private int count;
 
+    @Column
+    @NotNull
+    private boolean online;
+
     @Enumerated(EnumType.STRING)
     @Column
     @NotNull
@@ -44,9 +46,7 @@ public class Booking {
     @NotNull
     private LocalDate bookingDate;
 
-    @Column
-    @NotNull
-    private LocalDate expirationDate;
+    @Column private LocalDate expirationDate;
 
     @Column private LocalDate loanDate;
 
@@ -56,5 +56,24 @@ public class Booking {
     protected void onCreate() {
         bookingDate = LocalDate.now();
     }
-}
 
+    public Booking(Order order, Book book, int count, boolean online) {
+        this.order = order;
+        this.book = book;
+        this.count = count;
+        this.online = online;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return id != null && id.equals(booking.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 + (id != null ? id.hashCode() : 0);
+    }
+}

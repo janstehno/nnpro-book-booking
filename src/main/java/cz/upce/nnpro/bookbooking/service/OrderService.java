@@ -1,19 +1,19 @@
 package cz.upce.nnpro.bookbooking.service;
 
-import cz.upce.nnpro.bookbooking.dto.OrderDTO;
+import cz.upce.nnpro.bookbooking.dto.RequestOrderDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponseOrderDTO;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
-import cz.upce.nnpro.bookbooking.entity.User;
-import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
-import cz.upce.nnpro.bookbooking.security.service.MailService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -24,6 +24,8 @@ public class OrderService implements ServiceInterface<Order> {
 
     private final BookService bookService;
 
+    private final BookingService bookingService;
+
     private final MailService mailService;
 
     @Override
@@ -32,46 +34,13 @@ public class OrderService implements ServiceInterface<Order> {
     }
 
     @Override
-    public Order getById(Long id) {
-        return orderRepository.findById(id).orElse(null);
+    public Order getById(Long id) throws RuntimeException {
+        return orderRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override
     public Order create(Order order) {
         return orderRepository.save(order);
-    }
-
-    public Order create(User user, OrderDTO data) {
-        Order order = new Order();
-        order.setUser(user);
-
-        Set<Booking> bookings = new HashSet<>();
-
-        for (Map.Entry<Long, Integer> entry : data.getBooks().entrySet()) {
-            Book book = bookService.getById(entry.getKey());
-            if (book == null || !book.isPhysical()) continue;
-
-            final int count = entry.getValue();
-            Booking booking = Booking.builder().order(order).book(book).count(count).build();
-
-            //TODO expirationDate
-            if (book.getAvailableCopies() >= count) {
-                booking.setStatus(StatusE.AVAILABLE);
-                book.setAvailableCopies(book.getAvailableCopies() - count);
-            } else {
-                booking.setStatus(StatusE.WAITING);
-            }
-
-            bookings.add(booking);
-            bookService.update(book);
-        }
-
-        order.setBookings(bookings);
-
-        Order savedOrder = orderRepository.save(order);
-        mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
-
-        return savedOrder;
     }
 
     @Override
@@ -84,11 +53,57 @@ public class OrderService implements ServiceInterface<Order> {
         orderRepository.deleteById(id);
     }
 
-    public List<Order> getAllByUserId(Long userId) {
-        return orderRepository.findAllByUserId(userId);
+    public List<ResponseOrderDTO> getAllByUserId(Long userId) {
+        return orderRepository.findAllByUserId(userId).stream().map(ResponseOrderDTO::new).toList();
     }
 
-    public Order getByIdAndUserId(Long id, Long userId) {
-        return orderRepository.findByIdAndUserId(id, userId);
+    public ResponseOrderDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
+        final Order order = orderRepository.findByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
+        return new ResponseOrderDTO(order);
+    }
+
+    @Transactional
+    public ResponseOrderDTO create(AppUser user, List<RequestOrderDTO> data) {
+        Order order = new Order();
+        order.setUser(user);
+        order = create(order);
+
+        Set<Booking> bookings = new HashSet<>(createBookings(order, data));
+
+        order.setBookings(bookingService.createAll(bookings));
+        Order savedOrder = orderRepository.save(order);
+
+        mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
+
+        return new ResponseOrderDTO(savedOrder);
+    }
+
+    private Set<Booking> createBookings(Order order, List<RequestOrderDTO> data) {
+        Set<Booking> bookings = new HashSet<>();
+
+        for (RequestOrderDTO d : data) {
+            Book book = bookService.getById(d.getId());
+            if (book == null || !book.isPhysical()) continue;
+
+            boolean online = d.isOnline();
+            int count = d.getCount();
+
+            if (d.isOnline()) {
+                count = 0;
+                if (!book.isOnline()) online = false;
+            } else {
+                if (count <= 0) continue;
+                if (count > book.getPhysicalCopies()) count = book.getPhysicalCopies();
+            }
+
+            Booking booking = new Booking(order, book, count, online);
+
+            bookingService.handleReservation(booking);
+
+            bookings.add(booking);
+            bookService.update(book);
+        }
+
+        return bookings;
     }
 }

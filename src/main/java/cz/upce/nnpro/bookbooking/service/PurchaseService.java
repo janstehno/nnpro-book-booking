@@ -1,12 +1,13 @@
 package cz.upce.nnpro.bookbooking.service;
 
-import cz.upce.nnpro.bookbooking.dto.PurchaseDTO;
+import cz.upce.nnpro.bookbooking.dto.RequestPurchaseDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponsePurchaseDTO;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
-import cz.upce.nnpro.bookbooking.entity.User;
 import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
+import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.PurchaseRepository;
-import cz.upce.nnpro.bookbooking.security.service.MailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,36 +31,13 @@ public class PurchaseService implements ServiceInterface<Purchase> {
     }
 
     @Override
-    public Purchase getById(Long id) {
-        return purchaseRepository.findById(id).orElse(null);
+    public Purchase getById(Long id) throws RuntimeException {
+        return purchaseRepository.findById(id).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
     @Override
     public Purchase create(Purchase purchase) {
         return purchaseRepository.save(purchase);
-    }
-
-    public Purchase create(User user, PurchaseDTO data) {
-        Purchase purchase = new Purchase();
-        purchase.setUser(user);
-
-        Set<BookPurchase> bookPurchases = new HashSet<>();
-        double price = 0.0;
-
-        for (Long bookId : data.getBookIds()) {
-            Book book = bookService.getById(bookId);
-            if (book == null || !book.isEbook()) continue;
-            bookPurchases.add(BookPurchase.builder().book(book).purchase(purchase).build());
-            price += book.getEbookPrice();
-        }
-
-        purchase.setPrice(price);
-        purchase.setBookPurchases(bookPurchases);
-
-        Purchase savedPurchase = purchaseRepository.save(purchase);
-        mailService.sendEmailAboutPurchase(user.getEmail(), savedPurchase);
-
-        return savedPurchase;
     }
 
     @Override
@@ -72,11 +50,37 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         purchaseRepository.deleteById(id);
     }
 
-    public List<Purchase> getAllByUserId(Long userId) {
-        return purchaseRepository.findAllByUserId(userId);
+    public List<ResponsePurchaseDTO> getAllByUserId(Long userId) {
+        return purchaseRepository.findAllByUserId(userId).stream().map(ResponsePurchaseDTO::new).toList();
     }
 
-    public Purchase getByIdAndUserId(Long id, Long userId) {
-        return purchaseRepository.findAllByIdAndUserId(id, userId);
+    public ResponsePurchaseDTO getByIdAndUserId(Long id, Long userId) throws RuntimeException {
+        final Purchase purchase = purchaseRepository.findByIdAndUserId(id, userId).orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
+        return new ResponsePurchaseDTO(purchase);
+    }
+
+    public ResponsePurchaseDTO create(AppUser user, List<RequestPurchaseDTO> data) {
+        Purchase purchase = new Purchase();
+        purchase.setUser(user);
+        purchase = create(purchase);
+
+        Set<BookPurchase> bookPurchases = new HashSet<>();
+        double price = 0.0;
+
+        for (RequestPurchaseDTO d : data) {
+            Book book = bookService.getById(d.getId());
+            if (book == null || !book.isEbook() || d.getCount() <= 0) continue;
+
+            bookPurchases.add(new BookPurchase(book, purchase, d.getCount()));
+            price += book.getEbookPrice() * d.getCount();
+        }
+
+        purchase.setPrice(price);
+        purchase.setBookPurchases(bookPurchases);
+        Purchase savedPurchase = purchaseRepository.save(purchase);
+
+        mailService.sendEmailAboutPurchase(user.getEmail(), savedPurchase);
+
+        return new ResponsePurchaseDTO(savedPurchase);
     }
 }

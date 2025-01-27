@@ -1,6 +1,8 @@
 package cz.upce.nnpro.bookbooking.configuration;
 
-import cz.upce.nnpro.bookbooking.security.jwt.JwtFilter;
+import cz.upce.nnpro.bookbooking.components.AuthorityLoggerFilter;
+import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
+import cz.upce.nnpro.bookbooking.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,16 +22,24 @@ public class SecurityConfiguration {
 
     private final JwtFilter jwtFilter;
 
+    private final AuthorityLoggerFilter authorityLoggerFilter;
+
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.cors(Customizer.withDefaults())
                    .csrf(AbstractHttpConfigurer::disable)
-                   .authorizeHttpRequests(a -> a.requestMatchers("/auth/**", "/books/**").permitAll().anyRequest().authenticated())
-                   .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .authenticationProvider(authenticationProvider)
+                   .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                   .addFilterBefore(authorityLoggerFilter, UsernamePasswordAuthenticationFilter.class)
+                   .authorizeHttpRequests(a -> a.requestMatchers("/auth/**", "/books/**")
+                                                .permitAll()
+                                                .requestMatchers("/admin/**")
+                                                .hasAuthority(RoleE.ADMIN.name())
+                                                .anyRequest()
+                                                .authenticated())
                    .build();
     }
 }

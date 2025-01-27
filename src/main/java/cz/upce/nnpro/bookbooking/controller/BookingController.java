@@ -1,53 +1,28 @@
 package cz.upce.nnpro.bookbooking.controller;
 
-import cz.upce.nnpro.bookbooking.entity.Booking;
-import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.service.BookingService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/bookings")
+@RequestMapping("/orders/{orderId}/bookings")
 public class BookingController {
 
     private final BookingService service;
 
-    @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Booking>> getAllBookingsOfUser(
+    @PostMapping("/{bookingId}/cancel")
+    public ResponseEntity<Void> cancelBookingById(
+            @AuthenticationPrincipal
+            AppUser user,
             @PathVariable
-            Long userId) {
-        final List<Booking> bookings = service.getAllByUserId(userId);
-        return ResponseEntity.ok(bookings);
-    }
-
-    @PutMapping("/{userId}/{id}/returned")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<StatusE> updateReturnedBooking(
+            Long orderId,
             @PathVariable
-            Long id) {
-        final Booking booking = service.getById(id);
-        if (booking == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        // TODO lock?
-        final StatusE status = service.updateReturned(booking);
-        return ResponseEntity.ok(status);
+            Long bookingId) {
+        service.cancelBooking(user.getId(), orderId, bookingId);
+        return ResponseEntity.ok().build();
     }
-
-    @PutMapping("/{userId}/{id}/loaned")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<StatusE> updateLoanedBooking(
-            @PathVariable
-            Long id) {
-        final Booking booking = service.getById(id);
-        if (booking == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        final StatusE status = service.updateLoaned(booking);
-        return ResponseEntity.ok(status);
-    }
-
 }

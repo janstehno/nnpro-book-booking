@@ -1,14 +1,14 @@
 package cz.upce.nnpro.bookbooking.repository;
 
-import cz.upce.nnpro.bookbooking.entity.User;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
+public interface UserRepository extends JpaRepository<AppUser, Long> {
+    Optional<AppUser> findByUsername(String username);
 
-    Optional<User> findByEmail(String email);
+    Optional<AppUser> findByEmail(String email);
 }

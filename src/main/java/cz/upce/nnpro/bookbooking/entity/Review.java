@@ -3,7 +3,6 @@ package cz.upce.nnpro.bookbooking.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,21 +10,20 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "reviews")
+@Table(name = "reviews", uniqueConstraints = {@UniqueConstraint(columnNames = {"USER_ID", "BOOK_ID"})})
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @NotNull
-    private User user;
+    private AppUser user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BOOK_ID")
     @NotNull
     private Book book;
@@ -34,7 +32,9 @@ public class Review {
     @NotNull
     private int rating;
 
-    @Column private String text;
+    @Column
+    @NotNull
+    private String text;
 
     @Column private LocalDate date;
 
@@ -47,5 +47,11 @@ public class Review {
     protected void onUpdate() {
         date = LocalDate.now();
     }
-}
 
+    public Review(String text, int rating, AppUser user, Book book) {
+        this.user = user;
+        this.book = book;
+        this.rating = rating;
+        this.text = text;
+    }
+}

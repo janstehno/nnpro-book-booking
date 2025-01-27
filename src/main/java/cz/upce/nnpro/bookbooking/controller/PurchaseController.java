@@ -1,15 +1,13 @@
 package cz.upce.nnpro.bookbooking.controller;
 
-import cz.upce.nnpro.bookbooking.dto.PurchaseDTO;
-import cz.upce.nnpro.bookbooking.entity.Purchase;
-import cz.upce.nnpro.bookbooking.entity.User;
-import cz.upce.nnpro.bookbooking.security.jwt.JwtService;
+import cz.upce.nnpro.bookbooking.dto.RequestPurchaseDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponsePurchaseDTO;
+import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.service.PurchaseService;
-import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,44 +19,30 @@ public class PurchaseController {
 
     private final PurchaseService service;
 
-    private final UserService userService;
-
-    private final JwtService jwtService;
-
     @GetMapping
-    public ResponseEntity<List<Purchase>> getAllPurchases(
-            @RequestHeader("Authorization")
-            String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
-        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        final List<Purchase> purchases = service.getAllByUserId(user.getId());
-        return ResponseEntity.ok(purchases);
+    public ResponseEntity<List<ResponsePurchaseDTO>> getAllPurchases(
+            @AuthenticationPrincipal
+            AppUser user) {
+        return ResponseEntity.ok(service.getAllByUserId(user.getId()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Purchase> getPurchaseById(
+    public ResponseEntity<ResponsePurchaseDTO> getPurchaseById(
             @PathVariable
             Long id,
-            @RequestHeader("Authorization")
-            String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
-        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        final Purchase purchase = service.getByIdAndUserId(id, user.getId());
-        if (purchase == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        return ResponseEntity.ok(purchase);
+            @AuthenticationPrincipal
+            AppUser user) {
+        return ResponseEntity.ok(service.getByIdAndUserId(id, user.getId()));
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Purchase> createPurchase(
+    public ResponseEntity<ResponsePurchaseDTO> createPurchase(
             @RequestBody
             @Valid
-            PurchaseDTO data,
-            @RequestHeader("Authorization")
-            String token) {
-        final User user = userService.getById(jwtService.extractUserId(token));
-        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        final Purchase purchase = service.create(user, data);
-        return ResponseEntity.ok(purchase);
+            List<RequestPurchaseDTO> purchases,
+            @AuthenticationPrincipal
+            AppUser user) {
+        return ResponseEntity.ok(service.create(user, purchases));
     }
 
 }
