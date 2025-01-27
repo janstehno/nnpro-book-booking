@@ -10,10 +10,7 @@ import cz.upce.nnpro.bookbooking.entity.Role;
 import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.security.JwtService;
-import cz.upce.nnpro.bookbooking.service.AuthService;
-import cz.upce.nnpro.bookbooking.service.ResetTokenService;
-import cz.upce.nnpro.bookbooking.service.RoleService;
-import cz.upce.nnpro.bookbooking.service.UserService;
+import cz.upce.nnpro.bookbooking.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +25,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import utils.TestUtils;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,6 +43,8 @@ class AuthServiceTest {
     @Mock private RoleService roleService;
 
     @Mock private JwtService jwtService;
+
+    @Mock private MailService mailService;
 
     @Mock private ResetTokenService resetTokenService;
 
@@ -95,11 +96,16 @@ class AuthServiceTest {
         PasswordResetRequest request = new PasswordResetRequest(user.getUsername());
 
         when(userService.getByUsername(request.getUsername())).thenReturn(user);
-        when(resetTokenService.create(any(ResetToken.class))).thenReturn(mock(ResetToken.class));
+
+        when(jwtService.generateResetToken(user)).thenReturn("mockedToken");
+        ResetToken mockToken = new ResetToken("mockedToken", user, LocalDateTime.now().plusMinutes(15));
+        when(resetTokenService.create(any(ResetToken.class))).thenReturn(mockToken);
+
+        doNothing().when(mailService).sendEmailAboutPasswordReset(anyString(), anyString());
 
         ResponseEntity<?> response = authService.passwordMail(request, mock(HttpServletRequest.class));
 
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
