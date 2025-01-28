@@ -74,9 +74,11 @@ const Order = () => {
                     <span className={`status ${booking.status.toLowerCase()}`}>{booking.status.toLowerCase()}</span>
                   </td>
                   <td>
-                    {(booking.status === "WAITING" || booking.status === "AVAILABLE") && (
+                    {(booking.status === "WAITING" || booking.status === "AVAILABLE") ? (
                       <button className="btn btn-danger text-light status" onClick={() => handleCancel(booking.id)}>Cancel</button>
-                    )}
+                    ) : booking.status === "ONLINE" ? (
+                      <button className="btn btn-light text-dark status">Show Online</button>
+                    ) : ( <></> )}
                   </td>
                 </tr>
               );

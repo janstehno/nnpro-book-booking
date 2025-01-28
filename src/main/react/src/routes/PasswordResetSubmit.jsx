@@ -31,9 +31,9 @@ const PasswordResetSubmit = () => {
   };
 
   return (
-    <div className="password-reset-submit-container main-container">
+    <div className="password-reset-submit-container main-container d-flex flex-column justify-content-center align-items-center">
       <h1 className="text-primary">Reset Password</h1>
-      <form onSubmit={handlePasswordReset}>
+      <form className="d-flex flex-column justify-content-center align-items-center" onSubmit={handlePasswordReset}>
         <input
           type="password"
           className="form-control"

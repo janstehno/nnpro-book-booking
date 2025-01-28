@@ -15,9 +15,9 @@ const PasswordReset = () => {
   };
 
   return (
-  <div className="password-reset-container main-container">
+  <div className="password-reset-container main-container d-flex flex-column justify-content-center align-items-center">
     <h1 className="text-primary">Password reset</h1>
-    <form onSubmit={handleResetRequest}>
+    <form className="d-flex flex-column justify-content-center align-items-center" onSubmit={handleResetRequest}>
       <input
         type="text"
         className="form-control"
