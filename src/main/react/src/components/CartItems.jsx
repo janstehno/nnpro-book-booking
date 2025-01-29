@@ -33,7 +33,8 @@ const CartItems = ({ items, onQuantityChange, onOnlineToggle }) => {
                 <button
                   className="btn btn-light plus p-1"
                   onClick={() => onQuantityChange(item, 1)}
-                  disabled={item.quantity >= item.physicalCopies}
+                  disabled={(item.type === CartItemType.PURCHASE && item.quantity >= 10) ||
+                  (item.type === CartItemType.BOOKING && item.quantity >= item.physicalCopies)}
                 >
                   <img className="w-100 p-0 m-0" src="/plus.png" alt="Plus" />
                 </button>
