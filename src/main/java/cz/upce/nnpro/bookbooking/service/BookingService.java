@@ -76,6 +76,7 @@ public class BookingService implements ServiceInterface<Booking> {
                                 .orElseThrow(CustomExceptionHandler.EntityNotFoundException::new);
     }
 
+    @Transactional
     public void updateReturned(Booking booking) {
         booking.setStatus(StatusE.RETURNED);
         booking.setReturnDate(LocalDate.now());
