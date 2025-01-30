@@ -36,7 +36,7 @@ public class MailService {
         if (!isServiceMailEnabled) return;
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("Book Booking");
+        message.setFrom("support@bookbooking.com");
         message.setTo(to);
         message.setSubject("Thank you for your purchase!");
 
@@ -60,7 +60,7 @@ public class MailService {
         if (!isServiceMailEnabled) return;
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("Book Booking");
+        message.setFrom("support@bookbooking.com");
         message.setTo(to);
         message.setSubject("Your Order Confirmation");
 
@@ -101,7 +101,7 @@ public class MailService {
         if (!isServiceMailEnabled) return;
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("Book Booking");
+        message.setFrom("support@bookbooking.com");
         message.setTo(booking.getOrder().getUser().getEmail());
         message.setSubject("Reserved Book Available Now");
 
