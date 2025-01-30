@@ -13,7 +13,6 @@ public class ResponseBookingDTO {
     private Long id;
     private Book book;
     private int count;
-    private boolean online;
     private StatusE status;
     private LocalDate bookingDate;
     @Nullable private LocalDate expirationDate;
@@ -22,7 +21,6 @@ public class ResponseBookingDTO {
         this.id = booking.getId();
         this.book = booking.getBook();
         this.count = booking.getCount();
-        this.online = booking.getStatus().equals(StatusE.LOANED) && booking.isOnline();
         this.status = booking.getStatus();
         this.bookingDate = booking.getBookingDate();
         this.expirationDate = booking.getExpirationDate();
