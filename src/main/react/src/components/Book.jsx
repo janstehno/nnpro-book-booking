@@ -7,9 +7,10 @@ const Book = ({book}) => {
           <img className="card-img-top" src="https://placehold.co/170x210" alt="Book cover" />
           <div className="card-body">
             <h5 className="card-title m-0">{book.title}</h5>
-            <p className="book-author m-0 pb-2">{book.author}</p>
-            {book.price && (
-              <p className="book-price m-0 pt-2 border-top">${book.price}</p>
+            <p className="book-author m-0">{book.author}</p>
+            <div className="my-2 border-top"></div>
+            {book.ebook && book.price && (
+              <p className="book-price m-0">${book.price}</p>
             )}
             <div className="book-availability d-flex flex-wrap justify-content-between align-items-center">
               <p className="book-price m-0">Available: <b>{book.available}</b></p>

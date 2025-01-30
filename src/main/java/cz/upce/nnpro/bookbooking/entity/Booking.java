@@ -1,6 +1,7 @@
 package cz.upce.nnpro.bookbooking.entity;
 
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ public class Booking {
 
     @Column
     @NotNull
+    @Transient
     private boolean online;
 
     @Enumerated(EnumType.STRING)
@@ -46,11 +48,17 @@ public class Booking {
     @NotNull
     private LocalDate bookingDate;
 
-    @Column private LocalDate expirationDate;
+    @Column
+    @Nullable
+    private LocalDate expirationDate;
 
-    @Column private LocalDate loanDate;
+    @Column
+    @Nullable
+    private LocalDate loanDate;
 
-    @Column private LocalDate returnDate;
+    @Column
+    @Nullable
+    private LocalDate returnDate;
 
     @PrePersist
     protected void onCreate() {

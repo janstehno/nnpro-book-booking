@@ -21,7 +21,10 @@ const Cart = () => {
       const itemIndex = updatedCart.findIndex(item => item.id === changedItem.id && item.type === changedItem.type && item.online === changedItem.online);
       if (itemIndex !== -1) {
         let updatedQuantity = updatedCart[itemIndex].quantity + increment;
-        if (updatedQuantity <= updatedCart[itemIndex].physicalCopies && updatedQuantity >= 0) {
+        if (changedItem.type === CartItemType.PURCHASE && updatedQuantity >= 0){
+         updatedCart[itemIndex].quantity = Math.min(updatedQuantity, 10);
+        }
+        else if (updatedQuantity <= updatedCart[itemIndex].physicalCopies && updatedQuantity >= 0) {
          updatedCart[itemIndex].quantity = updatedQuantity;
         }
         if (updatedQuantity === 0) {

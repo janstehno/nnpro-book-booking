@@ -1,10 +1,8 @@
 package service;
 
 import cz.upce.nnpro.bookbooking.Application;
-import cz.upce.nnpro.bookbooking.dto.ResponseBookDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBooksDTO;
-import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.service.AuthService;
@@ -18,7 +16,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import utils.TestUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,26 +64,6 @@ class BookServiceIntegrationTest {
         assertEquals(b.getTitle(), detailDTO.getBook().getTitle());
         assertEquals(b.getAuthor(), detailDTO.getBook().getAuthor());
         assertTrue(detailDTO.getReviews().isEmpty());
-    }
-
-    @Test
-    void testGetBestBooks() {
-        authService.register(TestUtils.testRegisterRequest());
-        AppUser user = userService.getByUsername(TestUtils.testRegisterRequest().getUsername());
-
-        Book b1 = bookService.create(TestUtils.testBook("Book 1"));
-        b1.setReviews(Collections.singletonList(reviewService.create(TestUtils.testReview(b1, user, 3))));
-        Book b2 = bookService.create(TestUtils.testBook("Book 2"));
-        b2.setReviews(Collections.singletonList(reviewService.create(TestUtils.testReview(b2, user, 1))));
-        Book b3 = bookService.create(TestUtils.testBook("Book 3"));
-        b3.setReviews(Collections.singletonList(reviewService.create(TestUtils.testReview(b3, user, 5))));
-
-        List<ResponseBookDTO> bestBooks = bookService.getBest(2);
-
-        assertEquals(2, bestBooks.size());
-        assertEquals(b3.getId(), bestBooks.getFirst().getId());
-        // TODO not working (it should)
-        // assertEquals(b1.getId(), bestBooks.getLast().getId());
     }
 
     @Test

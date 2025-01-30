@@ -92,4 +92,22 @@ class AdminServiceIntegrationTest {
             assertEquals(StatusE.RETURNED, booking.getStatus());
         });
     }
+
+    @Test
+    void shouldNotUpdate_whenOnline(){
+        authService.register(testRegisterRequest);
+        AppUser user = userService.getByUsername(testRegisterRequest.getUsername());
+        Book b = bookService.create(TestUtils.testBook("Book 1"));
+        b.setOnline(true);
+        List<RequestOrderDTO> request = List.of(new RequestOrderDTO(b.getId(), 0, true));
+        ResponseOrderDTO response = orderService.create(user, request);
+
+        assertNotNull(response.getBookings());
+        List<Long> bookingIds = response.getBookings().stream().map(ResponseBookingDTO::getId).toList();
+
+        adminService.updateLoanedBooks(user.getId(), bookingIds);
+
+        Booking booking = bookingService.getById(bookingIds.getFirst());
+        assertEquals(StatusE.ONLINE, booking.getStatus());
+    }
 }

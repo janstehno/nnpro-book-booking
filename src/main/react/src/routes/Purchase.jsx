@@ -18,7 +18,6 @@ const Purchase = () => {
     try {
       const response = await api.get(`/purchases/${purchaseId}`);
       setPurchase(response.data);
-      console.log(response.data);
     } catch {}
     setLoading(false);
   };
