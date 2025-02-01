@@ -7,6 +7,7 @@ import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
+import cz.upce.nnpro.bookbooking.security.RedisService;
 import cz.upce.nnpro.bookbooking.service.BookingService;
 import cz.upce.nnpro.bookbooking.service.BookService;
 import cz.upce.nnpro.bookbooking.service.MailService;
@@ -17,9 +18,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.redisson.api.RLock;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,12 +39,21 @@ public class OrderServiceUnitTest {
 
     @Mock private MailService mailService;
 
+    @Mock private RedisService redisService;
+
     @InjectMocks private OrderService orderService;
 
     private AppUser user;
     private Book book1, book2;
     private Order order1;
     private Booking booking1;
+
+    private void mockRedisService() {
+        RLock mockLock = mock(RLock.class);
+        when(redisService.getLock(anyString())).thenReturn(mockLock);
+        when(redisService.tryLock(any(RLock.class), anyLong(), any(TimeUnit.class))).thenReturn(true);
+        doNothing().when(redisService).releaseLock(any(RLock.class));
+    }
 
     @BeforeEach
     void setUp() {
@@ -100,12 +112,13 @@ public class OrderServiceUnitTest {
         when(bookingService.createAll(anySet())).thenReturn(bookings);
         when(orderRepository.save(any(Order.class))).thenReturn(order1);
 
+        mockRedisService();
+
         ResponseOrderDTO result = orderService.create(user, Collections.singletonList(new RequestOrderDTO(book1.getId(), 2, false)));
 
         assertNotNull(result);
         assertEquals(order1.getId(), result.getId());
     }
-
 
     @Test
     void testUpdateOrder() {
@@ -155,6 +168,8 @@ public class OrderServiceUnitTest {
         when(bookService.getById(2L)).thenReturn(book2);
         when(orderRepository.save(any(Order.class))).thenReturn(order1);
 
+        mockRedisService();
+
         ResponseOrderDTO result = orderService.create(user, requestData);
 
         assertNull(result);
@@ -168,6 +183,8 @@ public class OrderServiceUnitTest {
         when(bookService.getById(1L)).thenReturn(book1);
         when(bookingService.createAll(anySet())).thenReturn(Collections.singletonList(booking1));
         when(orderRepository.save(any(Order.class))).thenReturn(order1);
+
+        mockRedisService();
 
         ResponseOrderDTO result = orderService.create(user, requestData);
 

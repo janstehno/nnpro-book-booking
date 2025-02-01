@@ -8,13 +8,16 @@ import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Order;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
 import cz.upce.nnpro.bookbooking.repository.OrderRepository;
+import cz.upce.nnpro.bookbooking.security.RedisService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.redisson.api.RLock;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +30,8 @@ public class OrderService implements ServiceInterface<Order> {
     private final BookingService bookingService;
 
     private final MailService mailService;
+
+    private final RedisService redisService;
 
     @Override
     public List<Order> getAll() {
@@ -86,28 +91,43 @@ public class OrderService implements ServiceInterface<Order> {
         Set<Booking> bookings = new HashSet<>();
 
         for (RequestOrderDTO d : data) {
-            Book book = bookService.getById(d.getId());
-            if (book == null || !book.isPhysical()) continue;
+            RLock lock = redisService.getLock("create-booking-book:" + d.getId());
+            if (!redisService.tryLock(lock, 10, TimeUnit.SECONDS)) continue;
 
-            boolean online = d.isOnline();
-            int count = d.getCount();
-
-            if (d.isOnline()) {
-                count = 0;
-                if (!book.isOnline()) online = false;
-            } else {
-                if (count <= 0) continue;
-                if (count > book.getPhysicalCopies()) count = book.getPhysicalCopies();
+            try {
+                Booking booking = createBooking(order, d);
+                if (booking != null) bookings.add(booking);
+            } finally {
+                redisService.releaseLock(lock);
             }
-
-            Booking booking = new Booking(order, book, count, online);
-
-            bookingService.handleReservation(booking);
-
-            bookings.add(booking);
-            bookService.update(book);
         }
 
         return bookings;
     }
+
+    private Booking createBooking(Order order, RequestOrderDTO request) {
+        Book book = bookService.getById(request.getId());
+        if (book == null || !book.isPhysical()) return null;
+
+        int count = determineCount(book, request);
+        if (count < 0) return null;
+
+        Booking booking = new Booking(order, book, count, request.isOnline());
+        bookingService.handleReservation(booking);
+
+        book.setAvailableCopies(book.getAvailableCopies() - count);
+        bookService.update(book);
+
+        return booking;
+    }
+
+    private int determineCount(Book book, RequestOrderDTO request) {
+        if (request.isOnline()) {
+            return book.isOnline() ? 0 : -1;
+        } else {
+            if (request.getCount() <= 0) return -1;
+            return Math.min(request.getCount(), book.getPhysicalCopies());
+        }
+    }
+
 }
