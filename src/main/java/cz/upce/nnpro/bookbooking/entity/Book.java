@@ -58,19 +58,25 @@ public class Book {
     @JsonIgnore
     private List<Review> reviews = Collections.emptyList();
 
-    public Book(String title, String author, GenreE genre, String description, boolean isPhysical, boolean isEbook, boolean isOnline,
-                int physicalCopies, int availableCopies,
-                double ebookPrice) {
+    public Book(String title, String author, GenreE genre, String description, boolean isOnline, int physicalCopies, int availableCopies, double ebookPrice) {
         this.title = title;
         this.author = author;
         this.genre = genre;
         this.description = description;
-        this.isPhysical = isPhysical;
-        this.isEbook = isEbook;
+        this.isPhysical = physicalCopies > 0;
+        this.isEbook = ebookPrice > 0.0;
         this.isOnline = isOnline;
         this.physicalCopies = physicalCopies;
         this.availableCopies = availableCopies;
         this.ebookPrice = ebookPrice;
+    }
+
+    public void setPhysical() {
+        isPhysical = physicalCopies > 0;
+    }
+
+    public void setEbook() {
+        isEbook = ebookPrice > 0.0;
     }
 
     public Double getRating() {

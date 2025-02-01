@@ -1,8 +1,6 @@
 package cz.upce.nnpro.bookbooking.service;
 
-import cz.upce.nnpro.bookbooking.dto.ResponseBookDTO;
-import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
-import cz.upce.nnpro.bookbooking.dto.ResponseBooksDTO;
+import cz.upce.nnpro.bookbooking.dto.*;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.enums.GenreE;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
@@ -87,5 +85,34 @@ public class BookService implements ServiceInterface<Book> {
             default -> Sort.by(Sort.Direction.ASC, "title");
         };
         return PageRequest.of(page - 1, size, sort);
+    }
+
+    public List<BookDTO> getAllBooks() {
+        return getAll().stream().map(BookDTO::new).toList();
+    }
+
+    public BookDTO createBook(BookDTO newBook) {
+        Book book = newBook.toBook();
+        book.setAvailableCopies(newBook.getPhysicalCopies());
+
+        create(book);
+        return new BookDTO(book);
+    }
+
+    public BookDTO updateBook(BookDTO updatedBook) {
+        Book book = getById(updatedBook.getId());
+        if (book == null) return null;
+
+        int diff = updatedBook.getPhysicalCopies() - book.getPhysicalCopies();
+        book = updatedBook.toBook();
+
+        if (diff >= 0) {
+            book.setAvailableCopies(updatedBook.getPhysicalCopies());
+        } else {
+            book.setAvailableCopies(Math.max(book.getAvailableCopies() + diff, 0));
+        }
+
+        update(book);
+        return new BookDTO(book);
     }
 }

@@ -53,7 +53,7 @@ public class ReviewControllerUnitTest {
 
         user = new AppUser();
 
-        book = new Book("Book Title", "Test Author", GenreE.ACTION, "Test Description", true, true, true, 5, 3, 49.99);
+        book = new Book("Book Title", "Test Author", GenreE.ACTION, "Test Description", true, 5, 3, 49.99);
         book.setId(1L);
 
         review = new Review();

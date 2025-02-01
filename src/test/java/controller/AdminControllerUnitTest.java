@@ -1,6 +1,8 @@
 package controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro.bookbooking.controller.AdminController;
+import cz.upce.nnpro.bookbooking.dto.BookDTO;
 import cz.upce.nnpro.bookbooking.dto.RequestBookingsDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookingDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseUserDTO;
@@ -10,6 +12,7 @@ import cz.upce.nnpro.bookbooking.entity.Role;
 import cz.upce.nnpro.bookbooking.entity.enums.RoleE;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import cz.upce.nnpro.bookbooking.service.AdminService;
+import cz.upce.nnpro.bookbooking.service.BookService;
 import cz.upce.nnpro.bookbooking.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,11 +43,14 @@ public class AdminControllerUnitTest {
 
     @Mock private UserService userService;
 
+    @Mock private BookService bookService;
+
     @InjectMocks private AdminController adminController;
 
     private ResponseBookingDTO bookingDTO;
     private AppUser user;
     private Booking booking;
+    private BookDTO bookDTO;
 
     @BeforeEach
     void setUp() {
@@ -64,6 +70,9 @@ public class AdminControllerUnitTest {
 
         user = new AppUser("Test", "User", "test@user.com", "user", "user", role);
         user.setId(1L);
+
+        bookDTO = new BookDTO(1L, "Test Book", "Test Author", "ACTION",
+                              "Description", false, 5, 29.99);
     }
 
     @Test
@@ -88,7 +97,9 @@ public class AdminControllerUnitTest {
         List<ResponseBookingDTO> bookings = Collections.singletonList(bookingDTO);
         when(adminService.getAllByUserId(1L)).thenReturn(bookings);
 
-        mockMvc.perform(put("/admin/users/{userId}/bookings", 1L).contentType(MediaType.APPLICATION_JSON).content("{ \"returnIds\": [1], \"loanIds\": [2] }"))
+        mockMvc.perform(put("/admin/users/{userId}/bookings", 1L)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{ \"returnIds\": [1], \"loanIds\": [2] }"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$[0].id").value(booking.getId()))
                .andExpect(jsonPath("$[0].status").value(booking.getStatus().name()));
@@ -114,5 +125,65 @@ public class AdminControllerUnitTest {
                .andExpect(jsonPath("$[0].role").value(user.getRole().getName().name()));
 
         verify(userService, times(1)).getAllUsers();
+    }
+
+    @Test
+    void testCreateBook() throws Exception {
+        when(bookService.createBook(any(BookDTO.class))).thenReturn(bookDTO);
+
+        mockMvc.perform(post("/admin/books")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(bookDTO)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.id").value(bookDTO.getId()))
+               .andExpect(jsonPath("$.title").value(bookDTO.getTitle()))
+               .andExpect(jsonPath("$.author").value(bookDTO.getAuthor()))
+               .andExpect(jsonPath("$.genre").value(bookDTO.getGenre().name()))
+               .andExpect(jsonPath("$.description").value(bookDTO.getDescription()))
+               .andExpect(jsonPath("$.online").value(bookDTO.isOnline()))
+               .andExpect(jsonPath("$.physicalCopies").value(bookDTO.getPhysicalCopies()))
+               .andExpect(jsonPath("$.ebookPrice").value(bookDTO.getEbookPrice()));
+
+        verify(bookService, times(1)).createBook(any(BookDTO.class));
+    }
+
+    @Test
+    void testUpdateBook() throws Exception {
+        when(bookService.updateBook(any(BookDTO.class))).thenReturn(bookDTO);
+
+        mockMvc.perform(put("/admin/books")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(bookDTO)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.id").value(bookDTO.getId()))
+               .andExpect(jsonPath("$.title").value(bookDTO.getTitle()))
+               .andExpect(jsonPath("$.author").value(bookDTO.getAuthor()))
+               .andExpect(jsonPath("$.genre").value(bookDTO.getGenre().name()))
+               .andExpect(jsonPath("$.description").value(bookDTO.getDescription()))
+               .andExpect(jsonPath("$.online").value(bookDTO.isOnline()))
+               .andExpect(jsonPath("$.physicalCopies").value(bookDTO.getPhysicalCopies()))
+               .andExpect(jsonPath("$.ebookPrice").value(bookDTO.getEbookPrice()));
+
+        verify(bookService, times(1)).updateBook(any(BookDTO.class));
+    }
+
+    @Test
+    void testGetAllBooks() throws Exception {
+        List<BookDTO> books = Collections.singletonList(bookDTO);
+
+        when(bookService.getAllBooks()).thenReturn(books);
+
+        mockMvc.perform(get("/admin/books"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$[0].id").value(bookDTO.getId()))
+               .andExpect(jsonPath("$[0].title").value(bookDTO.getTitle()))
+               .andExpect(jsonPath("$[0].author").value(bookDTO.getAuthor()))
+               .andExpect(jsonPath("$[0].genre").value(bookDTO.getGenre().name()))
+               .andExpect(jsonPath("$[0].description").value(bookDTO.getDescription()))
+               .andExpect(jsonPath("$[0].online").value(bookDTO.isOnline()))
+               .andExpect(jsonPath("$[0].physicalCopies").value(bookDTO.getPhysicalCopies()))
+               .andExpect(jsonPath("$[0].ebookPrice").value(bookDTO.getEbookPrice()));
+
+        verify(bookService, times(1)).getAllBooks();
     }
 }

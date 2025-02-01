@@ -52,14 +52,16 @@ public class OrderServiceUnitTest {
         book1 = new Book();
         book1.setId(1L);
         book1.setTitle("Book A");
-        book1.setPhysical(true);
+        book1.setPhysical();
         book1.setPhysicalCopies(5);
+        book1.setAvailableCopies(5);
 
         book2 = new Book();
         book2.setId(2L);
         book2.setTitle("Book B");
-        book2.setPhysical(false);
+        book1.setPhysical();
         book2.setPhysicalCopies(0);
+        book2.setAvailableCopies(0);
 
         booking1 = new Booking();
         booking1.setBook(book1);
@@ -92,10 +94,10 @@ public class OrderServiceUnitTest {
 
     @Test
     void testCreateOrder() {
-        Set<Booking> bookings = new HashSet<>(Collections.singletonList(booking1));
+        List<Booking> bookings = Collections.singletonList(booking1);
 
         when(bookService.getById(book1.getId())).thenReturn(book1);
-        when(bookingService.createAll(anySet())).thenReturn(new ArrayList<>(bookings));
+        when(bookingService.createAll(anySet())).thenReturn(bookings);
         when(orderRepository.save(any(Order.class))).thenReturn(order1);
 
         ResponseOrderDTO result = orderService.create(user, Collections.singletonList(new RequestOrderDTO(book1.getId(), 2, false)));

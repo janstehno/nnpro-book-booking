@@ -1,5 +1,6 @@
 package service;
 
+import cz.upce.nnpro.bookbooking.dto.BookDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBooksDTO;
@@ -19,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -33,26 +34,12 @@ public class BookServiceUnitTest {
 
     @BeforeEach
     void setUp() {
-        book1 = new Book();
+        book1 = new Book("Book A", "Author A", GenreE.FANTASY, "Desc A", false, 10, 8, 15.99);
+        book2 = new Book("Book B", "Author B", GenreE.SCIENCE_FICTION, "Desc B", true, 0, 0, 9.99);
+        book3 = new Book("Book C", "Author C", GenreE.FANTASY, "Desc C", false, 5, 1, 19.99);
         book1.setId(1L);
-        book1.setTitle("Book A");
-        book1.setRating(4.5);
-        book1.setGenre(GenreE.FANTASY);
-        book1.setEbookPrice(15.99);
-
-        book2 = new Book();
         book2.setId(2L);
-        book2.setTitle("Book B");
-        book2.setRating(3.7);
-        book2.setGenre(GenreE.SCIENCE_FICTION);
-        book2.setEbookPrice(9.99);
-
-        book3 = new Book();
         book3.setId(3L);
-        book3.setTitle("Book C");
-        book3.setRating(0.8);
-        book3.setGenre(GenreE.FANTASY);
-        book3.setEbookPrice(19.99);
     }
 
     @Test
@@ -178,5 +165,47 @@ public class BookServiceUnitTest {
         assertEquals(book1.getTitle(), result.getBooks().get(0).getTitle());
         assertEquals(book2.getTitle(), result.getBooks().get(1).getTitle());
         assertEquals(book3.getTitle(), result.getBooks().get(2).getTitle());
+    }
+
+    @Test
+    void testCreateBook() {
+        BookDTO bookDTO = new BookDTO(book1);
+        when(bookRepository.save(any(Book.class))).thenReturn(book1);
+
+        BookDTO result = bookService.createBook(bookDTO);
+
+        assertNotNull(result);
+        assertEquals(book1.getTitle(), result.getTitle());
+        assertEquals(book1.getEbookPrice(), result.getEbookPrice());
+        verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
+    @Test
+    void testUpdateBook() {
+        BookDTO updatedDTO = new BookDTO(book1);
+        updatedDTO.setPhysicalCopies(15);
+
+        when(bookRepository.findById(book1.getId())).thenReturn(Optional.of(book1));
+        when(bookRepository.save(any(Book.class))).thenReturn(book1);
+
+        BookDTO result = bookService.updateBook(updatedDTO);
+
+        assertNotNull(result);
+        assertEquals(updatedDTO.getPhysicalCopies(), result.getPhysicalCopies());
+        verify(bookRepository, times(1)).findById(book1.getId());
+        verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
+    @Test
+    void testGetAllBooks() {
+        when(bookRepository.findAll()).thenReturn(List.of(book1, book2, book3));
+
+        List<BookDTO> books = bookService.getAllBooks();
+
+        assertEquals(3, books.size());
+        assertEquals(book1.getTitle(), books.get(0).getTitle());
+        assertEquals(book2.getTitle(), books.get(1).getTitle());
+        assertEquals(book3.getTitle(), books.get(2).getTitle());
+        verify(bookRepository, times(1)).findAll();
     }
 }
