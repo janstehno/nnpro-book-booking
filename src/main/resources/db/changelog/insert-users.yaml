@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: author-of-the-changeset
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: firstname
+                  value: "Běžný"
+              - column:
+                  name: lastname
+                  value: "Uživatel"
+              - column:
+                  name: email
+                  value: "user@email.cz"
+              - column:
+                  name: username
+                  value: "user"
+              - column:
+                  name: password
+                  value: "$2a$12$ykxvOKbRRyBB1LdDSsrg7OXY3iVemDNMG40K7tyfxge0VxzzDVRdW"
+              - column:
+                  name: creation_date
+                  value: "2025-01-31 10:00:00"
+              - column:
+                  name: update_date
+                  value: "2025-01-31 10:00:00"
+              - column:
+                  name: role_id
+                  valueComputed: "(SELECT id FROM roles WHERE name='USER')"
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: firstname
+                  value: "Pověřený"
+              - column:
+                  name: lastname
+                  value: "Admin"
+              - column:
+                  name: email
+                  value: "admin@email.cz"
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: password
+                  value: "$2a$12$GdPsb2pyIc4TvvCXYiZL8eDbRyvUzFXJiAbHc29b54krx/ShuGcwC"
+              - column:
+                  name: creation_date
+                  value: "2025-01-31 10:00:00"
+              - column:
+                  name: update_date
+                  value: "2025-01-31 10:00:00"
+              - column:
+                  name: role_id
+                  valueComputed: "(SELECT id FROM roles WHERE name='ADMIN')"

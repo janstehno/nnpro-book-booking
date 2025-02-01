@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: author-of-the-changeset
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Hobbit" }
+              - column: { name: author, value: "J.R.R. Tolkien" }
+              - column: { name: genre, value: "FANTASY" }
+              - column: { name: description, value: "A fantasy novel about the adventures of Bilbo Baggins." }
+              - column: { name: is_physical, valueBoolean: true }
+              - column: { name: is_ebook, valueBoolean: true }
+              - column: { name: is_online, valueBoolean: true }
+              - column: { name: physical_copies, valueNumeric: 7 }
+              - column: { name: available_copies, valueNumeric: 7 }
+              - column: { name: ebook_price, valueNumeric: 12.99 }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "1984" }
+              - column: { name: author, value: "George Orwell" }
+              - column: { name: genre, value: "DYSTOPIAN" }
+              - column: { name: description, value: "Dystopian novel about totalitarianism." }
+              - column: { name: is_physical, valueBoolean: true }
+              - column: { name: is_ebook, valueBoolean: false }
+              - column: { name: is_online, valueBoolean: false }
+              - column: { name: physical_copies, valueNumeric: 5 }
+              - column: { name: available_copies, valueNumeric: 5 }
+              - column: { name: ebook_price, valueNumeric: 0.0 }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Pride and Prejudice" }
+              - column: { name: author, value: "Jane Austen" }
+              - column: { name: genre, value: "CLASSIC" }
+              - column: { name: description, value: "A romantic novel that critiques the British landed gentry." }
+              - column: { name: is_physical, valueBoolean: true }
+              - column: { name: is_ebook, valueBoolean: false }
+              - column: { name: is_online, valueBoolean: false }
+              - column: { name: physical_copies, valueNumeric: 4 }
+              - column: { name: available_copies, valueNumeric: 4 }
+              - column: { name: ebook_price, valueNumeric: 0.0 }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Great Gatsby" }
+              - column: { name: author, value: "F. Scott Fitzgerald" }
+              - column: { name: genre, value: "CLASSIC" }
+              - column: { name: description, value: "A novel about the American dream and disillusionment." }
+              - column: { name: is_physical, valueBoolean: true }
+              - column: { name: is_ebook, valueBoolean: true }
+              - column: { name: is_online, valueBoolean: true }
+              - column: { name: physical_copies, valueNumeric: 6 }
+              - column: { name: available_copies, valueNumeric: 6 }
+              - column: { name: ebook_price, valueNumeric: 10.99 }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "To Kill a Mockingbird" }
+              - column: { name: author, value: "Harper Lee" }
+              - column: { name: genre, value: "DRAMA" }
+              - column: { name: description, value: "A novel about racial injustice in the Deep South." }
+              - column: { name: is_physical, valueBoolean: true }
+              - column: { name: is_ebook, valueBoolean: false }
+              - column: { name: is_online, valueBoolean: true }
+              - column: { name: physical_copies, valueNumeric: 3 }
+              - column: { name: available_copies, valueNumeric: 3 }
+              - column: { name: ebook_price, valueNumeric: 0.0 }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Catcher in the Rye" }
+              - column: { name: author, value: "J.D. Salinger" }
+              - column: { name: genre, value: "CLASSIC" }
+              - column: { name: description, value: "A novel about teenage angst and alienation." }
+              - column: { name: is_physical, valueBoolean: true }
+              - column: { name: is_ebook, valueBoolean: false }
+              - column: { name: is_online, valueBoolean: true }
+              - column: { name: physical_copies, valueNumeric: 2 }
+              - column: { name: available_copies, valueNumeric: 2 }
+              - column: { name: ebook_price, valueNumeric: 0.0 }

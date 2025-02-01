@@ -8,10 +8,11 @@ spring:
     driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
-    changelog: classpath:db/changelog/db.changelog-master.yaml
+    clear-checksums: true
+    changelog: classpath:db/changelog/changelog-master.yaml
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
