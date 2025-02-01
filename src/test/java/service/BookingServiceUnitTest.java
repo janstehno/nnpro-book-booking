@@ -4,20 +4,25 @@ import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.enums.StatusE;
 import cz.upce.nnpro.bookbooking.repository.BookingRepository;
+import cz.upce.nnpro.bookbooking.security.RedisService;
 import cz.upce.nnpro.bookbooking.service.BookingService;
-import cz.upce.nnpro.bookbooking.service.MailService;
 import cz.upce.nnpro.bookbooking.service.BookService;
+import cz.upce.nnpro.bookbooking.service.MailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
+import org.redisson.api.RLock;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,15 +32,21 @@ import static org.mockito.Mockito.*;
 public class BookingServiceUnitTest {
 
     @Mock private BookingRepository bookingRepository;
-
-    @Mock private MailService mailService;
-
     @Mock private BookService bookService;
+    @Mock private MailService mailService;
+    @Mock private RedisService redisService;
 
     @InjectMocks private BookingService bookingService;
 
-    private Booking booking1, booking2, booking3, booking4;
     private Book book1, book2;
+    private Booking booking1, booking2, booking3, booking4;
+
+    private void mockRedisService() {
+        RLock mockLock = mock(RLock.class);
+        when(redisService.getLock(anyString())).thenReturn(mockLock);
+        when(redisService.tryLock(any(RLock.class), anyLong(), any(TimeUnit.class))).thenReturn(true);
+        doNothing().when(redisService).releaseLock(any(RLock.class));
+    }
 
     @BeforeEach
     void setUp() {
@@ -148,8 +159,10 @@ public class BookingServiceUnitTest {
         when(bookService.update(book1)).thenReturn(book1);
 
         when(bookingRepository.findByBookAndStatusOrderByOrderDateAsc(any(Book.class),
-                                                                      eq(StatusE.WAITING),
-                                                                      any(Pageable.class))).thenReturn(new PageImpl<>(new ArrayList<>()));
+                eq(StatusE.WAITING),
+                any(Pageable.class))).thenReturn(new PageImpl<>(new ArrayList<>()));
+
+        mockRedisService();
 
         bookingService.updateReturned(booking1);
 
@@ -160,6 +173,8 @@ public class BookingServiceUnitTest {
     @Test
     void testUpdateLoanedBooking() {
         when(bookingRepository.save(booking1)).thenReturn(booking1);
+
+        mockRedisService();
 
         bookingService.updateLoaned(booking1);
 
@@ -173,6 +188,8 @@ public class BookingServiceUnitTest {
         when(bookingRepository.findByOrderUserIdAndOrderIdAndId(1L, 1L, 1L)).thenReturn(Optional.of(booking1));
         when(bookingRepository.save(booking1)).thenReturn(booking1);
 
+        mockRedisService();
+
         bookingService.cancelBooking(1L, 1L, 1L);
 
         assertEquals(StatusE.CANCELED, booking1.getStatus());
@@ -181,6 +198,8 @@ public class BookingServiceUnitTest {
     @Test
     void testNotCancelBooking_WhenOnline() {
         when(bookingRepository.findByOrderUserIdAndOrderIdAndId(1L, 1L, 4L)).thenReturn(Optional.of(booking4));
+
+        mockRedisService();
 
         bookingService.cancelBooking(1L, 1L, 4L);
 
@@ -191,11 +210,13 @@ public class BookingServiceUnitTest {
     @Test
     void testReserveBooks_ShouldReserve() {
         when(bookingRepository.findByBookAndStatusOrderByOrderDateAsc(book1,
-                                                                      StatusE.WAITING,
-                                                                      PageRequest.of(0, 10))).thenReturn(new PageImpl<>(Collections.singletonList(booking2),
-                                                                                                                        PageRequest.of(0, 10),
-                                                                                                                        1));
+                StatusE.WAITING,
+                PageRequest.of(0, 10))).thenReturn(new PageImpl<>(Collections.singletonList(booking2),
+                PageRequest.of(0, 10),
+                1));
         when(bookService.update(book1)).thenReturn(book1);
+
+        mockRedisService();
 
         bookingService.reserveBookForNextInLine(book1);
 
@@ -205,11 +226,13 @@ public class BookingServiceUnitTest {
     @Test
     void testReserveBooks_ShouldNotReserve_WhenNotEnoughCopies() {
         when(bookingRepository.findByBookAndStatusOrderByOrderDateAsc(book2,
-                                                                      StatusE.WAITING,
-                                                                      PageRequest.of(0, 10))).thenReturn(new PageImpl<>(Collections.singletonList(booking2),
-                                                                                                                        PageRequest.of(0, 10),
-                                                                                                                        1));
+                StatusE.WAITING,
+                PageRequest.of(0, 10))).thenReturn(new PageImpl<>(Collections.singletonList(booking2),
+                PageRequest.of(0, 10),
+                1));
         when(bookService.update(book2)).thenReturn(book2);
+
+        mockRedisService();
 
         bookingService.reserveBookForNextInLine(book2);
 
