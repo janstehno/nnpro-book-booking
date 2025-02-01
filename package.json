@@ -1,0 +1,13 @@
+{
+  "name": "spring-boot-docker",
+  "version": "1.0.0",
+  "scripts": {
+    "start-db": "docker-compose up -d db",
+    "build": "cross-env ./gradlew clean build",
+    "docker": "docker-compose up --build",
+    "app": "npm install && npm run start-db && npm run build && npm run docker"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

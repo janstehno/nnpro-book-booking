@@ -3,48 +3,46 @@ services:
     image: postgres
     container_name: book-booking-postgres
     environment:
-      POSTGRES_DB: book-booking
-      POSTGRES_USER: bb
-      POSTGRES_PASSWORD: bb
+      POSTGRES_DB: ${SPRING_DATASOURCE_DATABASE}
+      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     ports:
       - "5432:5432"
+    volumes:
+      - postgres-database:/var/lib/postgresql/data
+
   app:
-    image: eclipse-temurin:21-jdk
+    image: openjdk:21-jdk-slim
     container_name: book-booking-spring-boot
     working_dir: /app
     volumes:
-      - ./gradle:/app/gradle
-      - ./src/main/java:/app/src/main/java
-      - ./src/main/resources:/app/src/main/resources
-      - ./src/test:/app/src/test
-      - ./build.gradle:/app/build.gradle
-      - ./gradlew:/app/gradlew
-      - ./gradlew.bat:/app/gradlew.bat
-      - ./settings.gradle:/app/settings.gradle
-      - gradle-data:/root/.gradle
-    command:
-      sh -c "./gradlew test -Dspring.profiles.active=test && ./gradlew bootRun"
+      - ./build/libs/nnpro-book-booking-0.0.1.jar:/app/app.jar
+    command: [ "java", "-jar", "/app/app.jar" ]
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/book-booking
-      SPRING_DATASOURCE_USERNAME: bb
-      SPRING_DATASOURCE_PASSWORD: bb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${SPRING_DATASOURCE_DATABASE}
     depends_on:
       - db
     ports:
       - "8080:8080"
+    env_file:
+      - .env
+
   js:
     image: node
     container_name: book-booking-node-react-vite
     working_dir: /react
     volumes:
       - ./src/main/react:/react
-      - react-data:/react/node_modules
+      - node-modules:/react/node_modules
     command:
       sh -c "npm install && npm run dev"
     ports:
       - "5173:5173"
+    depends_on:
+      - app
+
 volumes:
-  react-data:
-    driver: local
-  gradle-data:
-    driver: local
+  postgres-database:
+    name: postgres-database
+  node-modules:
+    name: node-modules
