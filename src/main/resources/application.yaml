@@ -28,6 +28,9 @@ spring:
           starttls:
             enabled: true
             required: true
+  redis:
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
 jwt:
   secret: ${JWT_SECRET}
 service:
