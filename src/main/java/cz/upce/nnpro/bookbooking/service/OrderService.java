@@ -69,13 +69,17 @@ public class OrderService implements ServiceInterface<Order> {
         order = create(order);
 
         Set<Booking> bookings = new HashSet<>(createBookings(order, data));
+        if (bookings.isEmpty()) {
+            deleteById(order.getId());
+            return null;
+        }
 
         order.setBookings(bookingService.createAll(bookings));
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
 
-        mailService.sendEmailAboutOrder(user.getEmail(), savedOrder);
+        mailService.sendEmailAboutOrder(user.getEmail(), order);
 
-        return new ResponseOrderDTO(savedOrder);
+        return new ResponseOrderDTO(order);
     }
 
     private Set<Booking> createBookings(Order order, List<RequestOrderDTO> data) {

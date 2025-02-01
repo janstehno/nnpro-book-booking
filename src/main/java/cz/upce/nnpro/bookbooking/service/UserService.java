@@ -1,6 +1,7 @@
 package cz.upce.nnpro.bookbooking.service;
 
 import cz.upce.nnpro.bookbooking.dto.RequestUserPasswordDTO;
+import cz.upce.nnpro.bookbooking.dto.ResponseUserDTO;
 import cz.upce.nnpro.bookbooking.dto.UserDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
@@ -47,6 +48,10 @@ public class UserService implements ServiceInterface<AppUser> {
         userRepository.deleteById(id);
     }
 
+    public List<ResponseUserDTO> getAllUsers() {
+        return getAll().stream().map(ResponseUserDTO::new).toList();
+    }
+
     public UserDTO get(AppUser user) {
         return new UserDTO(user.getFirstname(), user.getLastname(), user.getEmail(), user.getRole().getName());
     }
@@ -67,14 +72,14 @@ public class UserService implements ServiceInterface<AppUser> {
         return userRepository.findByUsername(username).isPresent();
     }
 
-    public String update(AppUser user, UserDTO data) throws RuntimeException {
+    public String updateProfile(AppUser user, UserDTO data) throws RuntimeException {
         AppUser foundByEmail = getByEmail(data.getEmail());
         if (foundByEmail != null && !foundByEmail.getId().equals(user.getId())) throw new CustomExceptionHandler.EmailExistsException();
 
         user.setFirstname(data.getFirstname());
         user.setLastname(data.getLastname());
         user.setEmail(data.getEmail());
-        userRepository.save(user);
+        update(user);
 
         return jwtService.generateToken(user);
     }
@@ -83,7 +88,7 @@ public class UserService implements ServiceInterface<AppUser> {
         if (!passwordEncoder.matches(data.getOldPassword(), user.getPassword())) throw new CustomExceptionHandler.OldPasswordIncorrectException();
 
         user.setPassword(passwordEncoder.encode(data.getPassword()));
-        userRepository.save(user);
+        update(user);
 
         return jwtService.generateToken(user);
     }

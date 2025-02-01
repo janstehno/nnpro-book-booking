@@ -31,7 +31,7 @@ public class UserController {
             UserDTO data,
             @AuthenticationPrincipal
             AppUser user) {
-        return ResponseEntity.ok(service.update(user, data));
+        return ResponseEntity.ok(service.updateProfile(user, data));
     }
 
     @PutMapping("/password")

@@ -1,6 +1,5 @@
 package service;
 
-import cz.upce.nnpro.bookbooking.Application;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookDetailDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBooksDTO;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -27,11 +25,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class BookServiceUnitTest {
 
-    @Mock
-    private BookRepository bookRepository;
+    @Mock private BookRepository bookRepository;
 
-    @InjectMocks
-    private BookService bookService;
+    @InjectMocks private BookService bookService;
 
     private Book book1, book2, book3;
 
@@ -71,7 +67,7 @@ public class BookServiceUnitTest {
 
     @Test
     void testGetBest_FromThreeBooks_LimitToOne() {
-        when(bookRepository.findAll()).thenReturn(Arrays.asList(book1, book2, book3));
+        when(bookRepository.findAll()).thenReturn(List.of(book1, book2, book3));
 
         List<ResponseBookDTO> bestBooks = bookService.getBest(1);
 
@@ -82,7 +78,7 @@ public class BookServiceUnitTest {
 
     @Test
     void testGetBest_FromThreeBooks_LimitToTwo() {
-        when(bookRepository.findAll()).thenReturn(Arrays.asList(book1, book2, book3));
+        when(bookRepository.findAll()).thenReturn(List.of(book1, book2, book3));
 
         List<ResponseBookDTO> bestBooks = bookService.getBest(2);
 
@@ -95,7 +91,7 @@ public class BookServiceUnitTest {
 
     @Test
     void testGetBest_FromThreeBooks_LimitToThree() {
-        when(bookRepository.findAll()).thenReturn(Arrays.asList(book1, book2, book3));
+        when(bookRepository.findAll()).thenReturn(List.of(book1, book2, book3));
 
         List<ResponseBookDTO> bestBooks = bookService.getBest(3);
 

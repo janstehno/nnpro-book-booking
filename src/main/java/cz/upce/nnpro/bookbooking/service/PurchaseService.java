@@ -4,6 +4,7 @@ import cz.upce.nnpro.bookbooking.dto.RequestPurchaseDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponsePurchaseDTO;
 import cz.upce.nnpro.bookbooking.entity.AppUser;
 import cz.upce.nnpro.bookbooking.entity.Book;
+import cz.upce.nnpro.bookbooking.entity.Booking;
 import cz.upce.nnpro.bookbooking.entity.Purchase;
 import cz.upce.nnpro.bookbooking.entity.join.BookPurchase;
 import cz.upce.nnpro.bookbooking.exception.CustomExceptionHandler;
@@ -64,23 +65,33 @@ public class PurchaseService implements ServiceInterface<Purchase> {
         purchase.setUser(user);
         purchase = create(purchase);
 
+        Set<BookPurchase> bookPurchases = new HashSet<>(createBookPurchases(purchase, data));
+        if (bookPurchases.isEmpty()) {
+            deleteById(purchase.getId());
+            return null;
+        }
+
+        purchase.setBookPurchases(bookPurchases);
+        purchaseRepository.save(purchase);
+
+        mailService.sendEmailAboutPurchase(user.getEmail(), purchase);
+
+        return new ResponsePurchaseDTO(purchase);
+    }
+
+    private Set<BookPurchase> createBookPurchases(Purchase purchase, List<RequestPurchaseDTO> data) {
         Set<BookPurchase> bookPurchases = new HashSet<>();
-        double price = 0.0;
 
         for (RequestPurchaseDTO d : data) {
             Book book = bookService.getById(d.getId());
             if (book == null || !book.isEbook() || d.getCount() <= 0) continue;
 
-            bookPurchases.add(new BookPurchase(book, purchase, d.getCount()));
-            price += book.getEbookPrice() * d.getCount();
+            int count = d.getCount();
+            purchase.setPrice(purchase.getPrice() + (book.getEbookPrice() * count));
+
+            bookPurchases.add(new BookPurchase(book, purchase, count));
         }
 
-        purchase.setPrice(price);
-        purchase.setBookPurchases(bookPurchases);
-        Purchase savedPurchase = purchaseRepository.save(purchase);
-
-        mailService.sendEmailAboutPurchase(user.getEmail(), savedPurchase);
-
-        return new ResponsePurchaseDTO(savedPurchase);
+        return bookPurchases;
     }
 }

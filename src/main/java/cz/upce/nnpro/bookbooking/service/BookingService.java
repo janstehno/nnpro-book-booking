@@ -130,7 +130,7 @@ public class BookingService implements ServiceInterface<Booking> {
     public void cancelBooking(Long userId, Long orderId, Long bookingId) {
         Booking booking = getByOrderUserIdAndOrderIdAndId(userId, orderId, bookingId);
 
-        if (booking.isOnline()) return;
+        if (booking.getStatus().equals(StatusE.ONLINE) || booking.isOnline() || booking.getBook().isOnline()) return;
         freeBooks(booking.getBook(), booking.getCount());
         booking.setStatus(StatusE.CANCELED);
         update(booking);
@@ -144,7 +144,7 @@ public class BookingService implements ServiceInterface<Booking> {
         List<Booking> availableBookings = availableBookingsPage.getContent();
 
         for (Booking booking : availableBookings) {
-            if (booking.getExpirationDate().isAfter(today)) {
+            if (booking.getExpirationDate() != null && booking.getExpirationDate().isAfter(today)) {
                 booking.setStatus(target);
                 bookingRepository.save(booking);
             }

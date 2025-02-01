@@ -2,7 +2,7 @@ package cz.upce.nnpro.bookbooking.controller;
 
 import cz.upce.nnpro.bookbooking.dto.RequestBookingsDTO;
 import cz.upce.nnpro.bookbooking.dto.ResponseBookingDTO;
-import cz.upce.nnpro.bookbooking.entity.AppUser;
+import cz.upce.nnpro.bookbooking.dto.ResponseUserDTO;
 import cz.upce.nnpro.bookbooking.service.AdminService;
 import cz.upce.nnpro.bookbooking.service.UserService;
 import jakarta.validation.Valid;
@@ -41,8 +41,8 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<AppUser>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<List<ResponseUserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
 }

@@ -1,11 +1,9 @@
 package entity;
 
-import cz.upce.nnpro.bookbooking.Application;
 import cz.upce.nnpro.bookbooking.entity.Book;
 import cz.upce.nnpro.bookbooking.entity.Review;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -38,7 +36,7 @@ public class BookTest {
         review1 = mock(Review.class);
         when(review1.getRating()).thenReturn(4);
 
-        book.setReviews(List.of(review1));  // Single review with rating 4
+        book.setReviews(List.of(review1));
         assertEquals(4.0, book.getRating(), "Rating should be 4.0 when there is one review with rating 4.");
     }
 

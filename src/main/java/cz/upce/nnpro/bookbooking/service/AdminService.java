@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminService {
 
-    private final List<StatusE> restrictedStatus = Arrays.asList(StatusE.WAITING, StatusE.UNCLAIMED, StatusE.RETURNED, StatusE.CANCELED, StatusE.ONLINE);
+    private final List<StatusE> restrictedStatus = List.of(StatusE.WAITING, StatusE.UNCLAIMED, StatusE.RETURNED, StatusE.CANCELED, StatusE.ONLINE);
 
     private final BookingService bookingService;
 
