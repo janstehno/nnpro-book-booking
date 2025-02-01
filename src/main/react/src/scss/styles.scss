@@ -22,7 +22,7 @@ body{
     min-height: calc(100vh - 55px);
 }
 
-.main-container form input, .main-container form select{
+.main-container form input, .main-container form select, .main-container form textarea{
     margin-bottom: 10px;
     max-width: 250px;
 }

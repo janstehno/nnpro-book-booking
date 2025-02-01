@@ -8,7 +8,7 @@ const Home = () => {
   };
 
   const handleBooks = () => {
-    // navigate("/admin/books");
+    navigate("/admin/books");
   };
 
   return (

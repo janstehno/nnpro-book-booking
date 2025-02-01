@@ -26,6 +26,7 @@ import Cart from "@/routes/Cart";
 
 import AdminHome from "@/routes/admin/Home";
 import AdminUsers from "@/routes/admin/Users";
+import AdminBooks from "@/routes/admin/Books";
 import AdminBookings from "@/routes/admin/Bookings";
 
 import * as bootstrap from 'bootstrap';
@@ -59,6 +60,7 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/admin" element={<AdminHome />} />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/books" element={<AdminBooks />} />
         <Route path="/admin/users/:userId/bookings" element={<AdminBookings />} />
       </Routes>
       <Footer />
