@@ -90,6 +90,10 @@ SPRING_DATASOURCE_DATABASE="your-database-name"
 SPRING_DATASOURCE_USERNAME="your-database-username"
 SPRING_DATASOURCE_PASSWORD="your-database-password"
 
+SPRING_REDIS_HOST_TESTS="localhost"
+SPRING_REDIS_HOST="redis"
+SPRING_REDIS_PORT=6379
+
 SMTP_USERNAME="your-smtp-username"
 SMTP_PASSWORD="your-smtp-password"
 SERVICE_MAIL_ENABLED=true
