@@ -99,6 +99,7 @@ public class BookingService implements ServiceInterface<Booking> {
         }
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 1 * * ?")
     public void checkOnlineBookingExpiration() {
         checkExpirationFor(StatusE.AVAILABLE, StatusE.UNCLAIMED);
@@ -185,7 +186,7 @@ public class BookingService implements ServiceInterface<Booking> {
     }
 
     @Transactional
-    private void checkExpirationFor(StatusE status, StatusE target) {
+    protected void checkExpirationFor(StatusE status, StatusE target) {
         LocalDate today = LocalDate.now();
 
         RLock lock = redisService.getLock("check-expiration-for-lock-" + status.name());
